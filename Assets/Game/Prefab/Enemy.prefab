@@ -10,8 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2206224333058383175}
   - component: {fileID: 1972207367860973162}
-  - component: {fileID: 6859689553765440263}
-  - component: {fileID: 4639823370993309440}
+  - component: {fileID: 1012804491190444350}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -28,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 86419446158578205}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 41.014, y: -55.984, z: 0}
-  m_LocalScale: {x: 0.3671584, y: 0.44206008, z: 22.36}
+  m_LocalScale: {x: 0.3671584, y: 0.44206008, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -84,7 +83,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6859689553765440263
+--- !u!114 &1012804491190444350
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,20 +92,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 86419446158578205}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c388b071c62415c4d94dc23ec53cdc66, type: 3}
+  m_Script: {fileID: 11500000, guid: 47cb449fb9a778c4d9239a7994bdc8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startTime: 0
---- !u!114 &4639823370993309440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 86419446158578205}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 278ca28f246f52d4fbe21ae1e3746d1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _aster: {fileID: 0}
+  _enemyHp: 50
+  _actionNum: 1
+  _power: 10
