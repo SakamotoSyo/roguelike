@@ -4,18 +4,14 @@ using UnityEngine;
 
 public class EnemyManager : SingletonBehaviour<EnemyManager>
 {
-    public enum EnemyState 
-    {
-        Wait,
-        Move,
-    }
-
     //敵のリスト
     public List<GameObject> EnemyList = new List<GameObject>();
 
-    private int EnemyCountNum = 0;
+    //敵の総数のどこまで敵が行動したか
+    public int EnemyActionCountNum = 0;
 
-    public EnemyState _enemyState = EnemyState.Wait;
+    //敵一体の攻撃が終わったかどうか
+    public bool EnemyActionEnd = false;
 
     private bool _isMoveing = false;
     // Start is called before the first frame update
@@ -27,12 +23,33 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     // Update is called once per frame
     void Update()
     {
-        if (_enemyState == EnemyState.Move) 
-        {
-            //EnemyList[EnemyCountNum];
-            _isMoveing = true;
-        }
+
+        EnemyActionMgr();
+        
     }
+
+    /// <summary>
+    /// ターンがEnemyに移った時に各Enemyの行動を始める
+    /// </summary>
+    private void EnemyActionMgr() 
+    {
+        if (GameManager.Instance.TurnType == GameManager.TurnManager.Enemy && !EnemyActionEnd && EnemyList.Count > EnemyActionCountNum)
+        {
+            if (EnemyList[EnemyActionCountNum].TryGetComponent(out IEnemyMove IM))
+            {
+                IM.Move();
+                Debug.Log("敵が行動した");
+                EnemyActionCountNum++;
+            }
+        }
+        //Enemyの行動がすべて終わったらプレイヤーのターンに移す
+        else if(EnemyList.Count <= EnemyActionCountNum)
+        {
+            EnemyActionCountNum = 0;
+            Debug.Log("敵の行動が終わった");
+            GameManager.Instance.TurnType = GameManager.TurnManager.Player;
+        }
+    } 
 
 
 }
