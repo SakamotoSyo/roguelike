@@ -37,13 +37,13 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
         {
             if (EnemyList[EnemyActionCountNum].TryGetComponent(out IEnemyMove IM))
             {
-                IM.Move();
+                 IM.Move();
                 Debug.Log("敵が行動した");
                 EnemyActionCountNum++;
             }
         }
         //Enemyの行動がすべて終わったらプレイヤーのターンに移す
-        else if(EnemyList.Count <= EnemyActionCountNum)
+        else if(EnemyList.Count <= EnemyActionCountNum && !EnemyActionEnd)
         {
             EnemyActionCountNum = 0;
             Debug.Log("敵の行動が終わった");
