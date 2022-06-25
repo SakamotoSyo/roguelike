@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class PlayerBase : MonoBehaviour, IDamageble
 {
-    public enum MoveType
-    {
-        WaitKey,
-        Move,
-    }
+    public ChType GetType => ChType.Player;
 
     [SerializeField, Header("最大HP")] private int _maxHp;
     [SerializeField, Header("HP")] private float _playerHp;
     [SerializeField, Header("攻撃力")] private float _power;
     [SerializeField, Header("行動の回数")] private int _actionNum;
+    [SerializeField, Header("アイテムの所持リスト")] private List<Item> _playerItemList;
+
+    [SerializeField, Header("ItemDateBase")] private ItemDataBase _itemDataBase;
 
     [Tooltip("ゲームマネージャー")]
     private GameManager _gameManagerIns;
@@ -23,9 +23,8 @@ public class PlayerBase : MonoBehaviour, IDamageble
 
     [Tooltip("動作中かどうか")]
     private bool _isMoving;
-    //プレイヤーのムーブタイプ
-    private MoveType _moveType = MoveType.WaitKey;
 
+  
     //Test用
     private float _waitTime = 0.1f;
     private float _countTime = 0;
@@ -80,9 +79,6 @@ public class PlayerBase : MonoBehaviour, IDamageble
         else
         {
             Debug.Log("Shift");
-            ////ここに岩や敵があった時移動できないという処理を追加する
-            //_nextPosition = transform.position + new Vector3(x, y, 0);
-            //_moveType = MoveType.Move;
         }
 
         _isMoving = false;
@@ -103,24 +99,35 @@ public class PlayerBase : MonoBehaviour, IDamageble
         //0は壁、1は道
         if (value == 0)
         {
-            Debug.Log("かべ");
             return false;
 
         }
         else if (value == 1)
-        {
-            Debug.Log("呼ばれた");
-            return true;
-
+        { 
+           return true;
         }
 
         return false;
 
     }
 
-    public void AddDamage(float damage) 
+    /// <summary>
+    /// ダメージを受ける処理
+    /// </summary>
+    /// <param name="damage">食らうダメージ</param>
+    public void AddDamage(float damage)
     {
         Debug.Log($"プレイヤーは{damage}のダメージを受けた");
         _playerHp -= damage;
+    }
+
+    /// <summary>
+    /// アイテム名からアイテムを取得する
+    /// </summary>
+    /// <param name="searchName">アイテム名</param>
+    /// <returns></returns>
+    public Item GetItem(string searchName) 
+    {
+        return _itemDataBase.GetItemLists().Find(itemName => itemName.GetItemName == searchName);
     }
 }
