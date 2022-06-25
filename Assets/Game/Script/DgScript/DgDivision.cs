@@ -60,7 +60,7 @@ public class DgDivision
         {
             return Bottom - Top;
         }
-
+       
         /// <summary>
         /// –ÊÏ‚ğ•Ô‚µ‚Ä‚­‚ê‚é
         /// </summary>
