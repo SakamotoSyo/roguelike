@@ -8,6 +8,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     [SerializeField, Header("行動回数")] private int _actionNum;
     [SerializeField, Header("攻撃力")] private float _power;
 
+    [SerializeField] private LayerMask _testLayerMask;
 
     [Tooltip("自分自身の座標")]
     private int _startX;
@@ -38,6 +39,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     [Tooltip("ゲームマネージャーのインスタンス")]
     private GameManager _gameManager;
 
+    private Vector2 _position;
     protected private void Start()
     {
         //インスタンスを取得
@@ -48,23 +50,37 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
         _enemyManager.EnemyList.Add(this.gameObject);
     }
 
+    protected virtual void Update()
+    {
+        Debug.Log("afwfw");
+        _position = new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1) - new Vector2(this.transform.position.x, this.transform.position.y);
+        Debug.DrawRay(transform.position, _position, Color.blue);
+    }
+
     /// <summary>
     /// Playerの方向にRayを飛ばしPlayerのIDamgageを取得してダメージを与える
     /// </summary>
-    protected virtual void Attack()
+    protected virtual IEnumerator Attack()
     {
-        
-        RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), 10.0f);
-        Debug.Log(hit.collider.gameObject);
-        if (hit.collider)
-        {
-            Debug.DrawRay(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), Color.red);
-        }
+        //エネミーからプレイヤー対する方向ベクトルを取得
+        //_position = new Vector2(this.transform.position.x, this.transform.position.y) - new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1);
+        _position = new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1) - new Vector2(this.transform.position.x, this.transform.position.y);
 
+
+        //RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), 10.0f, _testLayerMask);
+        RaycastHit2D hit = Physics2D.Raycast(this.transform.position, _position, 10.0f, _testLayerMask);
+        //Debug.DrawRay(transform.position, _position, Color.blue);
+        yield return new WaitForSeconds(0.3f);
+        //UnityEditor.EditorApplication.isPaused = true;
+        Debug.Log(hit);
         if (hit.collider.gameObject.TryGetComponent(out IDamageble ID))
         {
             ID.AddDamage(_power);
         }
+     
+
+        _enemyManager.EnemyActionEnd = false;
+        _isAttack = false;
 
     }
 
@@ -73,6 +89,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     /// </summary>
     public virtual void Move()
     {
+        _enemyManager.EnemyActionEnd = true;
         _startX = (int)_enemyManager.EnemyList[0].transform.position.x;
         _startY = (int)_enemyManager.EnemyList[0].transform.position.y;
 
@@ -187,18 +204,17 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
         }
         else if (_isAttack)
         {
-            _isAttack = false;
-
-            Attack();
+            StartCoroutine(Attack());
         }
 
         //移動する
         transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
 
-        if (transform.position == _nextPosition)
+        if (transform.position == _nextPosition && !_isAttack)
         {
+            
             _isMove = false;
-            GameManager.Instance.TurnType = GameManager.TurnManager.Player;
+            _enemyManager.EnemyActionEnd = false;
         }
     }
 
@@ -206,8 +222,8 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     /// ダメージを受ける処理
     /// </summary>
     /// <param name="damage">受けるダメージ</param>
-    public void AddDamage(float damage) 
+    public void AddDamage(float damage)
     {
-        
+
     }
 }
