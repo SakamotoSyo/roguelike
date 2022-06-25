@@ -14,7 +14,7 @@ using UnityEngine.Tilemaps;
 /// <summary>
 /// ダンジョンの自動生成
 /// </summary>
-public class DgGenerator : SingletonBehaviour<DgGenerator>, IGeneratesomething
+public class DgGenerator : SingletonBehaviour<DgGenerator>
 {
 
     //2次元配列情報
@@ -79,6 +79,9 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>, IGeneratesomething
 
     [Header("敵のプレハブ")]
     [SerializeField] private GameObject _enemyPrefab;
+
+    [Header("トラップのプレハブ")] 
+    [SerializeField] private GameObject _trapPrefab;
 
     private bool isVertical = false;
     //縦で分割するかどうか
@@ -353,13 +356,11 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>, IGeneratesomething
                 //配列の中身の数字によってマップチップを入れてる。ここに罠などのギミックを生成する処理を追加してもいいかも
                 if (a == 1)
                 {
-                    //_groundTileMap.SetTile(new Vector3Int(x, y, 0), _groundTileChip);
                     var v = Instantiate(_kusanyaObject, new Vector3(x, -1 * y, 0), _kusanyaObject.transform.rotation);
-
+                    //TrapGenerator(x, y);
                 }
                 else if(a == 0) 
                 {
-                    //_wallTileMap.SetTile(new Vector3Int(x, y, 0), _wallTileChip);
                     var t = Instantiate(_iwaObject, new Vector3(x, -1 * y, 0), _iwaObject.transform.rotation);
                 }
             }
@@ -378,7 +379,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>, IGeneratesomething
     /// <summary>
     /// オブジェクトを入れるとダンジョン内にランダムに生成する
     /// </summary>
-    /// <param name="Iobject"></param>
+    /// <param name="Iobject">インスタンスするオブジェクト</param>
     public void Generatesomething(GameObject Iobject) 
     {
         //ランダムな区画を選択する
@@ -394,8 +395,11 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>, IGeneratesomething
     /// <summary>
     /// 罠を生成する
     /// </summary>
-    private void TrapGenerator() 
+    private void TrapGenerator(int x, int y)
     {
-
+        if (Random.Range(0, 101) > 95) 
+        {
+            var v = Instantiate(_trapPrefab, new Vector3(x, -1 * y, 0), _kusanyaObject.transform.rotation);
+        } 
     }
 }
