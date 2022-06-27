@@ -39,6 +39,9 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     [Tooltip("ゲームマネージャーのインスタンス")]
     private GameManager _gameManager;
 
+    [Tooltip("PlayerBaseScript")]
+    private IDamageble _playerBase;
+
     private Vector2 _position;
     protected private void Start()
     {
@@ -48,6 +51,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
         _generatorIns = DgGenerator.Instance;
         //エネミーマネージャーに自分自身のオブジェクトを渡す
         _enemyManager.EnemyList.Add(this.gameObject);
+        _playerBase = _gameManager.PlayerBase.GetComponent<IDamageble>();
     }
 
     protected virtual void Update()
@@ -68,10 +72,10 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
 
 
         //RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), 10.0f, _testLayerMask);
-        RaycastHit2D hit = Physics2D.Raycast(this.transform.position, _position, 10.0f, _testLayerMask);
-        //Debug.DrawRay(transform.position, _position, Color.blue);
-        yield return new WaitForSeconds(0.3f);
-        //UnityEditor.EditorApplication.isPaused = true;
+        RaycastHit2D hit = Physics2D.Linecast(this.transform.position, _position, _testLayerMask);
+
+        yield return new WaitForSeconds(0.1f);
+ 
         Debug.Log(hit);
         if (hit.collider.gameObject.TryGetComponent(out IDamageble ID))
         {
@@ -105,7 +109,9 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
                 //周りを見渡して攻撃対象がいた場合フラグを上げる
                 if (a == _goalX && b == _goalY)
                 {
+                    _playerBase.AddDamage(_power);
                     _isAttack = true;
+                    //コルーチンでアニメーションの処理を書いてもいいかも
                 }
             }
         }
@@ -204,13 +210,14 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
         }
         else if (_isAttack)
         {
-            StartCoroutine(Attack());
+           // StartCoroutine(Attack());
+           _isAttack = false;
         }
 
         //移動する
         transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
 
-        if (transform.position == _nextPosition && !_isAttack)
+        if (transform.position == _nextPosition)
         {
             
             _isMove = false;
