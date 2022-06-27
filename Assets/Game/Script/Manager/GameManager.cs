@@ -12,6 +12,8 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public TurnManager TurnType;
 
+    public GameObject PlayerBase;
+
     //ƒvƒŒƒCƒ„[‚ÌêŠ
     public int PlayerX;
     public int PlayerY;

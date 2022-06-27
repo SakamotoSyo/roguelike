@@ -32,6 +32,7 @@ public class PlayerBase : MonoBehaviour, IDamageble
     private void Start()
     {
         _gameManagerIns = GameManager.Instance;
+        _gameManagerIns.PlayerBase = this.gameObject;
         _gameManagerIns.PlayerX = (int)transform.position.x;
         _gameManagerIns.PlayerY = -1 * (int)transform.position.y;
 
