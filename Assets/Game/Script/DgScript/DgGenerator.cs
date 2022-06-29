@@ -390,6 +390,11 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         int y = Random.Range(_divList[suffix].Room.Top, _divList[suffix].Room.Bottom);
 
         var Object = Instantiate(Iobject, new Vector3(x, -1 * y, 0), _stairSet.transform.rotation);
+
+        if (Iobject == _playerObject) 
+        {
+            GameManager.Instance.SetPlayerPosition(x, y);
+        }
     }
 
     /// <summary>
