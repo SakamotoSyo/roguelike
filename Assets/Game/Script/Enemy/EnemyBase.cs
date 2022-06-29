@@ -51,12 +51,11 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
         _generatorIns = DgGenerator.Instance;
         //エネミーマネージャーに自分自身のオブジェクトを渡す
         _enemyManager.EnemyList.Add(this.gameObject);
-        _playerBase = _gameManager.PlayerBase.GetComponent<IDamageble>();
+        _playerBase = _gameManager.PlayerObj.GetComponent<IDamageble>();
     }
 
     protected virtual void Update()
     {
-        Debug.Log("afwfw");
         _position = new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1) - new Vector2(this.transform.position.x, this.transform.position.y);
         Debug.DrawRay(transform.position, _position, Color.blue);
     }
