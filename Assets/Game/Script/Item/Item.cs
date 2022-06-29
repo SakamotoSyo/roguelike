@@ -10,6 +10,8 @@ public class Item : ScriptableObject
     {
         RecoveryItem,
         PowerUpItem,
+        Weapon,
+        Armor,
         SpecialItem, 
 
     } 
@@ -29,4 +31,8 @@ public class Item : ScriptableObject
     [SerializeField,Header("アイテムに関する情報")]
     private string _itemInformationText;
     public string GetItemInformationText => _itemInformationText;
+
+    [SerializeField, Header("アイテムのイメージ")]
+    private Sprite _itemImage;
+    public Sprite GetItemImage => _itemImage;
 }
