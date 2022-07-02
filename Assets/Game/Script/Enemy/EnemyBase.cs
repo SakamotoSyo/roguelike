@@ -51,6 +51,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
         _generatorIns = DgGenerator.Instance;
         //エネミーマネージャーに自分自身のオブジェクトを渡す
         _enemyManager.EnemyList.Add(this.gameObject);
+
         _playerBase = _gameManager.PlayerObj.GetComponent<IDamageble>();
     }
 
@@ -202,8 +203,6 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
             {
                 //ゲームマネージャーにプレイヤーの場所を渡す
                 EnemyManager.Instance.EnemyList[0].transform.position += new Vector3(_xBool, _yBool, 0);
-
-
             }
 
         }
