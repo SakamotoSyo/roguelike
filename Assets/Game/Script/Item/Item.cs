@@ -8,8 +8,8 @@ public class Item : ScriptableObject
 {
     public enum ItemType 
     {
-        RecoveryItem,
-        PowerUpItem,
+        MagicBook,
+        Candy,
         Weapon,
         Armor,
         SpecialItem, 
