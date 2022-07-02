@@ -28,6 +28,16 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     [SerializeField, Header("ItemDateBase")]
     private ItemDataBase _itemDataBase;
 
+
+    /// <summary>
+    /// Hpの値を変更する
+    /// </summary>
+    /// <param name=""></param>
+    public void SetHp(float value) 
+    {
+        _playerHp = Mathf.Min(_playerHp += value, _maxHp);
+    }
+
     /// <summary>
     /// ダメージを受ける処理
     /// </summary>
@@ -55,6 +65,15 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     public void SetItem(Item item)
     {
         _playerItemList.Add(item);
+    }
+
+    /// <summary>
+    /// アイテムリストからアイテムを削除する
+    /// </summary>
+    /// <param name="item"></param>
+    public void RemoveItem(Item item) 
+    {
+        _playerItemList.Remove(item);
     }
 
    
