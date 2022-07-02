@@ -51,6 +51,9 @@ public class PlayerBase : MonoBehaviour
             //移動先に障害物がないかどうか
             if (_isMoving && (x != 0 || y != 0))
             {
+                //アイテムが足元に落ちていないかどうか
+                ItemJudge(x, y);
+
                 //ここに岩や敵があった時移動できないという処理を追加する
                 _nextPosition = transform.position + new Vector3(x, y, 0);
 
@@ -97,6 +100,7 @@ public class PlayerBase : MonoBehaviour
         int value = DgGenerator.Instance.Layer.GetMapData(_gameManagerIns.PlayerX + x, _gameManagerIns.PlayerY + y * -1);
 
         // Debug.Log(value);
+
         //0は壁、1は道
         if (value == 0)
         {
@@ -112,5 +116,29 @@ public class PlayerBase : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// 足元にアイテムがないかどうか判定する
+    /// </summary>
+    public void ItemJudge(float x, float y) 
+    {
+        foreach (var i in _gameManagerIns.ItemObjList)
+        {
+            //プレイヤーと自分の座標が重なっていた時
+            if (i.transform.position == this.gameObject.transform.position + new Vector3(x, y, 0)) 
+            {
+                var objCs = i.GetComponent<ItemObjectScript>();
+                var PlayerStatus = gameObject.GetComponent<PlayerStatus>();
+                
+                //アイテムをインベントリにセットする
+                PlayerStatus.SetItem(objCs.ItemInfomation);
+                _gameManagerIns.RemoveItemObjList(i);
+                //落ちているアイテムを削除
+                objCs.DestroyObj();
+
+                return;
+
+            }
+        }
+    }
    
 }
