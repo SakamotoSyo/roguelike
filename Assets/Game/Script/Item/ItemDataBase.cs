@@ -14,4 +14,13 @@ public class ItemDataBase : ScriptableObject
         return ItemList;
     }
 
+    /// <summary>
+    /// アイテムリストの中身をランダムに返す
+    /// </summary>
+    /// <returns></returns>
+    public Item GetRandamItemLists() 
+    {
+        return ItemList[UnityEngine.Random.Range(0, ItemList.Count)];
+    }
+
 }
