@@ -11,6 +11,8 @@ using UnityEngine.Tilemaps;
 //5.区画内に部屋を作る
 //6.部屋同士をつなげる通路を作る
 
+//Layerの０は壁１は道２は敵３はアイテム
+
 /// <summary>
 /// ダンジョンの自動生成
 /// </summary>
@@ -18,10 +20,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
 {
 
     //2次元配列情報
-    private Layer2D _layer = null;
-
-    //カプセル化
-    public Layer2D Layer => _layer;
+    public Layer2D Layer = null;
 
     //区画リスト
     private List<DgDivision> _divList = null;
@@ -83,19 +82,25 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     [Header("トラップのプレハブ")] 
     [SerializeField] private GameObject _trapPrefab;
 
+    [Header("ItemDataBase")]
+    [SerializeField] private ItemDataBase _itemDataBase;
+
+    [Header("Itemのプレハブ")]
+    [SerializeField] private GameObject _itemPrefab;
+
     private bool isVertical = false;
     //縦で分割するかどうか
     // Start is called before the first frame update
     void Start()
     {
         //二次元配列に値を入れる
-        _layer = new Layer2D(_width, _height);
+        Layer = new Layer2D(_width, _height);
 
         //区画リスト作成
         _divList = new List<DgDivision>();
 
         //すべてを壁にする
-        _layer.Fill(_chipWall);
+        Layer.Fill(_chipWall);
 
         //最初の区画を作る
         CreateDivision(0, 0, _width - 1, _height - 1);
@@ -244,7 +249,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         {
             for (int i = room.Top; i <= room.Bottom; i++)
             {
-                _layer.SetData(j, i, 1);
+                Layer.SetData(j, i, 1);
             }
         }
 
@@ -305,15 +310,15 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
 
         for (int x = a.Room.Right; x < a.Outer.Right; x++) 
         {
-            _layer.SetData(x, y1, 1);
+            Layer.SetData(x, y1, 1);
         }
         for (int x = b.Room.Left; x > b.Outer.Left; x--) 
         {
-            _layer.SetData(x, y2, 1);
+            Layer.SetData(x, y2, 1);
         }
         for (int y = Mathf.Min(y1, y2), end = Mathf.Max(y1, y2); y <= end; y++) 
         {
-            _layer.SetData(a.Outer.Right, y, 1);
+            Layer.SetData(a.Outer.Right, y, 1);
         }
     }
 
@@ -329,15 +334,15 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
 
         for (int y = a.Room.Bottom; y < a.Outer.Bottom; y++) 
         {
-            _layer.SetData(x1, y, 1);
+            Layer.SetData(x1, y, 1);
         }
         for (int y = b.Room.Top; y > b.Outer.Top; y--) 
         {
-            _layer.SetData(x2, y, 1);
+            Layer.SetData(x2, y, 1);
         }
         for (int x = Mathf.Min(x1, x2), end = Mathf.Max(x1, x2); x <= end; x++) 
         {
-            _layer.SetData(x, a.Outer.Bottom, 1);
+            Layer.SetData(x, a.Outer.Bottom, 1);
         }
     }
 
@@ -346,12 +351,12 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     /// </summary>
     private void SetTile() 
     {
-        for (int y = 0; y < _layer.Height; ++y) 
+        for (int y = 0; y < Layer.Height; ++y) 
         {
-            for (int x = 0; x < _layer.Width; ++x) 
+            for (int x = 0; x < Layer.Width; ++x) 
             {
                 //XYの値を入れて配列の中身の数字を持ってくる
-                int a = _layer.GetMapData(x, y);
+                int a = Layer.GetMapData(x, y);
 
                 //配列の中身の数字によってマップチップを入れてる。ここに罠などのギミックを生成する処理を追加してもいいかも
                 if (a == 1)
@@ -373,6 +378,8 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         Generatesomething(_playerObject);
         //敵の生成
         Generatesomething(_enemyPrefab);
+        //アイテムの生成
+        ItemGeneratesomething();
     }
 
 
@@ -398,6 +405,37 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     }
 
     /// <summary>
+    /// ランダムな区画にアイテムを生成する
+    /// </summary>
+    public void ItemGeneratesomething() 
+    {
+        foreach (var i in _divList) 
+        {
+            //部屋の中にランダムな数のアイテムを生成する
+            int ItemNum = Random.Range(0, 3);
+            for (int j = 0; j < ItemNum; j++)
+            {
+                //部屋の中のランダムな座標を指定
+                int x = Random.Range(i.Room.Left, i.Room.Right);
+                int y = Random.Range(i.Room.Top, i.Room.Bottom);
+                Debug.Log($"Xは{x}Yは{y}");
+                var ItemObject = Instantiate(_itemPrefab, new Vector3(x, -1 * y, 0), _itemPrefab.transform.rotation);
+                //インスタンス化したプレハブからスクリプトを取得する
+                var ItemObjectCs = ItemObject.GetComponent<ItemObjectScript>();
+                //データーベースの中からランダムなアイテムを取ってくる
+                var ItemRan = _itemDataBase.GetRandamItemLists();
+
+                //スクリプトに情報をセットする
+                ItemObjectCs.SetItemInfor(ItemRan);
+                ItemObjectCs.SetItemSprite(ItemRan.GetItemImage);
+
+                //リストにアイテムのオブジェクトをセットする
+                GameManager.Instance.SetItemObjList(ItemObject);   
+            }
+        }
+    }
+
+    /// <summary>
     /// 罠を生成する
     /// </summary>
     private void TrapGenerator(int x, int y)
@@ -407,4 +445,6 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
             var v = Instantiate(_trapPrefab, new Vector3(x, -1 * y, 0), _kusanyaObject.transform.rotation);
         } 
     }
+
+    
 }
