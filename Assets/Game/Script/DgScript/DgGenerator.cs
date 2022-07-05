@@ -11,8 +11,6 @@ using UnityEngine.Tilemaps;
 //5.区画内に部屋を作る
 //6.部屋同士をつなげる通路を作る
 
-//Layerの０は壁１は道２は敵３はアイテム
-
 /// <summary>
 /// ダンジョンの自動生成
 /// </summary>
@@ -415,10 +413,21 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
             int ItemNum = Random.Range(0, 3);
             for (int j = 0; j < ItemNum; j++)
             {
+                //アイテムの座標をかぶらせないために一度生成したものをリストに保存
+            　　List<int> PosList = new List<int>();
                 //部屋の中のランダムな座標を指定
                 int x = Random.Range(i.Room.Left, i.Room.Right);
                 int y = Random.Range(i.Room.Top, i.Room.Bottom);
-                Debug.Log($"Xは{x}Yは{y}");
+                //被らない座標が出るまで回し続ける
+                while(PosList.Contains(x + y))
+                {
+                    x = Random.Range(i.Room.Left, i.Room.Right);
+                    y = Random.Range(i.Room.Top, i.Room.Bottom);
+                }
+
+                //生成した座標の保存
+                PosList.Add(x + y);
+
                 var ItemObject = Instantiate(_itemPrefab, new Vector3(x, -1 * y, 0), _itemPrefab.transform.rotation);
                 //インスタンス化したプレハブからスクリプトを取得する
                 var ItemObjectCs = ItemObject.GetComponent<ItemObjectScript>();
@@ -446,5 +455,13 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         } 
     }
 
+    /// <summary>
+    /// DivListを返す
+    /// </summary>
+    /// <returns></returns>
+    public List<DgDivision> GetDivList() 
+    {
+        return _divList;
+    }
     
 }
