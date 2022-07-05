@@ -42,6 +42,9 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     [Tooltip("PlayerBaseScript")]
     private IDamageble _playerBase;
 
+    [Tooltip("自分がどこの部屋にいるか")]
+    private int _nowRoomNum;
+
     private Vector2 _position;
     protected private void Start()
     {
@@ -61,32 +64,32 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
         Debug.DrawRay(transform.position, _position, Color.blue);
     }
 
-    /// <summary>
-    /// Playerの方向にRayを飛ばしPlayerのIDamgageを取得してダメージを与える
-    /// </summary>
-    protected virtual IEnumerator Attack()
-    {
-        //エネミーからプレイヤー対する方向ベクトルを取得
-        //_position = new Vector2(this.transform.position.x, this.transform.position.y) - new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1);
-        _position = new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1) - new Vector2(this.transform.position.x, this.transform.position.y);
+    ///// <summary>
+    ///// Playerの方向にRayを飛ばしPlayerのIDamgageを取得してダメージを与える
+    ///// </summary>
+    //protected virtual IEnumerator Attack()
+    //{
+    //    //エネミーからプレイヤー対する方向ベクトルを取得
+    //    //_position = new Vector2(this.transform.position.x, this.transform.position.y) - new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1);
+    //    _position = new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1) - new Vector2(this.transform.position.x, this.transform.position.y);
 
 
-        //RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), 10.0f, _testLayerMask);
-        RaycastHit2D hit = Physics2D.Linecast(this.transform.position, _position, _testLayerMask);
+    //    //RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), 10.0f, _testLayerMask);
+    //    RaycastHit2D hit = Physics2D.Linecast(this.transform.position, _position, _testLayerMask);
 
-        yield return new WaitForSeconds(0.1f);
+    //    yield return new WaitForSeconds(0.1f);
  
-        Debug.Log(hit);
-        if (hit.collider.gameObject.TryGetComponent(out IDamageble ID))
-        {
-            ID.AddDamage(_power);
-        }
+    //    Debug.Log(hit);
+    //    if (hit.collider.gameObject.TryGetComponent(out IDamageble ID))
+    //    {
+    //        ID.AddDamage(_power);
+    //    }
      
 
-        _enemyManager.EnemyActionEnd = false;
-        _isAttack = false;
+    //    _enemyManager.EnemyActionEnd = false;
+    //    _isAttack = false;
 
-    }
+    //}
 
     /// <summary>
     /// 敵の移動AI
@@ -109,6 +112,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
                 //周りを見渡して攻撃対象がいた場合フラグを上げる
                 if (a == _goalX && b == _goalY)
                 {
+                    //攻撃処理
                     _playerBase.AddDamage(_power);
                     _isAttack = true;
                     //コルーチンでアニメーションの処理を書いてもいいかも
@@ -117,7 +121,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
         }
 
 
-        if (!_isMove && !_isAttack)
+        if (!_isMove && !_isAttack && _gameManager.GetRoomNum((int)transform.position.x, (int)transform.position.y) == _nowRoomNum)
         {
 
 
