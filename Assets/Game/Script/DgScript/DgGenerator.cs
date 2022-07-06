@@ -86,11 +86,17 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     [Header("Itemのプレハブ")]
     [SerializeField] private GameObject _itemPrefab;
 
+    [Tooltip("マップを生成し終わったかどうか")]
+    private bool _mapGenerateEnd;
+    public bool MapGenerateEnd => _mapGenerateEnd;
+
     private bool isVertical = false;
     //縦で分割するかどうか
     // Start is called before the first frame update
     void Start()
     {
+        _mapGenerateEnd = false;
+
         //二次元配列に値を入れる
         Layer = new Layer2D(_width, _height);
 
@@ -375,9 +381,11 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         //プレイヤーの生成
         Generatesomething(_playerObject);
         //敵の生成
-        Generatesomething(_enemyPrefab);
+        //Generatesomething(_enemyPrefab);
         //アイテムの生成
         ItemGeneratesomething();
+        _mapGenerateEnd = true;
+
     }
 
 
@@ -399,6 +407,14 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         if (Iobject == _playerObject) 
         {
             GameManager.Instance.SetPlayerPosition(x, y);
+        }
+
+        if (Iobject == _enemyPrefab) 
+        {
+            //エネミーに今自分がどの部屋にいるか教えてあげる
+            var EnemyScript = Object.GetComponent<EnemyBase>();
+            //EnemyScript.SetRoomNum(suffix);
+            EnemyManager.Instance.SetTotalEnemyNum(1);
         }
     }
 
