@@ -13,10 +13,14 @@ public class PlayerBase : MonoBehaviour
     [Tooltip("プレイヤーが次に移動する場所")]
     private Vector3 _nextPosition;
 
+    [Tooltip("プレイヤーが動いた方向")]
+    private Vector3 _playerDirection;
+    public Vector3 PlayerDirection => _playerDirection;
+
     [Tooltip("動作中かどうか")]
     private bool _isMoving;
 
-  
+
     //Test用
     private float _waitTime = 0.1f;
     private float _countTime = 0;
@@ -25,6 +29,9 @@ public class PlayerBase : MonoBehaviour
     {
         _gameManagerIns = GameManager.Instance;
         _gameManagerIns.SetPlayerObj(this.gameObject);
+
+        //ゲームマネージャーにプレイヤーの場所を渡すi
+       // _gameManagerIns.SetPlayerRoomNum((int)(transform.position.x), (int)transform.position.y * -1);
 
     }
     private void Update()
@@ -51,6 +58,12 @@ public class PlayerBase : MonoBehaviour
             //移動先に障害物がないかどうか
             if (_isMoving && (x != 0 || y != 0))
             {
+                //プレイヤーの方向を保存する
+                _playerDirection = new Vector3(x, y, 0);
+
+                //ゲームマネージャーでプレイヤーがどの部屋にいるか判定するi
+               // _gameManagerIns.SetPlayerRoomNum((int)(transform.position.x + x)　, (int)(transform.position.y + y) * -1);
+
                 //アイテムが足元に落ちていないかどうか
                 ItemJudge(x, y);
 
@@ -123,7 +136,7 @@ public class PlayerBase : MonoBehaviour
     {
         foreach (var i in _gameManagerIns.ItemObjList)
         {
-            //プレイヤーと自分の座標が重なっていた時
+            //プレイヤーとアイテムの座標が重なっていた時
             if (i.transform.position == this.gameObject.transform.position + new Vector3(x, y, 0)) 
             {
                 var objCs = i.GetComponent<ItemObjectScript>();
@@ -140,5 +153,6 @@ public class PlayerBase : MonoBehaviour
             }
         }
     }
-   
+
+ 
 }
