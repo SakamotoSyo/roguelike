@@ -527,6 +527,7 @@ MonoBehaviour:
   _mainPanelCanvasGroup: {fileID: 190354403}
   _itemGroupCanvasGroup: {fileID: 925713178}
   _itemButtonPrefab: {fileID: 2823822878493255684, guid: f2489e8b93afcae41826058e45447465, type: 3}
+  _itemObjectPrehab: {fileID: 7895762158427674627, guid: 377b10fbc78d584429f6aadfda986475, type: 3}
 --- !u!1 &322339883
 GameObject:
   m_ObjectHideFlags: 0
@@ -2096,9 +2097,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 365ec86fd6dcd154481219f9a459733f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyPrefab: {fileID: 86419446158578205, guid: bd7a3628ea032544f9e8e910c9b148bc, type: 3}
   EnemyList: []
   EnemyActionCountNum: 0
   EnemyActionEnd: 0
+  _totalEnemyNum: 5
 --- !u!1 &1411577967
 GameObject:
   m_ObjectHideFlags: 0
