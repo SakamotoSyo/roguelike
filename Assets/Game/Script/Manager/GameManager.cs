@@ -16,9 +16,17 @@ public class GameManager : SingletonBehaviour<GameManager>
     private GameObject _playerObj;
     public GameObject PlayerObj => _playerObj;
 
+    [Tooltip("アイテムのゲームオブジェクトをリストで管理する")]
     private List<GameObject> _itemObjList = new List<GameObject>();
-
     public List<GameObject> ItemObjList => _itemObjList;
+
+    [Tooltip("ダンジョンにいる敵の総数")]
+    private int _totalEnemyNum;
+    public int TotalEnemyNum => _totalEnemyNum;   
+
+    //プレイヤーのいる部屋i
+   // private int _playerRoomNum;
+    //public int PlayerRoomNum => _playerRoomNum; 
 
 
     //プレイヤーの座標
@@ -28,7 +36,12 @@ public class GameManager : SingletonBehaviour<GameManager>
     public int PlayerX => _playerX;
     public int PlayerY => _playerY;
 
+    private DgGenerator _dgGenerator;
 
+    private void Start()
+    {
+        _dgGenerator = DgGenerator.Instance;
+    }
 
     /// <summary>
     /// プレイヤーのポジションをセットする
@@ -51,12 +64,21 @@ public class GameManager : SingletonBehaviour<GameManager>
     }
 
     /// <summary>
-    /// アイテムをリストにセットする
+    /// アイテムオブジェクトをリストにセットする
     /// </summary>
     /// <param name="obj"></param>
     public void SetItemObjList(GameObject obj)
     {
         _itemObjList.Add(obj);
+    }
+
+    /// <summary>
+    /// 敵の総数を増やしたり減らしたりする
+    /// </summary>
+    /// <param name="num"></param>
+    public void SetTotalEnemy(int num) 
+    {
+        _totalEnemyNum += num;
     }
 
     /// <summary>
@@ -67,5 +89,44 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         _itemObjList.Remove(a);
     }
+
+
+
+    ///// <summary>
+    ///// プレイヤーのいる部屋を判定して変数に入れるi
+    ///// </summary>
+    ///// <param name="x"></param>
+    ///// <param name="y"></param>
+    //public void SetPlayerRoomNum(int x, int y) 
+    //{
+    //    for (int i = 0; i < _dgGenerator.GetDivList().Count; i++)
+    //    {
+    //        DgDivision a = _dgGenerator.GetDivList()[i];
+
+    //        if (a.Room.Left <= x && a.Room.Right >= x && a.Room.Top >= y && a.Room.Bottom <= y)
+    //        {
+    //            _playerRoomNum = i;
+    //        }
+
+    //    }
+    //}
+
+    ///// <summary>自分が現在どの部屋にいるか始めるi</summary>
+    //public int GetRoomNum(int x, int y) 
+    //{
+
+    //    for (int i = 0; i < _dgGenerator.GetDivList().Count; i++) 
+    //    {
+    //       DgDivision a = DgGenerator.Instance.GetDivList()[i];
+
+    //        if (a.Room.Left <= x && a.Room.Right >= x && a.Room.Top >= y && a.Room.Bottom <= y) 
+    //        {
+    //            return i;  
+    //        }
+          
+    //    }
+
+    //    return -1;
+    //}
 
 }
