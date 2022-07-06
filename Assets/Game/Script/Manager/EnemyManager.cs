@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class EnemyManager : SingletonBehaviour<EnemyManager>
 {
+    [Tooltip("Enemyのプレハブ")]
+    [SerializeField]private GameObject _enemyPrefab;
+
     //敵のリスト
     public List<GameObject> EnemyList = new List<GameObject>();
 
@@ -13,18 +16,27 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     //敵一体の攻撃が終わったかどうか
     public bool EnemyActionEnd = false;
 
-    private bool _isMoveing = false;
-    // Start is called before the first frame update
+    [Header("ダンジョンに湧かせたい敵の量")]
+    [SerializeField]private int _totalEnemyNum;
+
+    [Tooltip("ダンジョンの今の敵の総数")]
+    private int _nowTotalEnemyNum;
+    public int NowTotalEnemyNum => _nowTotalEnemyNum;
+
+    private DgGenerator _generator;
+
     void Start()
     {
-        
+        _generator = DgGenerator.Instance;
     }
 
-    // Update is called once per frame
     void Update()
     {
-
+        //敵の行動順を管理する
         EnemyActionMgr();
+
+        //敵の生成を管理する
+        EnemyGenerator();
         
     }
 
@@ -37,7 +49,8 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
         {
             if (EnemyList[EnemyActionCountNum].TryGetComponent(out IEnemyMove IM))
             {
-                 IM.Move();
+                EnemyActionEnd = true;
+                IM.Move();
                 Debug.Log("敵が行動した");
                 EnemyActionCountNum++;
             }
@@ -49,7 +62,25 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
             Debug.Log("敵の行動が終わった");
             GameManager.Instance.TurnType = GameManager.TurnManager.Player;
         }
-    } 
+    }
 
+    /// <summary>
+    /// Enemyの生成を管理するメソッド
+    /// </summary>
+    private void EnemyGenerator() 
+    {
+        if (_totalEnemyNum > _nowTotalEnemyNum  && _generator.MapGenerateEnd) 
+        {
+            _generator.Generatesomething(_enemyPrefab);
+        }
+    }
+
+    /// <summary>
+    /// 敵の総数に変更があった時に使う
+    /// </summary>
+    public void SetTotalEnemyNum(int num) 
+    {
+        _nowTotalEnemyNum += num;
+    }
 
 }
