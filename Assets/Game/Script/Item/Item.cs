@@ -14,25 +14,36 @@ public class Item : ScriptableObject
         Armor,
         SpecialItem, 
 
-    } 
+    }
 
-    [SerializeField ,Header("アイテムの種類")]
-    private ItemType _itemType;
+    public enum ItemEffectType 
+    {
+        Hearing,
+        Food,
+
+    }
+
+    [Header("アイテムの種類")]
+    [SerializeField]private ItemType _itemType;
     public ItemType GetItemType => _itemType;
 
-    [SerializeField,Header("アイテムの名前")]
-     private string _itemName;
+    [Header("アイテムの名前")]
+    [SerializeField] private string _itemName;
     public string GetItemName => _itemName;
 
-    [SerializeField,Header("効果の値")]
-    private float _itemEffectNum;
+    [Header("効果の値")]
+    [SerializeField] private float _itemEffectNum;
     public float GetItemEffect => _itemEffectNum;
 
-    [SerializeField,Header("アイテムに関する情報")]
-    private string _itemInformationText;
+    [Header("アイテムに関する情報")]
+    [SerializeField]private string _itemInformationText;
     public string GetItemInformationText => _itemInformationText;
 
-    [SerializeField, Header("アイテムのイメージ")]
-    private Sprite _itemImage;
+    [Header("アイテムのイメージ")]
+    [SerializeField] private Sprite _itemImage;
     public Sprite GetItemImage => _itemImage;
+
+   [Header("アイテム効果の種類")]
+   [SerializeField]private ItemEffectType _itemEffectType;
+   public ItemEffectType GetEffectType => _itemEffectType; 
 }
