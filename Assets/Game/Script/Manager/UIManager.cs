@@ -16,13 +16,14 @@ public class UIManager : MonoBehaviour
         FootPanel,
         UseItemSelect,
         ItemInfomationPanel,
+        ShowText,
 
     }
 
     [SerializeField, Header("MainMenuのオブジェクト")]
     private GameObject _mainMenuPanel;
 
-    [SerializeField, Header("SelectMenuのオブジェクト")] 
+    [SerializeField, Header("SelectMenuのオブジェクト")]
     private GameObject _SelectMenuPanel;
 
     [SerializeField, Header("ItemPanelのオブジェクト")]
@@ -55,12 +56,20 @@ public class UIManager : MonoBehaviour
     [SerializeField, Header("ItemButtonのPrefab")]
     private GameObject _itemButtonPrefab;
 
+    [SerializeField, Header("ItemObjectのPrefab")]
+    private GameObject _itemObjectPrehab;
+
 
     [Tooltip("PlayerStatusのスクリプト")]
     private PlayerStatus _playerStatusCs;
 
+    [Tooltip("PlayerBaseのスクリプト")]
+    private PlayerBase _playerBaseCs;
+
 
     [Tooltip("ゲームマネージャー")] private GameManager _gameManager;
+
+    private float _testPosition;
 
     /// <summary>現在のUIType</summary>
     private UIType _uiType;
@@ -70,6 +79,12 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         _gameManager = GameManager.Instance;
+
+        //最初にあらかじめ持ち物の上限分のボタンを作成
+        for (int i = 0; i > 20; i++)
+        {
+            var a = Instantiate(_itemButtonPrefab, _itemContent.transform);
+        }
         //_playerBaseCs = _gameManager.PlayerObj.GetComponent<PlayerBase>();
     }
 
@@ -77,7 +92,7 @@ public class UIManager : MonoBehaviour
     void Update()
     {
 
-        if (_gameManager.TurnType == GameManager.TurnManager.Player)
+        if (_gameManager.TurnType == GameManager.TurnManager.Player && _uiType == UIType.Normal)
         {
             PlayerMainUI();
         }
@@ -85,6 +100,8 @@ public class UIManager : MonoBehaviour
         {
             CancelUI();
         }
+
+
     }
 
 
@@ -132,15 +149,15 @@ public class UIManager : MonoBehaviour
                 }
                 _uiType = UIType.ItemPanel;
             }
-            else if(_uiType == UIType.ItemInfomationPanel) 
+            else if (_uiType == UIType.ItemInfomationPanel)
             {
                 _itemInforPanel.SetActive(false);
-
-              
-                _uiType = UIType.MainMenuPanel;
+                _gameManager.TurnType = GameManager.TurnManager.Player;
+                _uiType = UIType.Normal;
             }
 
         }
+
     }
 
 
@@ -171,14 +188,14 @@ public class UIManager : MonoBehaviour
 
             //_itemPanel.SetActive(true);
             //もしnullだった場合中身を入れる
-            if (_playerStatusCs == null) 
+            if (_playerStatusCs == null)
             {
                 _playerStatusCs = _gameManager.PlayerObj.GetComponent<PlayerStatus>();
             }
 
             GameObject ItemButtonIns;
             //持っているアイテムの生成
-            foreach (var item in _playerStatusCs.PlayerItemList) 
+            foreach (var item in _playerStatusCs.PlayerItemList)
             {
                 ItemButtonIns = Instantiate(_itemButtonPrefab, _itemContent.transform);
 
@@ -191,17 +208,15 @@ public class UIManager : MonoBehaviour
                 {
                     ItemButtonIns.transform.Find("Equip").GetComponent<Text>().text = "E";
                 }
-                else if (_playerStatusCs.ShieldEquip == item) 
+                else if (_playerStatusCs.ShieldEquip == item)
                 {
                     ItemButtonIns.transform.Find("Equip").GetComponent<Text>().text = "E";
                 }
 
-              
-
             }
 
             //アイテムを持っているかどうか
-            if (_itemContent.transform.childCount != 0) 
+            if (_itemContent.transform.childCount != 0)
             {
 
                 _uiType = UIType.ItemPanel;
@@ -210,15 +225,15 @@ public class UIManager : MonoBehaviour
                 _mainPanelCanvasGroup.interactable = false;
                 EventSystem.current.SetSelectedGameObject(_itemContent.transform.GetChild(0).gameObject);
             }
-            else 
+            else
             {
                 _itemInforPanel.SetActive(true);
                 _itemInfoText.text = "アイテムを持っていません";
 
                 _uiType = UIType.ItemInfomationPanel;
             }
-           
-           
+
+
         }
         else if (UIType.MainMenuPanel == _uiType && panelName == "footPanel")
         {
@@ -227,24 +242,24 @@ public class UIManager : MonoBehaviour
 
             _uiType = UIType.FootPanel;
         }
-       
+
     }
 
     /// <summary>
     /// アイテムを選んだ時に呼ばれるメソッド
     /// </summary>
     /// <param name="item">Itemの情報</param>
-    public void SelectItem(Item item) 
+    public void SelectItem(Item item)
     {
         var ItemSelectButton = Instantiate(_useItemButtonPrehab, _useItemSelectPanel.transform);
-        if (item.GetItemType == Item.ItemType.MagicBook ) 
+        if (item.GetItemType == Item.ItemType.MagicBook)
         {
             ItemSelectButton.GetComponentInChildren<Text>().text = "読む";
             ItemSelectButton.GetComponent<Button>().onClick.AddListener(() => UseSelectItem(item));
 
             var ItemSelectButton2 = Instantiate(_useItemButtonPrehab, _useItemSelectPanel.transform);
             ItemSelectButton2.GetComponentInChildren<Text>().text = "投げる";
-            ItemSelectButton2.GetComponent<Button>().onClick.AddListener(() => ThrowItem(item));
+            ItemSelectButton2.GetComponent<Button>().onClick.AddListener(() => StartCoroutine(ThrowItem(item)));
 
             var ItemSelectButton3 = Instantiate(_useItemButtonPrehab, _useItemSelectPanel.transform);
             ItemSelectButton3.GetComponentInChildren<Text>().text = "置く";
@@ -256,8 +271,9 @@ public class UIManager : MonoBehaviour
         }
 
         _useItemSelectPanel.SetActive(true);
-       _itemGroupCanvasGroup.interactable = false;
+        _itemGroupCanvasGroup.interactable = false;
         EventSystem.current.SetSelectedGameObject(_useItemSelectPanel.transform.GetChild(0).gameObject);
+        //石井拓斗
         _uiType = UIType.UseItemSelect;
     }
 
@@ -266,44 +282,148 @@ public class UIManager : MonoBehaviour
     /// アイテムを使ったとき
     /// </summary>
     /// <param name="item"></param>
-    private void UseSelectItem(Item item) 
+    private void UseSelectItem(Item item)
     {
-        if (item.GetItemType == Item.ItemType.MagicBook) 
+        if (item.GetEffectType == Item.ItemEffectType.Hearing)
         {
-            if (item.GetItemName == "Kaihukunosyo") 
-            {
-                _playerStatusCs.RemoveItem(item);
-                _playerStatusCs.SetHp(item.GetItemEffect);
-                ResetMenu();
+            _playerStatusCs.RemoveItem(item);
+            _playerStatusCs.SetHp(item.GetItemEffect);
 
-                Debug.Log($"{item.GetItemEffect}回復しました");   
-            }
+            ShowText($"{item.GetItemEffect}回復しました");
         }
+        else if (item.GetEffectType == Item.ItemEffectType.Food)
+        {
+
+        }
+
     }
 
     /// <summary>
     /// アイテムを投げるメソッド
     /// </summary>
     /// <param name="item"></param>
-    private void ThrowItem(Item item) 
+    public IEnumerator ThrowItem(Item item)
     {
+        //アイテムを生成する
+        var Item = Instantiate(_itemObjectPrehab, _gameManager.PlayerObj.transform.position, _gameManager.PlayerObj.transform.rotation);
+        var ItemObjectCs = Item.GetComponent<ItemObjectScript>();
 
+        //アイテムに情報を設定
+        ItemObjectCs.SetItemInfor(item);
+        ItemObjectCs.SetItemSprite(item.GetItemImage);
+        _playerBaseCs = _gameManager.PlayerObj.GetComponent<PlayerBase>();
+        //プレイヤーの動いた方向を持ってくる
+        int x = (int)_playerBaseCs.PlayerDirection.x;
+        int y = (int)_playerBaseCs.PlayerDirection.y;
+
+        if (x == 0 && y == 0)
+        {
+            y = -1;
+        }
+
+        //アイテムがが壁の座標まで飛び続ける
+        while (DgGenerator.Instance.Layer.GetMapData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1) == 1)
+        {
+            if (x > 0)
+            {
+                x += 1;
+            }
+            else if (x < 0)
+            {
+                x -= 1;
+            }
+
+            if (y > 0)
+            {
+                y += 1;
+            }
+            else if (y < 0)
+            {
+                y -= 1;
+            }
+        }
+        //このままだと壁の中に入ったままになってしまうためひとつ前の座標に戻す
+        if (x > 0)
+        {
+            x -= 1;
+        }
+        else if (x < 0)
+        {
+            x += 1;
+        }
+
+        if (y > 0)
+        {
+            y -= 1;
+        }
+        else if (y < 0)
+        {
+            y += 1;
+        }
+
+        //移動する次の場所
+        Vector3 _nextPosition = new Vector3(_gameManager.PlayerX + x, _gameManager.PlayerY * -1 + y, 0);
+        //今の場所から目的地までの距離
+        var _distance_Two = Vector3.Distance(Item.transform.position, _nextPosition);
+        //移動処理
+        StartCoroutine(ItemThrowMove(Item, _nextPosition, _distance_Two));
+
+        yield return new WaitForSeconds(0.08f);
+        //アイテムのオブジェクトをゲームマネージャーに渡す
+        _gameManager.SetItemObjList(Item);
+
+        _playerStatusCs.RemoveItem(item);
+
+        ResetMenu();
     }
+
+    /// <summary>
+    /// アイテムを指定の場所まで移動させる
+    /// </summary>
+    /// <param name="Item"></param>
+    /// <param name="_nextPosition"></param>
+    private IEnumerator ItemThrowMove(GameObject Item, Vector3 _nextPosition, float _distance_Two)
+    {
+        while (Item.transform.position != _nextPosition)
+        {
+            //ここがスピード
+            _testPosition += 0.05f;
+            //移動処理
+            Item.transform.position = Vector3.Lerp(_gameManager.PlayerObj.transform.position, _nextPosition, _testPosition);
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        _testPosition = 0;
+    }
+
 
     /// <summary>
     /// アイテムをその場に置く
     /// </summary>
     /// <param name="item"></param>
-    private void ItemPut(Item item) 
+    private void ItemPut(Item item)
     {
+        //アイテムの生成
+        var Item = Instantiate(_itemObjectPrehab, _gameManager.PlayerObj.transform.position, _gameManager.PlayerObj.transform.rotation);
+        var ItemObjectCs = Item.GetComponent<ItemObjectScript>();
 
+        //アイテムに情報を渡す
+        ItemObjectCs.SetItemInfor(item);
+        ItemObjectCs.SetItemSprite(item.GetItemImage);
+        _playerBaseCs = _gameManager.PlayerObj.GetComponent<PlayerBase>();
+        //アイテムのオブジェクトをゲームマネージャーに渡す
+        _gameManager.SetItemObjList(Item);
+
+        _playerStatusCs.RemoveItem(item);
+
+        ResetMenu();
     }
 
     /// <summary>
     /// アイテムの説明を表示する
     /// </summary>
     /// <param name="item"></param>
-    private void ItemExplanation(Item item) 
+    private void ItemExplanation(Item item)
     {
 
     }
@@ -334,5 +454,18 @@ public class UIManager : MonoBehaviour
 
         _uiType = UIType.Normal;
         _gameManager.TurnType = GameManager.TurnManager.Player;
+    }
+
+    /// <summary>
+    /// 引数に入れたものをTextで表示する
+    /// </summary>
+    private void ShowText(string st)
+    {
+        ResetMenu();
+        _gameManager.TurnType = GameManager.TurnManager.MenuOpen;
+        _uiType = UIType.ItemInfomationPanel;
+
+        _itemInforPanel.SetActive(true);
+        _itemInfoText.text = st;
     }
 }
