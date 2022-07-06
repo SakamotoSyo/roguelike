@@ -21,7 +21,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     private int _yBool = -1;
     private int _xBool = -1;
 
-    [Tooltip("動いたかどうか")]
+    [Tooltip("移動したかどうか")]
     private bool _isMove = false;
 
     [Tooltip("攻撃できるかどうか")]
@@ -42,8 +42,8 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     [Tooltip("PlayerBaseScript")]
     private IDamageble _playerBase;
 
-    [Tooltip("自分がどこの部屋にいるか")]
-    private int _nowRoomNum;
+    //[Tooltip("自分がどこの部屋にいるか")]
+    //private int _nowRoomNum;
 
     private Vector2 _position;
     protected private void Start()
@@ -96,9 +96,8 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     /// </summary>
     public virtual void Move()
     {
-        _enemyManager.EnemyActionEnd = true;
-        _startX = (int)_enemyManager.EnemyList[0].transform.position.x;
-        _startY = (int)_enemyManager.EnemyList[0].transform.position.y;
+        _startX = (int)transform.position.x;
+        _startY = (int)transform.position.y;
 
         _goalX = (int)_gameManager.PlayerX;
         _goalY = -1 * (int)_gameManager.PlayerY;
@@ -121,7 +120,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
         }
 
 
-        if (!_isMove && !_isAttack && _gameManager.GetRoomNum((int)transform.position.x, (int)transform.position.y) == _nowRoomNum)
+        if (!_isMove && !_isAttack)
         {
 
 
@@ -153,19 +152,22 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
             if (_generatorIns.Layer.GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 1 && !_isMove)
             {
                 _nextPosition = transform.position + new Vector3(_xBool, _yBool, 0);
+                Debug.Log("move");
                 _isMove = true;
             }
             //Y軸が同じときX軸方向にだけ動く
-            if (_generatorIns.Layer.GetMapData(_startX + _xBool, _startY * -1) == 1 && !_isMove && _xBool == 0)
+            if (_generatorIns.Layer.GetMapData(_startX + _xBool, _startY * -1) == 1 && !_isMove && _yBool == 0)
             {
                 _nextPosition = transform.position + new Vector3(_xBool, 0, 0);
                 _isMove = true;
+                Debug.Log("move1");
             }
             //X軸が同じときY方向にだけ動く
-            if (_generatorIns.Layer.GetMapData(_startX, _startY + _yBool * -1) == 1 && !_isMove && _yBool == 0)
+            if (_generatorIns.Layer.GetMapData(_startX, _startY + _yBool * -1) == 1 && !_isMove && _xBool == 0)
             {
                 _nextPosition = transform.position + new Vector3(0, _yBool, 0);
                 _isMove = true;
+                Debug.Log("move2");
             }
 
             //どこにも動けなかった場合周りを見て動く
@@ -173,24 +175,28 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
             {
                 _nextPosition = transform.position + new Vector3(1, 0, 0);
                 _isMove = true;
+                Debug.Log("move3");
             }
 
             if (_generatorIns.Layer.GetMapData(_startX - 1, _startY * -1) == 1 && !_isMove && _xBool == -1)
             {
                 _nextPosition = transform.position + new Vector3(-1, 0, 0);
                 _isMove = true;
+                Debug.Log("move4");
             }
 
             if (_generatorIns.Layer.GetMapData(_startX, (_startY * -1) - 1) == 1 && !_isMove && _yBool == 1)
             {
                 _nextPosition = transform.position + new Vector3(0, 1, 0);
                 _isMove = true;
+                Debug.Log("move5");
             }
 
             if (_generatorIns.Layer.GetMapData(_startX, (_startY * -1) + 1) == 1 && !_isMove && _yBool == -1)
             {
                 _nextPosition = transform.position + new Vector3(0, -1, 0);
                 _isMove = true;
+                Debug.Log("move6");
             }
             else
             {
@@ -206,16 +212,21 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
             else
             {
                 //ゲームマネージャーにプレイヤーの場所を渡す
-                EnemyManager.Instance.EnemyList[0].transform.position += new Vector3(_xBool, _yBool, 0);
+                //EnemyManager.Instance.EnemyList[0].transform.position += new Vector3(_xBool, _yBool, 0);
+                _generatorIns.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, 1);
+                _generatorIns.Layer.SetData((int)transform.position.x + _xBool, ((int)transform.position.y + _yBool) * -1 , 2);
+                Debug.Log("所在地を更新しました");
+                
             }
 
         }
         else if (_isAttack)
         {
-           // StartCoroutine(Attack());
            _isAttack = false;
         }
 
+        //自分が今どこの部屋にいるか判定するi
+       // _nowRoomNum = _gameManager.GetRoomNum((int)transform.position.x, (int)transform.position.y);
         //移動する
         transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
 
@@ -235,4 +246,12 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     {
 
     }
+
+    ///// <summary>
+    ///// Enemyにどこの部屋に今いるのか値をセットするi
+    ///// </summary>
+    //public void SetRoomNum(int nowRoom) 
+    //{
+    //    _nowRoomNum = nowRoom;
+    //}
 }
