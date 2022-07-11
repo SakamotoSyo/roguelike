@@ -6,7 +6,7 @@ using System;
 [CreateAssetMenu(fileName = "ItemDataBase", menuName = "ItemDataBase")]
 public class ItemDataBase : ScriptableObject
 {
-
+    //‚±‚±’¼‚µprivate‚É‚·‚é
     public List<Item> ItemList = new List<Item>();
 
     public List<Item> GetItemLists()
