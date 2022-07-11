@@ -44,13 +44,13 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     /// ターンがEnemyに移った時に各Enemyの行動を始める
     /// </summary>
     private void EnemyActionMgr() 
-    {
+    {  
         if (GameManager.Instance.TurnType == GameManager.TurnManager.Enemy && !EnemyActionEnd && EnemyList.Count > EnemyActionCountNum)
         {
-            if (EnemyList[EnemyActionCountNum].TryGetComponent(out IEnemyMove IM))
+            if (EnemyList[EnemyActionCountNum].TryGetComponent(out EnemyBase IM))
             {
                 EnemyActionEnd = true;
-                IM.Move();
+                IM.EnemyMove();
                 Debug.Log("敵が行動した");
                 EnemyActionCountNum++;
             }
