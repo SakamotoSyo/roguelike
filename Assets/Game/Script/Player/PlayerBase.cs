@@ -5,10 +5,15 @@ using UnityEngine;
 
 public class PlayerBase : MonoBehaviour
 {
-   
+
+    [Header("Playerの攻撃力")]
+    [SerializeField] private float _playerAttack;
 
     [Tooltip("ゲームマネージャー")]
     private GameManager _gameManagerIns;
+
+    [Tooltip("エネミーマネージャー")]
+    private EnemyManager _enemyManagerIns;
 
     [Tooltip("プレイヤーが次に移動する場所")]
     private Vector3 _nextPosition;
@@ -28,6 +33,7 @@ public class PlayerBase : MonoBehaviour
     private void Start()
     {
         _gameManagerIns = GameManager.Instance;
+        _enemyManagerIns = EnemyManager.Instance;
         _gameManagerIns.SetPlayerObj(this.gameObject);
 
         //ゲームマネージャーにプレイヤーの場所を渡すi
@@ -36,6 +42,8 @@ public class PlayerBase : MonoBehaviour
     }
     private void Update()
     {
+        Attack();
+
         if (_gameManagerIns.TurnType == GameManager.TurnManager.Player && _waitTime < _countTime)
         {
             MoveInputKey();
@@ -79,9 +87,9 @@ public class PlayerBase : MonoBehaviour
                 //行動が終わったのでターンフェーズを変える
                 _gameManagerIns.TurnType = GameManager.TurnManager.Enemy;
             }
-            else
+            else 
             {
-
+                
             }
         }
         else
@@ -89,7 +97,32 @@ public class PlayerBase : MonoBehaviour
             Debug.Log("Shift");
         }
 
+
+
         _isMoving = false;
+    }
+
+
+    /// <summary>
+    ///プレイヤーの攻撃処理
+    /// </summary>
+    private void Attack() 
+    {
+        if (Input.GetButtonDown("Submit")) 
+        {
+          Debug.Log("攻撃がよばれた");
+            //プレイヤーが向いている方向に敵がいた場合
+            foreach (var i in _enemyManagerIns.EnemyList) 
+            {
+                if (transform.position.x + PlayerDirection.x == i.transform.position.x && transform.position.y + PlayerDirection.y == i.transform.position.y) 
+                {
+                    Debug.Log("攻撃の処理が成功した");
+                    //アニメーションの処理を入れる
+                    i.GetComponent<IDamageble>().AddDamage(_playerAttack);
+                    _gameManagerIns.TurnType = GameManager.TurnManager.Enemy;
+                }
+            }
+        }
     }
 
     private void UIInputKey() 
@@ -120,7 +153,7 @@ public class PlayerBase : MonoBehaviour
             return false;
 
         }
-        else if (value == 1)
+        else if (value == 1 || value == 3)
         { 
            return true;
         }
