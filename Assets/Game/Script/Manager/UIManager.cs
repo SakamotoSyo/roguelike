@@ -67,7 +67,11 @@ public class UIManager : MonoBehaviour
     private PlayerBase _playerBaseCs;
 
 
-    [Tooltip("ゲームマネージャー")] private GameManager _gameManager;
+    [Tooltip("ゲームマネージャー")] 
+    private GameManager _gameManager;
+
+    [Tooltip("ダンジョン生成")]
+    private  DgGenerator _dgGenerator;
 
     private float _testPosition;
 
@@ -79,6 +83,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         _gameManager = GameManager.Instance;
+        _dgGenerator = DgGenerator.Instance;
 
         //最初にあらかじめ持ち物の上限分のボタンを作成
         for (int i = 0; i > 20; i++)
@@ -322,7 +327,7 @@ public class UIManager : MonoBehaviour
         }
 
         //アイテムがが壁の座標まで飛び続ける
-        while (DgGenerator.Instance.Layer.GetMapData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1) == 1)
+        while (_dgGenerator.Layer.GetMapData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1) == 1)
         {
             if (x > 0)
             {
@@ -365,6 +370,9 @@ public class UIManager : MonoBehaviour
         Vector3 _nextPosition = new Vector3(_gameManager.PlayerX + x, _gameManager.PlayerY * -1 + y, 0);
         //今の場所から目的地までの距離
         var _distance_Two = Vector3.Distance(Item.transform.position, _nextPosition);
+        //配列にアイテムの場所をセットする
+        _dgGenerator.Layer.SetData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1, 3);
+        Debug.Log(_dgGenerator.Layer.GetMapData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1));
         //移動処理
         StartCoroutine(ItemThrowMove(Item, _nextPosition, _distance_Two));
 
@@ -413,7 +421,9 @@ public class UIManager : MonoBehaviour
         _playerBaseCs = _gameManager.PlayerObj.GetComponent<PlayerBase>();
         //アイテムのオブジェクトをゲームマネージャーに渡す
         _gameManager.SetItemObjList(Item);
-
+        //配列にアイテムの場所をSetする
+        _dgGenerator.Layer.SetData((int)_gameManager.PlayerObj.transform.position.x, (int)_gameManager.PlayerObj.transform.position.y, 3);
+        //プレイヤーのアイテム欄からその場に置いたアイテムを消去する
         _playerStatusCs.RemoveItem(item);
 
         ResetMenu();
