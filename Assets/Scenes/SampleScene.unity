@@ -2101,7 +2101,7 @@ MonoBehaviour:
   EnemyList: []
   EnemyActionCountNum: 0
   EnemyActionEnd: 0
-  _totalEnemyNum: 5
+  _totalEnemyNum: 2
 --- !u!1 &1411577967
 GameObject:
   m_ObjectHideFlags: 0
