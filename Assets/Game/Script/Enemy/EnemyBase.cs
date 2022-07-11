@@ -2,48 +2,46 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EnemyBase : MonoBehaviour, IEnemyMove
+public abstract class EnemyBase : MonoBehaviour, IDamageble
 {
-    [SerializeField, Header("体力")] private float _enemyHp;
-    [SerializeField, Header("行動回数")] private int _actionNum;
-    [SerializeField, Header("攻撃力")] private float _power;
-
-    [SerializeField] private LayerMask _testLayerMask;
+    [SerializeField, Header("体力")] protected float _enemyHp;
+    [SerializeField, Header("行動回数")] protected int _actionNum;
+    [SerializeField, Header("攻撃力")] protected float _power;
 
     [Tooltip("自分自身の座標")]
-    private int _startX;
-    private int _startY;
+    protected int _startX;
+    protected int _startY;
 
     [Tooltip("追いかける対象の座標")]
-    private int _goalX;
-    private int _goalY;
+    protected int _goalX;
+    protected int _goalY;
 
-    private int _yBool = -1;
-    private int _xBool = -1;
+    protected int _yBool = -1;
+    protected int _xBool = -1;
 
     [Tooltip("移動したかどうか")]
-    private bool _isMove = false;
+    protected bool _isMove = false;
 
     [Tooltip("攻撃できるかどうか")]
-    private bool _isAttack = false;
+    protected bool _isAttack = false;
 
     [Tooltip("次の目的地")]
-    private Vector3 _nextPosition;
+    protected Vector3 _nextPosition;
 
     [Tooltip("DgGeneratorのインスタンス")]
-    private DgGenerator _generatorIns;
+    protected DgGenerator _generatorIns;
 
     [Tooltip("エネミーマネージャーのインスタンス")]
-    private EnemyManager _enemyManager;
+    protected EnemyManager _enemyManager;
 
     [Tooltip("ゲームマネージャーのインスタンス")]
-    private GameManager _gameManager;
+    protected GameManager _gameManager;
 
     [Tooltip("PlayerBaseScript")]
-    private IDamageble _playerBase;
+    protected IDamageble _playerBase;
 
-    //[Tooltip("自分がどこの部屋にいるか")]
-    //private int _nowRoomNum;
+    [Tooltip("自分がどこの部屋にいるか")]
+    protected int _nowRoomNum;
 
     private Vector2 _position;
     protected private void Start()
@@ -94,7 +92,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     /// <summary>
     /// 敵の移動AI
     /// </summary>
-    public virtual void Move()
+    public virtual void EnemyAction()
     {
         _startX = (int)transform.position.x;
         _startY = (int)transform.position.y;
@@ -102,6 +100,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
         _goalX = (int)_gameManager.PlayerX;
         _goalY = -1 * (int)_gameManager.PlayerY;
 
+        //攻撃できるかどうか確認する
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 3; j++)
@@ -122,107 +121,11 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
 
         if (!_isMove && !_isAttack)
         {
-
-
-            _xBool = -1;
-            _yBool = -1;
-
-            //目的地のX軸が右方向だった場合
-            if (_goalX - _startX > 0)
-            {
-                _xBool = 1;
-            }
-            //目的地のX軸が同じだった場合
-            else if (_goalX - _startX == 0)
-            {
-                _xBool = 0;
-            }
-
-            //目的地のY軸がした方向だった場合
-            if (_goalY - _startY > 0)
-            {
-                _yBool = 1;
-            }
-            //目的地のY軸が同じだった場合
-            else if (_goalY - _startY == 0)
-            {
-                _yBool = 0;
-            }
-
-            if (_generatorIns.Layer.GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 1 && !_isMove)
-            {
-                _nextPosition = transform.position + new Vector3(_xBool, _yBool, 0);
-                Debug.Log("move");
-                _isMove = true;
-            }
-            //Y軸が同じときX軸方向にだけ動く
-            if (_generatorIns.Layer.GetMapData(_startX + _xBool, _startY * -1) == 1 && !_isMove && _yBool == 0)
-            {
-                _nextPosition = transform.position + new Vector3(_xBool, 0, 0);
-                _isMove = true;
-                Debug.Log("move1");
-            }
-            //X軸が同じときY方向にだけ動く
-            if (_generatorIns.Layer.GetMapData(_startX, _startY + _yBool * -1) == 1 && !_isMove && _xBool == 0)
-            {
-                _nextPosition = transform.position + new Vector3(0, _yBool, 0);
-                _isMove = true;
-                Debug.Log("move2");
-            }
-
-            //どこにも動けなかった場合周りを見て動く
-            if (_generatorIns.Layer.GetMapData(_startX + 1, _startY * -1) == 1 && !_isMove && _xBool == 1)
-            {
-                _nextPosition = transform.position + new Vector3(1, 0, 0);
-                _isMove = true;
-                Debug.Log("move3");
-            }
-
-            if (_generatorIns.Layer.GetMapData(_startX - 1, _startY * -1) == 1 && !_isMove && _xBool == -1)
-            {
-                _nextPosition = transform.position + new Vector3(-1, 0, 0);
-                _isMove = true;
-                Debug.Log("move4");
-            }
-
-            if (_generatorIns.Layer.GetMapData(_startX, (_startY * -1) - 1) == 1 && !_isMove && _yBool == 1)
-            {
-                _nextPosition = transform.position + new Vector3(0, 1, 0);
-                _isMove = true;
-                Debug.Log("move5");
-            }
-
-            if (_generatorIns.Layer.GetMapData(_startX, (_startY * -1) + 1) == 1 && !_isMove && _yBool == -1)
-            {
-                _nextPosition = transform.position + new Vector3(0, -1, 0);
-                _isMove = true;
-                Debug.Log("move6");
-            }
-            else
-            {
-                Debug.Log("壁です");
-            }
-
-
-            if (!_isMove)
-            {
-                _xBool = 0;
-                _yBool = 0;
-            }
-            else
-            {
-                //ゲームマネージャーにプレイヤーの場所を渡す
-                //EnemyManager.Instance.EnemyList[0].transform.position += new Vector3(_xBool, _yBool, 0);
-                _generatorIns.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, 1);
-                _generatorIns.Layer.SetData((int)transform.position.x + _xBool, ((int)transform.position.y + _yBool) * -1 , 2);
-                Debug.Log("所在地を更新しました");
-                
-            }
-
+            EnemyMove();
         }
         else if (_isAttack)
         {
-           _isAttack = false;
+            _isAttack = false;
         }
 
         //自分が今どこの部屋にいるか判定するi
@@ -232,9 +135,104 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
 
         if (transform.position == _nextPosition)
         {
-            
+
+            _generatorIns.Layer.SetData((int)Mathf.Floor(transform.position.x), (int)Mathf.Floor(transform.position.y) * -1, 2);
+
             _isMove = false;
             _enemyManager.EnemyActionEnd = false;
+        }
+    }
+
+    /// <summary>
+    /// どう移動するかの処理
+    /// </summary>
+    public virtual void EnemyMove() 
+    {
+        _xBool = -1;
+        _yBool = -1;
+
+        //目的地のX軸が右方向だった場合
+        if (_goalX - _startX > 0)
+        {
+            _xBool = 1;
+        }
+        //目的地のX軸が同じだった場合
+        else if (_goalX - _startX == 0)
+        {
+            _xBool = 0;
+        }
+
+        //目的地のY軸がした方向だった場合
+        if (_goalY - _startY > 0)
+        {
+            _yBool = 1;
+        }
+        //目的地のY軸が同じだった場合
+        else if (_goalY - _startY == 0)
+        {
+            _yBool = 0;
+        }
+
+        if ((GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove)
+        {
+            _nextPosition = (Vector2)transform.position + new Vector2(_xBool, _yBool);
+            _isMove = true;
+        }
+        //Y軸が同じときX軸方向にだけ動く
+        if ((GetMapData(_startX + _xBool, _startY * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _yBool == 0)
+        {
+            _nextPosition = (Vector2)transform.position + new Vector2(_xBool, 0);
+            _isMove = true;
+        }
+        //X軸が同じときY方向にだけ動く
+        if ((GetMapData(_startX, _startY + _yBool * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == 0)
+        {
+            _nextPosition = (Vector2)transform.position + new Vector2(0, _yBool);
+            _isMove = true;
+        }
+
+        //どこにも動けなかった場合周りを見て動く
+        if ((GetMapData(_startX + 1, _startY * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == 1)
+        {
+            _nextPosition = (Vector2)transform.position + new Vector2(1, 0);
+            _isMove = true;
+        }
+
+        if ((GetMapData(_startX - 1, _startY * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == -1)
+        {
+            _nextPosition = (Vector2)transform.position + new Vector2(-1, 0);
+            _isMove = true;
+        }
+
+        if ((GetMapData(_startX, (_startY * -1) - 1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _yBool == 1)
+        {
+            _nextPosition = (Vector2)transform.position + new Vector2(0, 1);
+            _isMove = true;
+        }
+
+        if ((GetMapData(_startX, (_startY * -1) + 1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _yBool == -1)
+        {
+            _nextPosition = (Vector2)transform.position + new Vector2(0, -1);
+            _isMove = true;
+        }
+        else
+        {
+            Debug.Log("壁です");
+        }
+
+
+        if (!_isMove)
+        {
+            _xBool = 0;
+            _yBool = 0;
+        }
+        else
+        {
+            //ゲームマネージャーにプレイヤーの場所を渡す
+            //EnemyManager.Instance.EnemyList[0].transform.position += new Vector3(_xBool, _yBool, 0);
+            _generatorIns.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, 1);
+
+
         }
     }
 
@@ -244,9 +242,20 @@ public abstract class EnemyBase : MonoBehaviour, IEnemyMove
     /// <param name="damage">受けるダメージ</param>
     public void AddDamage(float damage)
     {
-
+        _enemyHp -= damage;
+        Debug.Log(damage);
     }
 
+    /// <summary>
+    /// マップデータの情報を取り出す
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    private int GetMapData(int x, int y) 
+    {
+        return _generatorIns.Layer.GetMapData(x, y);
+    }
     ///// <summary>
     ///// Enemyにどこの部屋に今いるのか値をセットするi
     ///// </summary>
