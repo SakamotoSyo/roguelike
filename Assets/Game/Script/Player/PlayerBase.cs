@@ -37,13 +37,15 @@ public class PlayerBase : MonoBehaviour
         _gameManagerIns.SetPlayerObj(this.gameObject);
 
         //ゲームマネージャーにプレイヤーの場所を渡すi
-       // _gameManagerIns.SetPlayerRoomNum((int)(transform.position.x), (int)transform.position.y * -1);
+        // _gameManagerIns.SetPlayerRoomNum((int)(transform.position.x), (int)transform.position.y * -1);
 
     }
     private void Update()
     {
-        Attack();
-
+        if (_gameManagerIns.TurnType == GameManager.TurnManager.Player)
+        {
+            Attack();
+        }
         if (_gameManagerIns.TurnType == GameManager.TurnManager.Player && _waitTime < _countTime)
         {
             MoveInputKey();
@@ -70,7 +72,7 @@ public class PlayerBase : MonoBehaviour
                 _playerDirection = new Vector3(x, y, 0);
 
                 //ゲームマネージャーでプレイヤーがどの部屋にいるか判定するi
-               // _gameManagerIns.SetPlayerRoomNum((int)(transform.position.x + x)　, (int)(transform.position.y + y) * -1);
+                // _gameManagerIns.SetPlayerRoomNum((int)(transform.position.x + x)　, (int)(transform.position.y + y) * -1);
 
                 //アイテムが足元に落ちていないかどうか
                 ItemJudge(x, y);
@@ -86,15 +88,20 @@ public class PlayerBase : MonoBehaviour
 
                 //行動が終わったのでターンフェーズを変える
                 _gameManagerIns.TurnType = GameManager.TurnManager.Enemy;
+                Debug.Log("味方の行動が終わりました");
             }
-            else 
+            else
             {
-                
+
             }
         }
         else
         {
-            Debug.Log("Shift");
+            if (x != 0 || y != 0)
+            {
+                _playerDirection = new Vector2(x, y);
+                Debug.Log($"{_playerDirection}プレイヤーの方向を決めました");
+            }
         }
 
 
@@ -106,30 +113,30 @@ public class PlayerBase : MonoBehaviour
     /// <summary>
     ///プレイヤーの攻撃処理
     /// </summary>
-    private void Attack() 
+    private void Attack()
     {
-        if (Input.GetButtonDown("Submit")) 
+        if (Input.GetButtonDown("Submit"))
         {
-          Debug.Log("攻撃がよばれた");
+            Debug.Log("攻撃がよばれた");
             //プレイヤーが向いている方向に敵がいた場合
-            foreach (var i in _enemyManagerIns.EnemyList) 
+            foreach (var i in _enemyManagerIns.EnemyList)
             {
-                if (transform.position.x + PlayerDirection.x == i.transform.position.x && transform.position.y + PlayerDirection.y == i.transform.position.y) 
+                if (transform.position.x + PlayerDirection.x == i.transform.position.x && transform.position.y + PlayerDirection.y == i.transform.position.y)
                 {
-                    Debug.Log("攻撃の処理が成功した");
+                     _gameManagerIns.OutPutLog("攻撃の処理が成功した");
                     //アニメーションの処理を入れる
-                    i.GetComponent<IDamageble>().AddDamage(_playerAttack);
-                    _gameManagerIns.TurnType = GameManager.TurnManager.Enemy;
+                    i.GetComponent<IDamageble>().AddDamage(_playerAttack, this.gameObject);
                 }
             }
+           _gameManagerIns.TurnType = GameManager.TurnManager.Enemy;
         }
     }
 
-    private void UIInputKey() 
+    private void UIInputKey()
     {
-        if (Input.GetButtonDown("Cancel")) 
+        if (Input.GetButtonDown("Cancel"))
         {
-            
+
         }
 
     }
@@ -154,8 +161,8 @@ public class PlayerBase : MonoBehaviour
 
         }
         else if (value == 1 || value == 3)
-        { 
-           return true;
+        {
+            return true;
         }
 
         return false;
@@ -165,18 +172,19 @@ public class PlayerBase : MonoBehaviour
     /// <summary>
     /// 足元にアイテムがないかどうか判定する
     /// </summary>
-    public void ItemJudge(float x, float y) 
+    public void ItemJudge(float x, float y)
     {
         foreach (var i in _gameManagerIns.ItemObjList)
         {
             //プレイヤーとアイテムの座標が重なっていた時
-            if (i.transform.position == this.gameObject.transform.position + new Vector3(x, y, 0)) 
+            if (i.transform.position == this.gameObject.transform.position + new Vector3(x, y, 0))
             {
                 var objCs = i.GetComponent<ItemObjectScript>();
                 var PlayerStatus = gameObject.GetComponent<PlayerStatus>();
-                
+
                 //アイテムをインベントリにセットする
                 PlayerStatus.SetItem(objCs.ItemInfomation);
+                //足元に置いたアイテムをリストからRemove
                 _gameManagerIns.RemoveItemObjList(i);
                 //落ちているアイテムを削除
                 objCs.DestroyObj();
@@ -187,5 +195,4 @@ public class PlayerBase : MonoBehaviour
         }
     }
 
- 
 }
