@@ -318,7 +318,8 @@ public class UIManager : MonoBehaviour
         ItemObjectCs.SetItemSprite(item.GetItemImage);
         _playerBaseCs = _gameManager.PlayerObj.GetComponent<PlayerBase>();
         //ƒvƒŒƒCƒ„[‚Ì“®‚¢‚½•ûŒü‚ğ‚Á‚Ä‚­‚é
-        int x = (int)_playerBaseCs.PlayerDirection.x;
+        int x = (int)_playerBaseCs.
+            PlayerDirection.x;
         int y = (int)_playerBaseCs.PlayerDirection.y;
 
         if (x == 0 && y == 0)
