@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 public class GameManager : SingletonBehaviour<GameManager>
 {
     public enum TurnManager
@@ -9,25 +10,32 @@ public class GameManager : SingletonBehaviour<GameManager>
         Player,
         MenuOpen,
         Enemy,
+        LogOpen,
     }
 
     public TurnManager TurnType;
 
-    private GameObject _playerObj;
     public GameObject PlayerObj => _playerObj;
+
+    [Header("ログを出力するパネル")]
+    [SerializeField] private GameObject _logPanel;
+
+    private GameObject _playerObj;
 
     [Tooltip("アイテムのゲームオブジェクトをリストで管理する")]
     private List<GameObject> _itemObjList = new List<GameObject>();
     public List<GameObject> ItemObjList => _itemObjList;
 
+    private List<String> _logList = new List<string>();
+
+    public int TotalEnemyNum => _totalEnemyNum;
+
     [Tooltip("ダンジョンにいる敵の総数")]
     private int _totalEnemyNum;
-    public int TotalEnemyNum => _totalEnemyNum;   
 
     //プレイヤーのいる部屋i
-   // private int _playerRoomNum;
-    //public int PlayerRoomNum => _playerRoomNum; 
-
+    // private int _playerRoomNum;
+    //public int PlayerRoomNum => _playerRoomNum; S
 
     //プレイヤーの座標
     private int _playerX;
@@ -36,11 +44,24 @@ public class GameManager : SingletonBehaviour<GameManager>
     public int PlayerX => _playerX;
     public int PlayerY => _playerY;
 
+    [Header("メッセージをどの程度表示するか")]
+    [SerializeField] private float _messageTime;
+
+    private float _countTime;
+
+    [Header("ログを出力するテキスト")]
+    [SerializeField] private Text _logText;
+
     private DgGenerator _dgGenerator;
 
     private void Start()
     {
         _dgGenerator = DgGenerator.Instance;
+    }
+
+    private void Update()
+    {
+        LogActive();
     }
 
     /// <summary>
@@ -76,7 +97,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// 敵の総数を増やしたり減らしたりする
     /// </summary>
     /// <param name="num"></param>
-    public void SetTotalEnemy(int num) 
+    public void SetTotalEnemy(int num)
     {
         _totalEnemyNum += num;
     }
@@ -85,16 +106,58 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// リストから指定したインデックスのアイテムをリムーブする
     /// </summary>
     /// <param name="a"></param>
-    public void RemoveItemObjList(GameObject a)
+    public void RemoveItemObjList(GameObject ItemObj)
     {
-        _itemObjList.Remove(a);
+        _itemObjList.Remove(ItemObj);
     }
 
+    /// <summary>
+    /// Logにメッセージを出力する
+    /// </summary>
+    /// <param name="message">メッセージ</param>
+    public void OutPutLog(string message)
+    {
 
+        //既に前のテキストが残っていた場合改行してTextを出力する
+        if (_logList.Count == 0)
+        {
+            _logList.Add(message);
+            _logText.text += message;
+        }
+        else
+        {
+            var St = "/n" + message;
+            _logList.Add(message);
+            _logText.text += message;
+        }
 
-    ///// <summary>
-    ///// プレイヤーのいる部屋を判定して変数に入れるi
-    ///// </summary>
+        //既にパネルが表示されていたらパネルの表示時間を元に戻す
+        if (_messageTime > _countTime)
+        {
+            //コルーチンにする
+        }
+    }
+
+    /// <summary>
+    /// パネルをアクティブ非アクティブ切り替える
+    /// </summary>
+    private void LogActive()
+    {
+        if (_messageTime < _countTime)
+        {
+            _logPanel.SetActive(true);
+            _countTime = 0;
+        }
+        else
+        {
+            _logPanel.SetActive(false);
+        }
+
+    }
+
+    /// <summary>
+    /// プレイヤーのいる部屋を判定して変数に入れるi
+    /// </summary>
     ///// <param name="x"></param>
     ///// <param name="y"></param>
     //public void SetPlayerRoomNum(int x, int y) 
@@ -123,7 +186,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     //        {
     //            return i;  
     //        }
-          
+
     //    }
 
     //    return -1;
