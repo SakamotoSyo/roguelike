@@ -4,9 +4,17 @@ using UnityEngine;
 
 public abstract class EnemyBase : MonoBehaviour, IDamageble
 {
-    [SerializeField, Header("体力")] protected float _enemyHp;
-    [SerializeField, Header("行動回数")] protected int _actionNum;
-    [SerializeField, Header("攻撃力")] protected float _power;
+    [Header("体力")]
+    [SerializeField] protected float _enemyHp;
+
+    [Header("行動回数")]
+    [SerializeField] protected int _actionNum;
+
+    [Header("攻撃力")]
+    [SerializeField] protected float _power;
+
+    [Header("Enemyの経験値")]
+    [SerializeField] private float _exp;
 
     [Tooltip("自分自身の座標")]
     protected int _startX;
@@ -37,14 +45,14 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
     [Tooltip("ゲームマネージャーのインスタンス")]
     protected GameManager _gameManager;
 
-    [Tooltip("PlayerBaseScript")]
+    [Tooltip("PlayerIDamageble")]
     protected IDamageble _playerBase;
 
     [Tooltip("自分がどこの部屋にいるか")]
     protected int _nowRoomNum;
 
     private Vector2 _position;
-    protected private void Start()
+    protected void Start()
     {
         //インスタンスを取得
         _gameManager = GameManager.Instance;
@@ -58,36 +66,9 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
 
     protected virtual void Update()
     {
-        _position = new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1) - new Vector2(this.transform.position.x, this.transform.position.y);
-        Debug.DrawRay(transform.position, _position, Color.blue);
+      
     }
 
-    ///// <summary>
-    ///// Playerの方向にRayを飛ばしPlayerのIDamgageを取得してダメージを与える
-    ///// </summary>
-    //protected virtual IEnumerator Attack()
-    //{
-    //    //エネミーからプレイヤー対する方向ベクトルを取得
-    //    //_position = new Vector2(this.transform.position.x, this.transform.position.y) - new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1);
-    //    _position = new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1) - new Vector2(this.transform.position.x, this.transform.position.y);
-
-
-    //    //RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), 10.0f, _testLayerMask);
-    //    RaycastHit2D hit = Physics2D.Linecast(this.transform.position, _position, _testLayerMask);
-
-    //    yield return new WaitForSeconds(0.1f);
- 
-    //    Debug.Log(hit);
-    //    if (hit.collider.gameObject.TryGetComponent(out IDamageble ID))
-    //    {
-    //        ID.AddDamage(_power);
-    //    }
-     
-
-    //    _enemyManager.EnemyActionEnd = false;
-    //    _isAttack = false;
-
-    //}
 
     /// <summary>
     /// 敵の移動AI
@@ -111,7 +92,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
                 if (a == _goalX && b == _goalY)
                 {
                     //攻撃処理
-                    _playerBase.AddDamage(_power);
+                    _playerBase.AddDamage(_power, this.gameObject);
                     _isAttack = true;
                     //コルーチンでアニメーションの処理を書いてもいいかも
                 }
@@ -135,9 +116,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
 
         if (transform.position == _nextPosition)
         {
-
+            Debug.Log("EnemyActionEnd");
             _generatorIns.Layer.SetData((int)Mathf.Floor(transform.position.x), (int)Mathf.Floor(transform.position.y) * -1, 2);
-
             _isMove = false;
             _enemyManager.EnemyActionEnd = false;
         }
@@ -240,9 +220,13 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
     /// ダメージを受ける処理
     /// </summary>
     /// <param name="damage">受けるダメージ</param>
-    public void AddDamage(float damage)
+    public void AddDamage(float damage, GameObject obj)
     {
         _enemyHp -= damage;
+        if (_enemyHp <= 0) 
+        {
+            OnDeath(obj);
+        }
         Debug.Log(damage);
     }
 
@@ -256,11 +240,61 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
     {
         return _generatorIns.Layer.GetMapData(x, y);
     }
-    ///// <summary>
-    ///// Enemyにどこの部屋に今いるのか値をセットするi
-    ///// </summary>
+
+    /// <summary>自分自身が倒されたときに呼ばれる</summary>
+    private void OnDeath(GameObject obj) 
+    {
+        if (obj == _gameManager.PlayerObj) 
+        {
+           var playStatus = _gameManager.PlayerObj.GetComponent<PlayerStatus>();
+            playStatus.GetResult(_exp);
+        }
+    }
+
+    /// <summary> Enemyにどこの部屋に今いるのか値をセットするi </summary>
     //public void SetRoomNum(int nowRoom) 
     //{
     //    _nowRoomNum = nowRoom;
     //}
 }
+
+//public struct EnemyStatusData 
+//{
+//    public float _enemyHp;
+//    public float _power;
+//    public float _exp;
+
+//    public EnemyStatusData(float hp, float power, float exp) 
+//    {
+//        this._enemyHp = hp;
+//        this._power = power;
+//        this._exp = exp;
+//    }
+//}
+
+    ///// <summary>
+    ///// Playerの方向にRayを飛ばしPlayerのIDamgageを取得してダメージを与える
+    ///// </summary>
+    //protected virtual IEnumerator Attack()
+    //{
+    //    //エネミーからプレイヤー対する方向ベクトルを取得
+    //    //_position = new Vector2(this.transform.position.x, this.transform.position.y) - new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1);
+    //    _position = new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1) - new Vector2(this.transform.position.x, this.transform.position.y);
+
+
+    //    //RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), 10.0f, _testLayerMask);
+    //    RaycastHit2D hit = Physics2D.Linecast(this.transform.position, _position, _testLayerMask);
+
+    //    yield return new WaitForSeconds(0.1f);
+ 
+    //    Debug.Log(hit);
+    //    if (hit.collider.gameObject.TryGetComponent(out IDamageble ID))
+    //    {
+    //        ID.AddDamage(_power);
+    //    }
+     
+
+    //    _enemyManager.EnemyActionEnd = false;
+    //    _isAttack = false;
+
+    //}
