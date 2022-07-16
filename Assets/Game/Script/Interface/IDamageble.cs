@@ -12,6 +12,6 @@ public interface IDamageble
 {
     //ChType GetType { get; }
 
-    public void AddDamage(float damage);
+    public void AddDamage(float damage, GameObject attackObj);
     //‚±‚±‚É‰½‘®«‚©“ü‚ê‚Ä‚à‚¢‚¢‚©‚à
 }
