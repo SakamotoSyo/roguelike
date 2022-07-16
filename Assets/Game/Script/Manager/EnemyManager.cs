@@ -50,7 +50,7 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
             if (EnemyList[EnemyActionCountNum].TryGetComponent(out EnemyBase IM))
             {
                 EnemyActionEnd = true;
-                IM.EnemyMove();
+                IM.EnemyAction();
                 Debug.Log("“G‚ªs“®‚µ‚½");
                 EnemyActionCountNum++;
             }
