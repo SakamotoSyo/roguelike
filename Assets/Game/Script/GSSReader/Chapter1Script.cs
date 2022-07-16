@@ -105,9 +105,6 @@ public class Chapter1Script : MonoBehaviour
       
     }
 
-
-    //  メソッド名もなんでもOKです。
-    //  GSSReader の OnLoadEnd に追加することで
     //  GSS の読み込み完了時にコールバックされます。
     public void OnGSSLoadEnd()
     {
@@ -115,17 +112,7 @@ public class Chapter1Script : MonoBehaviour
         var d = r.Datas;
         if (d != null)
         {
-            //  d をゲームで使うデータに変換する処理をここに書きます。
-            //  以下は
-            /*for (var row = 0; row < d.Length; row++)
-            {
-                for (var col = 0; col < d[row].Length; col++)
-                {
-                    Debug.Log("[" + row + "][" + col + "]=" + d[row][col]);
-                    Debug.Log(d);
-
-                }
-            }*/
+            //  d をゲームで使うデータに変換する処理をここに書く
 
             if(Name < d.Length )
             {
