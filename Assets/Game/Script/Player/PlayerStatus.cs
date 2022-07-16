@@ -17,6 +17,8 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     private float _playerHp;
     [SerializeField, Header("攻撃力")]
     private float _power;
+    [Header("レベルアップまでの残り経験値")]
+    private float _exp;
     [SerializeField, Header("行動の回数")]
     private int _actionNum;
     [SerializeField, Header("装備している武器")]
@@ -27,6 +29,13 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     private List<Item> _playerItemList;
     [SerializeField, Header("ItemDateBase")]
     private ItemDataBase _itemDataBase;
+
+
+    private void Update()
+    {
+        
+    }
+
 
 
     /// <summary>
@@ -42,10 +51,18 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     /// ダメージを受ける処理
     /// </summary>
     /// <param name="damage">食らうダメージ</param>
-    public void AddDamage(float damage)
+    public void AddDamage(float damage, GameObject obj)
     {
-        Debug.Log($"プレイヤーは{damage}のダメージを受けた");
         _playerHp -= damage;
+    }
+
+    /// <summary>
+    /// 経験値の取得する処理を行うメソッド
+    /// </summary>
+    /// <param name="expPoint"></param>
+    public void SetExp(float expPoint)
+    {
+        _exp = expPoint;
     }
 
     /// <summary>
@@ -76,5 +93,13 @@ public class PlayerStatus : MonoBehaviour, IDamageble
         _playerItemList.Remove(item);
     }
 
+
+    /// <summary>
+    /// 敵を倒した時に呼ばれるメソッド
+    /// </summary>
+    public void GetResult(float exp) 
+    {
+        SetExp(exp);
+    }
    
 }
