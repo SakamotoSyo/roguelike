@@ -13,44 +13,53 @@ public class GameManager : SingletonBehaviour<GameManager>
         LogOpen,
     }
 
+    [Header("ログを出力するパネル")]
+    [SerializeField] private GameObject _logPanel;
+
+    [Header("ログを出力するテキスト")]
+    [SerializeField] private Text _logText;
+
+    [Header("メッセージをどの程度表示するか")]
+    [SerializeField] private float _messageTime;
+
+    [Header("メッセージのスクロールにかける時間")]
+    [SerializeField] private float _messageScroll;
+
+    [Header("メッセージのスクロールバー")]
+    [SerializeField] private Scrollbar _scrollbar;
+
     public TurnManager TurnType;
 
     public GameObject PlayerObj => _playerObj;
-    [Header("ログを出力するパネル")]
-    [SerializeField] private GameObject _logPanel;
+
+    public int TotalEnemyNum => _totalEnemyNum;
+    public int PlayerX => _playerX;
+    public int PlayerY => _playerY;
+
+    public List<GameObject> ItemObjList => _itemObjList;
+
 
     private GameObject _playerObj;
 
     [Tooltip("アイテムのゲームオブジェクトをリストで管理する")]
     private List<GameObject> _itemObjList = new List<GameObject>();
-    public List<GameObject> ItemObjList => _itemObjList;
+    [Tooltip("TextLogを格納するList")]
     private List<String> _logList = new List<string>();
-
-    public int TotalEnemyNum => _totalEnemyNum;
 
     [Tooltip("ダンジョンにいる敵の総数")]
     private int _totalEnemyNum;
-
     //プレイヤーのいる部屋i
     // private int _playerRoomNum;
     //public int PlayerRoomNum => _playerRoomNum; S
-
     //プレイヤーの座標
     private int _playerX;
     private int _playerY;
-    //カプセル化
-    public int PlayerX => _playerX;
-    public int PlayerY => _playerY;
-
-    [Header("メッセージをどの程度表示するか")]
-    [SerializeField] private float _messageTime;
 
     private float _countTime;
-
-    [Header("ログを出力するテキスト")]
-    [SerializeField] private Text _logText;
+    private float _messageCountTime;
 
     private Coroutine _textCoroutine;
+    private Coroutine _messageCoroutine;
 
     private DgGenerator _dgGenerator;
 
@@ -62,6 +71,11 @@ public class GameManager : SingletonBehaviour<GameManager>
     private void Update()
     {
         LogActive();
+
+        if (_scrollbar.value != 0)
+        {
+            LogScroll();
+        }
     }
 
     /// <summary>
@@ -137,7 +151,7 @@ public class GameManager : SingletonBehaviour<GameManager>
             _textCoroutine = StartCoroutine(LogActive());
 
         }
-        else 
+        else
         {
             StopCoroutine(_textCoroutine);
             _textCoroutine = null;
@@ -156,6 +170,25 @@ public class GameManager : SingletonBehaviour<GameManager>
 
         StopCoroutine(_textCoroutine);
         _textCoroutine = null;
+    }
+
+    /// <summary>文字が見切れた時にTextをScrollする処理</summary>
+    private void LogScroll()
+    {
+        _messageCountTime += Time.deltaTime;
+        if (_messageTime > _messageCountTime) 
+        {
+            return;
+        }
+
+        _scrollbar.value -= 0.01f;
+
+        if (_scrollbar.value <= 0) 
+        {
+            _scrollbar.value = 0;   
+        }
+
+        _messageCountTime = 0;
     }
 
     /// <summary>
