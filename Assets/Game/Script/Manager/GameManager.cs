@@ -16,7 +16,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     public TurnManager TurnType;
 
     public GameObject PlayerObj => _playerObj;
-
     [Header("ログを出力するパネル")]
     [SerializeField] private GameObject _logPanel;
 
@@ -25,7 +24,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     [Tooltip("アイテムのゲームオブジェクトをリストで管理する")]
     private List<GameObject> _itemObjList = new List<GameObject>();
     public List<GameObject> ItemObjList => _itemObjList;
-
     private List<String> _logList = new List<string>();
 
     public int TotalEnemyNum => _totalEnemyNum;
@@ -51,6 +49,8 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     [Header("ログを出力するテキスト")]
     [SerializeField] private Text _logText;
+
+    private Coroutine _textCoroutine;
 
     private DgGenerator _dgGenerator;
 
@@ -122,37 +122,40 @@ public class GameManager : SingletonBehaviour<GameManager>
         if (_logList.Count == 0)
         {
             _logList.Add(message);
-            _logText.text += message;
+            _logText.text = message;
         }
         else
         {
-            var St = "/n" + message;
-            _logList.Add(message);
-            _logText.text += message;
+            var St = "\n" + message;
+            _logList.Add(St);
+            _logText.text += St;
         }
 
         //既にパネルが表示されていたらパネルの表示時間を元に戻す
-        if (_messageTime > _countTime)
+        if (_textCoroutine == null)
         {
-            //コルーチンにする
+            _textCoroutine = StartCoroutine(LogActive());
+
+        }
+        else 
+        {
+            StopCoroutine(_textCoroutine);
+            _textCoroutine = null;
+            _textCoroutine = StartCoroutine(LogActive());
         }
     }
 
     /// <summary>
     /// パネルをアクティブ非アクティブ切り替える
     /// </summary>
-    private void LogActive()
+    private IEnumerator LogActive()
     {
-        if (_messageTime < _countTime)
-        {
-            _logPanel.SetActive(true);
-            _countTime = 0;
-        }
-        else
-        {
-            _logPanel.SetActive(false);
-        }
+        _logPanel.SetActive(true);
+        yield return new WaitForSeconds(3);
+        _logPanel.SetActive(false);
 
+        StopCoroutine(_textCoroutine);
+        _textCoroutine = null;
     }
 
     /// <summary>
