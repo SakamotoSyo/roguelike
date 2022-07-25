@@ -2,22 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyStatus : MonoBehaviour
+public class EnemyStatus : MonoBehaviour,IDamageble
 {
-    [SerializeField][Tooltip("最大HP")] private int _maxHp;
-    [SerializeField][Tooltip("HP")] private float _hp;
-    [SerializeField][Tooltip("攻撃力")] private float _power;
-    [SerializeField][Tooltip("行動の回数")] private int _actionNum;
+
+    [Header("敵の名前")]
+    [SerializeField] string _enemyName;
+    [Header("最大HP")]
+    [SerializeField] int _maxHp;
+    [Header("HP")]
+    [SerializeField] float _hp;
+    [Header("攻撃力")]
+    [SerializeField] float _power;
+    [Header("行動の回数")]
+    [SerializeField] int _actionNum;
+    [Header("敵の経験値")]
+    [SerializeField] float _enemyExp;
+    [Tooltip("EnemyBaseのスクリプト")]
+    private EnemyBase _enemyBase;
+    [Tooltip("GameManagerのインスタンス")]
+    private GameManager _gameManager;
     //public int MaxHp1 { get => MaxHp; set => MaxHp = value; }
 
-    
+    private void Start()
+    {
+      _gameManager = GameManager.Instance;
+    }
+
     /// <summary>
     /// 最大Hp
     /// </summary>
     /// <param name="hp"></param>
     public void SetMaxHp(int hp)
     {
-        this._maxHp = hp;
+        _maxHp = hp;
     }
 
     public int GetMaxHp() => _maxHp;
@@ -28,7 +45,7 @@ public class EnemyStatus : MonoBehaviour
     /// <param name="hp"></param>
     public void SetHp(float hp)
     {
-        this._hp = Mathf.Max(0, Mathf.Min(GetMaxHp(), hp));
+        _hp = Mathf.Max(0, Mathf.Min(GetMaxHp(), hp));
     }
 
 
@@ -40,8 +57,53 @@ public class EnemyStatus : MonoBehaviour
     /// <param name="power">力</param>
     public void SetPower(float power)
     {
-        this._power = power;
+        _power = power;
     }
 
     public float GetPower() => _power;
+
+    public void SetExp(float exp) 
+    {
+        _enemyExp = exp;
+    }
+
+    public float Exp => _enemyExp;
+
+    /// <summary>
+    /// ダメージを受ける処理
+    /// </summary>
+    /// <param name="damage">受けるダメージ</param>
+    public void AddDamage(float damage, GameObject obj)
+    {
+         _hp -= damage;
+        GameManager.Instance.OutPutLog($"{damage}のダメージを与えた");
+        if (_hp <= 0)
+        {
+            OnDeath(obj);
+        }
+        Debug.Log(damage);
+    }
+
+    /// <summary>自分自身が倒されたときに呼ばれる</summary>
+    private void OnDeath(GameObject obj)
+    {
+        _gameManager.OutPutLog("Enemyは倒れた");
+        if (obj == _gameManager.PlayerObj)
+        {
+            var data = new EnemyStatusData(_enemyName, _enemyExp);
+            EnemyManager.Instance.SetEnemyStatusList(data);
+        }
+    }
+}
+
+public struct EnemyStatusData 
+{
+    public EnemyStatusData(string name, float exp) 
+    {
+        Name = name;
+        Exp = exp;
+    }
+
+    public string Name;
+    public float Exp;
 }
