@@ -109,7 +109,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dc3aa5d536bb704a894f994fb82662c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _statusData: {fileID: 11400000, guid: 08361676da80e25419542d7f770f7402, type: 2}
+  _enemyName: ookami
+  _maxHp: 100
+  _hp: 50
+  _power: 10
+  _actionNum: 1
+  _enemyExp: 10
 --- !u!114 &-6938156547653174323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,8 +127,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47cb449fb9a778c4d9239a7994bdc8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyHp: 100
-  _actionNum: 1
-  _power: 10
-  _exp: 0
   _enemyStatus: {fileID: 5079518293087439672}
