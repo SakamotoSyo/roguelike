@@ -14,21 +14,6 @@ public class GameManager : SingletonBehaviour<GameManager>
         Result,
     }
 
-    [Header("ログを出力するパネル")]
-    [SerializeField] private GameObject _logPanel;
-
-    [Header("ログを出力するテキスト")]
-    [SerializeField] private Text _logText;
-
-    [Header("メッセージをどの程度表示するか")]
-    [SerializeField] private float _messageTime;
-
-    [Header("メッセージのスクロールにかける時間")]
-    [SerializeField] private float _messageScroll;
-
-    [Header("メッセージのスクロールバー")]
-    [SerializeField] private Scrollbar _scrollbar;
-
     public TurnManager TurnType;
 
     public GameObject PlayerObj => _playerObj;
@@ -39,7 +24,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public List<GameObject> ItemObjList => _itemObjList;
 
-
+    [Tooltip("PlayerのObject")]
     private GameObject _playerObj;
 
     [Tooltip("アイテムのゲームオブジェクトをリストで管理する")]
@@ -56,12 +41,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     private int _playerX;
     private int _playerY;
 
-    private float _countTime;
-    private float _messageCountTime;
-
-    private Coroutine _textCoroutine;
-    private Coroutine _messageCoroutine;
-
     private DgGenerator _dgGenerator;
 
     private void Start()
@@ -71,12 +50,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     private void Update()
     {
-        LogActive();
-
-        if (_scrollbar.value != 0)
-        {
-            LogScroll();
-        }
+       
     }
 
     /// <summary>
@@ -126,70 +100,13 @@ public class GameManager : SingletonBehaviour<GameManager>
         _itemObjList.Remove(ItemObj);
     }
 
-    /// <summary>
-    /// Logにメッセージを出力する
-    /// </summary>
-    /// <param name="message">メッセージ</param>
-    public void OutPutLog(string message)
-    {
-
-        //既に前のテキストが残っていた場合改行してTextを出力する
-        if (_logList.Count == 0)
-        {
-            _logList.Add(message);
-            _logText.text = message;
-        }
-        else
-        {
-            var St = "\n" + message;
-            _logList.Add(St);
-            _logText.text += St;
-        }
-
-        //既にパネルが表示されていたらパネルの表示時間を元に戻す
-        if (_textCoroutine == null)
-        {
-            _textCoroutine = StartCoroutine(LogActive());
-
-        }
-        else
-        {
-            StopCoroutine(_textCoroutine);
-            _textCoroutine = null;
-            _textCoroutine = StartCoroutine(LogActive());
-        }
-    }
 
     /// <summary>
-    /// パネルをアクティブ非アクティブ切り替える
+    /// レベルアップしたときに呼ばれる
     /// </summary>
-    private IEnumerator LogActive()
+    private void PlayerLevelUpProcess()
     {
-        _logPanel.SetActive(true);
-        yield return new WaitForSeconds(3);
-        _logPanel.SetActive(false);
-
-        StopCoroutine(_textCoroutine);
-        _textCoroutine = null;
-    }
-
-    /// <summary>文字が見切れた時にTextをScrollする処理</summary>
-    private void LogScroll()
-    {
-        _messageCountTime += Time.deltaTime;
-        if (_messageTime > _messageCountTime) 
-        {
-            return;
-        }
-
-        _scrollbar.value -= 0.01f;
-
-        if (_scrollbar.value <= 0) 
-        {
-            _scrollbar.value = 0;   
-        }
-
-        _messageCountTime = 0;
+            //OutPutLog($"プレイヤーは{_playerStatus.Level + 1}にアップした");
     }
 
     /// <summary>
