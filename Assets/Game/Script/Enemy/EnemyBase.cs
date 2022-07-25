@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EnemyBase : MonoBehaviour, IDamageble
+public abstract class EnemyBase : MonoBehaviour
 {
     [Header("体力")]
     [SerializeField] protected float _enemyHp;
@@ -45,6 +45,9 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
     [Tooltip("ゲームマネージャーのインスタンス")]
     protected GameManager _gameManager;
 
+    [Tooltip("EnemyStatusのScript")]
+    [SerializeField]protected EnemyStatus _enemyStatus;
+
     [Tooltip("PlayerIDamageble")]
     protected IDamageble _playerBase;
 
@@ -52,6 +55,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
     protected int _nowRoomNum;
 
     private Vector2 _position;
+
+    public Vector3 EnemyPos => this.gameObject.transform.position; 
+
+
     protected void Start()
     {
         //インスタンスを取得
@@ -59,7 +66,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
         _enemyManager = EnemyManager.Instance;
         _generatorIns = DgGenerator.Instance;
         //エネミーマネージャーに自分自身のオブジェクトを渡す
-        _enemyManager.EnemyList.Add(this.gameObject);
+        _enemyManager.SetEnemyBaseList(this.gameObject.GetComponent<EnemyBase>());
 
         _playerBase = _gameManager.PlayerObj.GetComponent<IDamageble>();
     }
@@ -211,23 +218,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
             //ゲームマネージャーにプレイヤーの場所を渡す
             //EnemyManager.Instance.EnemyList[0].transform.position += new Vector3(_xBool, _yBool, 0);
             _generatorIns.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, 1);
-
-
         }
-    }
-
-    /// <summary>
-    /// ダメージを受ける処理
-    /// </summary>
-    /// <param name="damage">受けるダメージ</param>
-    public void AddDamage(float damage, GameObject obj)
-    {
-        _enemyHp -= damage;
-        if (_enemyHp <= 0) 
-        {
-            OnDeath(obj);
-        }
-        Debug.Log(damage);
     }
 
     /// <summary>
@@ -241,15 +232,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageble
         return _generatorIns.Layer.GetMapData(x, y);
     }
 
-    /// <summary>自分自身が倒されたときに呼ばれる</summary>
-    private void OnDeath(GameObject obj) 
-    {
-        if (obj == _gameManager.PlayerObj) 
-        {
-           var playStatus = _gameManager.PlayerObj.GetComponent<PlayerStatus>();
-            playStatus.GetResult(_exp);
-        }
-    }
+  
 
     /// <summary> Enemyにどこの部屋に今いるのか値をセットするi </summary>
     //public void SetRoomNum(int nowRoom) 
