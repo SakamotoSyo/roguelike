@@ -6,8 +6,8 @@ using UnityEngine;
 public class PlayerBase : MonoBehaviour
 {
 
-    [Header("Playerの攻撃力")]
-    [SerializeField] private float _playerAttack;
+    [Header("PlayerStatus")]
+    [SerializeField] private PlayerStatus _playerStatus;
 
     [Tooltip("ゲームマネージャー")]
     private GameManager _gameManagerIns;
@@ -49,6 +49,10 @@ public class PlayerBase : MonoBehaviour
         if (_gameManagerIns.TurnType == GameManager.TurnManager.Player && _waitTime < _countTime)
         {
             MoveInputKey();
+        }
+        if (_gameManagerIns.TurnType == GameManager.TurnManager.Result) 
+        {
+            
         }
         _countTime += Time.deltaTime;
     }
@@ -119,16 +123,22 @@ public class PlayerBase : MonoBehaviour
         {
             Debug.Log("攻撃がよばれた");
             //プレイヤーが向いている方向に敵がいた場合
-            foreach (var i in _enemyManagerIns.EnemyList)
+            foreach (var i in _enemyManagerIns.EnemyBaseList)
             {
                 if (transform.position.x + PlayerDirection.x == i.transform.position.x && transform.position.y + PlayerDirection.y == i.transform.position.y)
                 {
                      _gameManagerIns.OutPutLog("攻撃の処理が成功した");
                     //アニメーションの処理を入れる
-                    i.GetComponent<IDamageble>().AddDamage(_playerAttack, this.gameObject);
+                    i.GetComponent<IDamageble>().AddDamage(_playerStatus.Power, this.gameObject);
+                    
                 }
             }
-           _gameManagerIns.TurnType = GameManager.TurnManager.Enemy;
+
+            //経験値をゲットしたかどうか確認する
+            _gameManagerIns.TurnType = GameManager.TurnManager.Result;
+
+           //元の設定
+           //_gameManagerIns.TurnType = GameManager.TurnManager.Enemy;
         }
     }
 
@@ -193,6 +203,14 @@ public class PlayerBase : MonoBehaviour
 
             }
         }
+    }
+
+    /// <summary>
+    /// 経験獲得などリザルトの処理
+    /// </summary>
+    private void ResultProcess() 
+    {
+        
     }
 
 }
