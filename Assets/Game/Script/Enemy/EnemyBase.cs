@@ -4,17 +4,7 @@ using UnityEngine;
 
 public abstract class EnemyBase : MonoBehaviour
 {
-    [Header("体力")]
-    [SerializeField] protected float _enemyHp;
-
-    [Header("行動回数")]
-    [SerializeField] protected int _actionNum;
-
-    [Header("攻撃力")]
-    [SerializeField] protected float _power;
-
-    [Header("Enemyの経験値")]
-    [SerializeField] private float _exp;
+  
 
     [Tooltip("自分自身の座標")]
     protected int _startX;
@@ -99,7 +89,7 @@ public abstract class EnemyBase : MonoBehaviour
                 if (a == _goalX && b == _goalY)
                 {
                     //攻撃処理
-                    _playerBase.AddDamage(_power, this.gameObject);
+                    _playerBase.AddDamage(_enemyStatus.GetPower(), this.gameObject);
                     _isAttack = true;
                     //コルーチンでアニメーションの処理を書いてもいいかも
                 }
