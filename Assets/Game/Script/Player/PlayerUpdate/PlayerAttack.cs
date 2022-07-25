@@ -33,7 +33,7 @@ public class PlayerAttack : MonoBehaviour
             {
                 if (transform.position.x + _playerMoveCs.PlayerDirection.x == i.EnemyPos.x && transform.position.y + _playerMoveCs.PlayerDirection.y == i.EnemyPos.y)
                 {
-                    _gameManager.OutPutLog("攻撃の処理が成功した");
+                    LogScript.Instance.OutPutLog("攻撃の処理が成功した");
                     //アニメーションの処理を入れる
                     i.GetComponent<IDamageble>().AddDamage(_playerStatus.Power, this.gameObject);
 

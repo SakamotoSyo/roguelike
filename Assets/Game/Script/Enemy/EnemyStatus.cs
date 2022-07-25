@@ -76,7 +76,7 @@ public class EnemyStatus : MonoBehaviour,IDamageble
     public void AddDamage(float damage, GameObject obj)
     {
          _hp -= damage;
-        GameManager.Instance.OutPutLog($"{damage}‚Ìƒ_ƒ[ƒW‚ğ—^‚¦‚½");
+        LogScript.Instance.OutPutLog($"{damage}‚Ìƒ_ƒ[ƒW‚ğ—^‚¦‚½");
         if (_hp <= 0)
         {
             OnDeath(obj);
@@ -87,7 +87,7 @@ public class EnemyStatus : MonoBehaviour,IDamageble
     /// <summary>©•ª©g‚ª“|‚³‚ê‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é</summary>
     private void OnDeath(GameObject obj)
     {
-        _gameManager.OutPutLog("Enemy‚Í“|‚ê‚½");
+        LogScript.Instance.OutPutLog("Enemy‚Í“|‚ê‚½");
         if (obj == _gameManager.PlayerObj)
         {
             var data = new EnemyStatusData(_enemyName, _enemyExp);

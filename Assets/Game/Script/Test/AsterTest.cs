@@ -273,11 +273,12 @@ public class AsterTest : MonoBehaviour
 
     public void Astar()
     {
-        _startX = (int)EnemyManager.Instance.EnemyList[0].transform.position.x;
-        _startY = (int)EnemyManager.Instance.EnemyList[0].transform.position.y;
 
-        _goalX = GameManager.Instance.PlayerX + 10;
-        _goalY = GameManager.Instance.PlayerY + 10;
+        _startX = (int)transform.position.x;
+        _startY = (int)transform.position.y *-1;
+
+        _goalX = GameManager.Instance.PlayerX;
+        _goalY = GameManager.Instance.PlayerY;
 
         var pList = new List<Point2>();
 
@@ -292,7 +293,7 @@ public class AsterTest : MonoBehaviour
         int cnt = 0;
         while (cnt < 1000) 
         {
-            mgr.RemoveOpenList(node);
+            //mgr.RemoveOpenList(node);
             //周囲を開く
             mgr.OpenAround(node);
             //最小スコアのノードを探す
@@ -310,6 +311,7 @@ public class AsterTest : MonoBehaviour
                 mgr.RemoveOpenList(node);
                 //パスを取得する
                 node.GetPath(pList);
+                Debug.Log(pList.Count);
                 //反転する
                 pList.Reverse();
                 break;
@@ -321,7 +323,7 @@ public class AsterTest : MonoBehaviour
 
         _state = eState.Walk;
         //foreachを使わずに一度だけ処理する
-        Debug.Log($"xは{pList[0].x}yは{pList[0].y}");
+      
 
 
 

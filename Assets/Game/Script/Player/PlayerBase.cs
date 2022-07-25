@@ -127,7 +127,7 @@ public class PlayerBase : MonoBehaviour
             {
                 if (transform.position.x + PlayerDirection.x == i.transform.position.x && transform.position.y + PlayerDirection.y == i.transform.position.y)
                 {
-                     _gameManagerIns.OutPutLog("攻撃の処理が成功した");
+                     LogScript.Instance.OutPutLog("攻撃の処理が成功した");
                     //アニメーションの処理を入れる
                     i.GetComponent<IDamageble>().AddDamage(_playerStatus.Power, this.gameObject);
                     
