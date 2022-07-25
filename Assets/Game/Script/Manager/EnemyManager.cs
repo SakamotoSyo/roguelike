@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
+using UniRx.Triggers;
+using System;
 
 public class EnemyManager : SingletonBehaviour<EnemyManager>
 {
@@ -16,7 +19,7 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
 
     [Tooltip("EnemyStatusのリスト")]
     private List<EnemyStatusData> _enemyStatusDataList = new List<EnemyStatusData>();
-    public List<EnemyStatusData> EnemyStatusList => _enemyStatusDataList;   
+    public List<EnemyStatusData> EnemyStatusList => _enemyStatusDataList;
     [Tooltip("PlayerのStatus")]
     private PlayerStatus _playerStatus;
 
@@ -38,6 +41,10 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     [Tooltip("現在の総EXP")]
     private float _totalEnemyExp;
 
+    [Tooltip("何回levelアップするか")]
+    private int _levelUpNum;
+
+
     void Start()
     {
         _generator = DgGenerator.Instance;
@@ -55,12 +62,13 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
         //倒されたEnemy分処理をする
         if (_gameManager.TurnType == GameManager.TurnManager.Result)
         {
-            foreach (var i in _enemyStatusDataList) 
-            {
-                _gameManager.OutPutLog($"{i.Exp}を手に入れた");   
-            }
+            PlayerGetExp();
 
-            _gameManager.TurnType = GameManager.TurnManager.Enemy;
+            //levelアップしない場合ターンを変更する
+            if (_levelUpNum == 0)
+            {
+                _gameManager.TurnType = GameManager.TurnManager.Enemy;
+            }
         }
 
     }
@@ -74,14 +82,12 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
         {
             EnemyActionEnd = true;
             _enemyBaseList[EnemyActionCountNum].EnemyAction();
-            Debug.Log("敵が行動した");
             EnemyActionCountNum++;
         }
         //Enemyの行動がすべて終わったらプレイヤーのターンに移す
         else if (_enemyBaseList.Count <= EnemyActionCountNum && !EnemyActionEnd)
         {
             EnemyActionCountNum = 0;
-            Debug.Log("敵の行動が終わった");
             GameManager.Instance.TurnType = GameManager.TurnManager.Player;
         }
     }
@@ -89,9 +95,30 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     /// <summary>
     /// Playerに経験値を獲得させる処理
     /// </summary>
-    private void PlayerGetExp() 
+    private void PlayerGetExp()
     {
 
+        foreach (var i in _enemyStatusDataList)
+        {
+
+            Debug.Log($"{i.Exp}経験値を手に入れた");
+            var remainingExp = i.Exp;
+
+            //レベルアップができなくなるまでループする
+            while (_playerStatus.EXP - i.Exp < 0)
+            {
+                remainingExp -= _playerStatus.EXP;
+                //レベルアップさせるための処理
+                //プレイヤーを1LevelUpさせる
+                _playerStatus.SetLevel(_playerStatus.Level + 1);
+            }
+
+            _playerStatus.SetExp(i.Exp);
+        }
+
+        _enemyStatusDataList.Clear();
+        _gameManager.TurnType = GameManager.TurnManager.Enemy;
+        //_gameManager.TurnType = GameManager.TurnManager.Enemy;
     }
 
     /// <summary>
@@ -127,12 +154,12 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     /// リストに値をセットする関数
     /// </summary>
     /// <param name="enemyBase">EnemyBaseScript</param>
-    public void SetEnemyBaseList(EnemyBase enemyBase) 
+    public void SetEnemyBaseList(EnemyBase enemyBase)
     {
         _enemyBaseList.Add(enemyBase);
     }
-    
-    public void SetEnemyStatusList(EnemyStatusData enemyStatus) 
+
+    public void SetEnemyStatusList(EnemyStatusData enemyStatus)
     {
         _enemyStatusDataList.Add(enemyStatus);
     }
