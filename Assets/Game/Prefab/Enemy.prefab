@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2206224333058383175}
   - component: {fileID: 1972207367860973162}
   - component: {fileID: 2335298799160777093}
+  - component: {fileID: 5079518293087439672}
   - component: {fileID: -6938156547653174323}
   m_Layer: 0
   m_Name: Enemy
@@ -96,6 +97,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4e009f1cb5f924e99cf85e36811a65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5079518293087439672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86419446158578205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dc3aa5d536bb704a894f994fb82662c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _statusData: {fileID: 11400000, guid: 08361676da80e25419542d7f770f7402, type: 2}
 --- !u!114 &-6938156547653174323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,7 +125,5 @@ MonoBehaviour:
   _enemyHp: 100
   _actionNum: 1
   _power: 10
-  _testLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  _aster: {fileID: 2335298799160777093}
+  _exp: 0
+  _enemyStatus: {fileID: 5079518293087439672}
