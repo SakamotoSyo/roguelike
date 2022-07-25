@@ -64,7 +64,7 @@ public class UIManager : MonoBehaviour
     private PlayerStatus _playerStatusCs;
 
     [Tooltip("PlayerBaseのスクリプト")]
-    private PlayerBase _playerBaseCs;
+    private PlayerMove _playerMoveCs;
 
 
     [Tooltip("ゲームマネージャー")] 
@@ -316,11 +316,10 @@ public class UIManager : MonoBehaviour
         //アイテムに情報を設定
         ItemObjectCs.SetItemInfor(item);
         ItemObjectCs.SetItemSprite(item.GetItemImage);
-        _playerBaseCs = _gameManager.PlayerObj.GetComponent<PlayerBase>();
+        _playerMoveCs = _gameManager.PlayerObj.GetComponent<PlayerMove>();
         //プレイヤーの動いた方向を持ってくる
-        int x = (int)_playerBaseCs.
-            PlayerDirection.x;
-        int y = (int)_playerBaseCs.PlayerDirection.y;
+        int x = (int)_playerMoveCs.PlayerDirection.x;
+        int y = (int)_playerMoveCs.PlayerDirection.y;
 
         if (x == 0 && y == 0)
         {
@@ -419,7 +418,7 @@ public class UIManager : MonoBehaviour
         //アイテムに情報を渡す
         ItemObjectCs.SetItemInfor(item);
         ItemObjectCs.SetItemSprite(item.GetItemImage);
-        _playerBaseCs = _gameManager.PlayerObj.GetComponent<PlayerBase>();
+        _playerMoveCs = _gameManager.PlayerObj.GetComponent<PlayerMove>();
         //アイテムのオブジェクトをゲームマネージャーに渡す
         _gameManager.SetItemObjList(Item);
         //配列にアイテムの場所をSetする
