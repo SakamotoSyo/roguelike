@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour, IDamageble
 {
+    [Tooltip("GameManagerのインスタンス")]
+    private GameManager _gameManager;
+
+    /// <summary>現在の攻撃力を返す</summary>
+    public float Power => _power;
     /// <summary> 装備している武器を返す</summary>
     public Item WeaponEquip => _weaponEquip;
     /// <summary> 装備している盾を返す</summary>
@@ -30,6 +35,10 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     [SerializeField, Header("ItemDateBase")]
     private ItemDataBase _itemDataBase;
 
+    void Start() 
+    {
+        _gameManager = GameManager.Instance;
+    }
 
     private void Update()
     {
@@ -53,6 +62,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     /// <param name="damage">食らうダメージ</param>
     public void AddDamage(float damage, GameObject obj)
     {
+        _gameManager.OutPutLog($"{damage}のダメージを受けた");
         _playerHp -= damage;
     }
 
