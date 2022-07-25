@@ -1,14 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerStatus : MonoBehaviour, IDamageble
 {
     [Tooltip("GameManagerのインスタンス")]
     private GameManager _gameManager;
 
+    /// <summary>現在のレベルを返す</summary>
+    public int Level => _playerLevel;
     /// <summary>現在の攻撃力を返す</summary>
     public float Power => _power;
+    /// <summary>レベルアップまでの経験値を返す</summary>
+    public float EXP => _playerExp;
     /// <summary> 装備している武器を返す</summary>
     public Item WeaponEquip => _weaponEquip;
     /// <summary> 装備している盾を返す</summary>
@@ -16,6 +21,8 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     /// <summary> アイテムリストを返す</summary>
     public List<Item> PlayerItemList => _playerItemList;
 
+    [Header("現在のレベル")]
+    [SerializeField] private int _playerLevel = 1;
     [SerializeField, Header("最大HP")]
     private int _maxHp;
     [SerializeField, Header("HP")]
@@ -23,7 +30,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     [SerializeField, Header("攻撃力")]
     private float _power;
     [Header("レベルアップまでの残り経験値")]
-    private float _exp;
+    private float _playerExp;
     [SerializeField, Header("行動の回数")]
     private int _actionNum;
     [SerializeField, Header("装備している武器")]
@@ -35,23 +42,32 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     [SerializeField, Header("ItemDateBase")]
     private ItemDataBase _itemDataBase;
 
-    void Start() 
+    public event Action<int> OnLevelChanged;
+
+    void Start()
     {
         _gameManager = GameManager.Instance;
     }
 
     private void Update()
     {
-        
+
     }
 
-
+    /// <summary>
+    /// 現在のレベルを変更できる
+    /// </summary>
+    public void SetLevel(int level) 
+    {
+        _playerLevel = level;
+        OnLevelChanged(level);
+    }
 
     /// <summary>
     /// Hpの値を変更する
     /// </summary>
     /// <param name=""></param>
-    public void SetHp(float value) 
+    public void SetHp(float value)
     {
         _playerHp = Mathf.Min(_playerHp += value, _maxHp);
     }
@@ -62,7 +78,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     /// <param name="damage">食らうダメージ</param>
     public void AddDamage(float damage, GameObject obj)
     {
-        _gameManager.OutPutLog($"{damage}のダメージを受けた");
+        LogScript.Instance.OutPutLog($"{damage}のダメージを受けた");
         _playerHp -= damage;
     }
 
@@ -72,7 +88,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     /// <param name="expPoint"></param>
     public void SetExp(float expPoint)
     {
-        _exp = expPoint;
+        _playerExp = expPoint;
     }
 
     /// <summary>
@@ -98,18 +114,9 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     /// アイテムリストからアイテムを削除する
     /// </summary>
     /// <param name="item"></param>
-    public void RemoveItem(Item item) 
+    public void RemoveItem(Item item)
     {
         _playerItemList.Remove(item);
     }
 
-
-    /// <summary>
-    /// 敵を倒した時に呼ばれるメソッド
-    /// </summary>
-    public void GetResult(float exp) 
-    {
-        SetExp(exp);
-    }
-   
 }
