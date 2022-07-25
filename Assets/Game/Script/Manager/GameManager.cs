@@ -11,6 +11,7 @@ public class GameManager : SingletonBehaviour<GameManager>
         MenuOpen,
         Enemy,
         LogOpen,
+        Result,
     }
 
     [Header("ログを出力するパネル")]
