@@ -93,7 +93,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     private bool isVertical = false;
     //c‚Å•ªŠ„‚·‚é‚©‚Ç‚¤‚©
     // Start is called before the first frame update
-    void Start()
+    protected override void OnAwake()
     {
         _mapGenerateEnd = false;
 
