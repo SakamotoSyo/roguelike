@@ -97,6 +97,10 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     /// </summary>
     private void PlayerGetExp()
     {
+        if (_playerStatus == null) 
+        {
+            _playerStatus = GameManager.Instance.PlayerObj.GetComponent<PlayerStatus>();
+        }
 
         foreach (var i in _enemyStatusDataList)
         {
@@ -105,15 +109,17 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
             var remainingExp = i.Exp;
 
             //レベルアップができなくなるまでループする
-            while (_playerStatus.EXP - i.Exp < 0)
+            while (_playerStatus.EXP - remainingExp < 0)
             {
                 remainingExp -= _playerStatus.EXP;
                 //レベルアップさせるための処理
                 //プレイヤーを1LevelUpさせる
                 _playerStatus.SetLevel(_playerStatus.Level + 1);
+
+                _playerStatus.SetExp(50);
             }
 
-            _playerStatus.SetExp(i.Exp);
+            _playerStatus.SetExp(_playerStatus.EXP - remainingExp);
         }
 
         _enemyStatusDataList.Clear();
