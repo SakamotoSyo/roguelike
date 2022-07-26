@@ -24,14 +24,15 @@ public class LogScript : SingletonBehaviour<LogScript>
     [Header("メッセージのスクロールバー")]
     [SerializeField] private Scrollbar _scrollbar;
 
-    [Tooltip("PlayerStatusのスクリプト")]
-    private PlayerStatus _playerStatus;
-
-    private float _countTime;
     private float _messageCountTime;
 
     private Coroutine _textCoroutine;
-    private Coroutine _messageCoroutine;
+
+    void Start()
+    {
+       var playerStatus = GameManager.Instance.PlayerObj.GetComponent<PlayerStatus>();
+        playerStatus.OnLevelChanged += PlayerLevelUpProcess;
+    }
 
     private void Update()
     {
@@ -112,8 +113,8 @@ public class LogScript : SingletonBehaviour<LogScript>
     /// <summary>
     /// レベルアップしたときに呼ばれる
     /// </summary>
-    private void PlayerLevelUpProcess()
+    private void PlayerLevelUpProcess(int level)
     {
-        OutPutLog($"プレイヤーは{_playerStatus.Level + 1}にアップした");
+        OutPutLog($"プレイヤーはレベル{level}にアップした");
     }
 }
