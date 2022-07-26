@@ -2113,6 +2113,7 @@ GameObject:
   m_Component:
   - component: {fileID: 967788176}
   - component: {fileID: 967788177}
+  - component: {fileID: 967788178}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2146,12 +2147,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55743031908e5c149bb729104ecaf7f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TurnType: 0
+--- !u!114 &967788178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 967788175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b33fceba42e994f9e415572d18c485, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _logPanel: {fileID: 862551757}
   _logText: {fileID: 1983543937}
-  _messageTime: 0.01
-  _messageScroll: 0.01
+  _messageTime: 3
+  _messageScroll: 0.02
   _scrollbar: {fileID: 626624344}
-  TurnType: 0
 --- !u!1 &1052419531
 GameObject:
   m_ObjectHideFlags: 0
@@ -2647,7 +2660,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyPrefab: {fileID: 86419446158578205, guid: bd7a3628ea032544f9e8e910c9b148bc, type: 3}
-  EnemyList: []
   EnemyActionCountNum: 0
   EnemyActionEnd: 0
   _totalEnemyNum: 2
