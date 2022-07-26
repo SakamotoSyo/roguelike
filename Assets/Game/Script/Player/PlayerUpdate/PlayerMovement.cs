@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("PlayerAttackのスクリプト")]
     [SerializeField] PlayerAttack _playerAttackCs;
  
-    void Start()
+    void Awake()
     {
         _gameManager = GameManager.Instance;
         _gameManager.SetPlayerObj(this.gameObject);
