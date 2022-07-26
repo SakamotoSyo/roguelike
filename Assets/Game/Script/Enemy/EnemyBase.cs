@@ -169,25 +169,25 @@ public abstract class EnemyBase : MonoBehaviour
         }
 
         //Ç«Ç±Ç…Ç‡ìÆÇØÇ»Ç©Ç¡ÇΩèÍçáé¸ÇËÇå©ÇƒìÆÇ≠
-        if ((GetMapData(_startX + 1, _startY * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == 1)
+        if ((GetMapData(_startX + 1, _startY * -1) == 1 || GetMapData(_startX + 1, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == 1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(1, 0);
             _isMove = true;
         }
 
-        if ((GetMapData(_startX - 1, _startY * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == -1)
+        if ((GetMapData(_startX - 1, _startY * -1) == 1 || GetMapData(_startX - 1, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == -1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(-1, 0);
             _isMove = true;
         }
 
-        if ((GetMapData(_startX, (_startY * -1) - 1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _yBool == 1)
+        if ((GetMapData(_startX, (_startY * -1) - 1) == 1 || GetMapData(_startX + _xBool, (_startY * -1) - 1) == 3) && !_isMove && _yBool == 1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(0, 1);
             _isMove = true;
         }
 
-        if ((GetMapData(_startX, (_startY * -1) + 1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _yBool == -1)
+        if ((GetMapData(_startX, (_startY * -1) + 1) == 1 || GetMapData(_startX + _xBool, (_startY * -1) + 1) == 3) && !_isMove && _yBool == -1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(0, -1);
             _isMove = true;
