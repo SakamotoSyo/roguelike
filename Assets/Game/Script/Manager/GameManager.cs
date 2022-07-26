@@ -29,8 +29,6 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     [Tooltip("アイテムのゲームオブジェクトをリストで管理する")]
     private List<GameObject> _itemObjList = new List<GameObject>();
-    [Tooltip("TextLogを格納するList")]
-    private List<String> _logList = new List<string>();
 
     [Tooltip("ダンジョンにいる敵の総数")]
     private int _totalEnemyNum;
