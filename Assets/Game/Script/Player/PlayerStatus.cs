@@ -41,7 +41,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     private List<Item> _playerItemList;
     [SerializeField, Header("ItemDateBase")]
     private ItemDataBase _itemDataBase;
-
+    /// <summary>levelが変わった時に通知する</summary>
     public event Action<int> OnLevelChanged;
 
     void Start()
@@ -61,6 +61,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     {
         _playerLevel = level;
         OnLevelChanged(level);
+        Debug.Log("このメソッドが呼ばれました");
     }
 
     /// <summary>
