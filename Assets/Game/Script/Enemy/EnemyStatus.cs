@@ -91,7 +91,12 @@ public class EnemyStatus : MonoBehaviour,IDamageble
         if (obj == _gameManager.PlayerObj)
         {
             var data = new EnemyStatusData(_enemyName, _enemyExp);
+            //EnemyManagerからEnemyBaseの参照を削除する
+            EnemyManager.Instance.RemoveEnemyData(this.gameObject);
+            //プレイヤーがリザルトに使うデータを渡す
             EnemyManager.Instance.SetEnemyStatusList(data);
+            //自分自身をDestroyする
+            Destroy(this.gameObject);
         }
     }
 }
