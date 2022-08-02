@@ -36,6 +36,8 @@ public class PlayerAttack : MonoBehaviour
                     LogScript.Instance.OutPutLog("攻撃の処理が成功した");
                     //アニメーションの処理を入れる
                     i.GetComponent<IDamageble>().AddDamage(_playerStatus.Power, this.gameObject);
+                    //ダメージを与え終わったら処理を終える
+                    break;
 
                 }
             }
