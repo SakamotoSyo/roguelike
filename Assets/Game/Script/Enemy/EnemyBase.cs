@@ -150,6 +150,7 @@ public abstract class EnemyBase : MonoBehaviour
             _yBool = 0;
         }
 
+        //通常の移動
         if ((GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(_xBool, _yBool);
@@ -220,6 +221,15 @@ public abstract class EnemyBase : MonoBehaviour
     private int GetMapData(int x, int y) 
     {
         return _generatorIns.Layer.GetMapData(x, y);
+    }
+
+    /// <summary>
+    ///このスクリプトがついているGameObjectを返す
+    /// </summary>
+    /// <returns></returns>
+    public GameObject GetThisScriptObj() 
+    {
+        return this.gameObject;
     }
 
   
