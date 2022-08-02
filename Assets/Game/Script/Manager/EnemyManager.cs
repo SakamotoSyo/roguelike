@@ -17,6 +17,10 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     private List<EnemyBase> _enemyBaseList = new List<EnemyBase>();
     public List<EnemyBase> EnemyBaseList => _enemyBaseList;
 
+    [Tooltip("EnemyのGameObjectリスト")]
+    private List<GameObject> _enemyGameObjList = new List<GameObject>();
+    public List<GameObject> EnemyGameObjList => _enemyGameObjList;
+
     [Tooltip("EnemyStatusのリスト")]
     private List<EnemyStatusData> _enemyStatusDataList = new List<EnemyStatusData>();
     public List<EnemyStatusData> EnemyStatusList => _enemyStatusDataList;
@@ -97,7 +101,7 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     /// </summary>
     private void PlayerGetExp()
     {
-        if (_playerStatus == null) 
+        if (_playerStatus == null)
         {
             _playerStatus = GameManager.Instance.PlayerObj.GetComponent<PlayerStatus>();
         }
@@ -122,9 +126,9 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
             _playerStatus.SetExp(_playerStatus.EXP - remainingExp);
         }
 
+        //経験値を獲得し終わったのでListを初期化
         _enemyStatusDataList.Clear();
         _gameManager.TurnType = GameManager.TurnManager.Enemy;
-        //_gameManager.TurnType = GameManager.TurnManager.Enemy;
     }
 
     /// <summary>
@@ -165,8 +169,31 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
         _enemyBaseList.Add(enemyBase);
     }
 
+    /// <summary>
+    /// プレイヤーがのリザルトが行われているときに使うデータ
+    /// </summary>
+    /// <param name="enemyStatus"></param>
     public void SetEnemyStatusList(EnemyStatusData enemyStatus)
     {
         _enemyStatusDataList.Add(enemyStatus);
+    }
+
+    /// <summary>
+    /// 指定したEnemyに関するデータを削除する
+    /// </summary>
+    /// <param name="gameObject">指定するGameObject</param>
+    public void RemoveEnemyData(GameObject gameObject)
+    {
+        foreach (var i in _enemyBaseList)
+        {
+            var EnemyObj = i.GetThisScriptObj();
+
+            if (gameObject == EnemyObj)
+            {
+                _generator.Layer.SetData((int)EnemyObj.transform.position.x, (int)EnemyObj.transform.position.y * -1, 1);
+                _enemyBaseList.Remove(i);
+                break;
+            }
+        }
     }
 }
