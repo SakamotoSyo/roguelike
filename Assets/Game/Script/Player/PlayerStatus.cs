@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UniRx;
 
 public class PlayerStatus : MonoBehaviour, IDamageble
 {
@@ -10,8 +11,12 @@ public class PlayerStatus : MonoBehaviour, IDamageble
 
     /// <summary>現在のレベルを返す</summary>
     public int Level => _playerLevel;
+    ///// <summary>現在の最大HPを返す</summary>
+    //public float MaxHp => _maxHp;
+    ///// <summary>現在のHPを返す</summary>
+    //public float PlayerHp => _playerHp;
     /// <summary>現在の攻撃力を返す</summary>
-    public float Power => _power;
+    public float Power => _playerPower;
     /// <summary>レベルアップまでの経験値を返す</summary>
     public float EXP => _playerExp;
     /// <summary> 装備している武器を返す</summary>
@@ -24,11 +29,11 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     [Header("現在のレベル")]
     [SerializeField] private int _playerLevel = 1;
     [SerializeField, Header("最大HP")]
-    private int _maxHp;
+    private float _setmaxHp;
     [SerializeField, Header("HP")]
     private float _playerHp;
     [SerializeField, Header("攻撃力")]
-    private float _power;
+    private float _playerPower;
     [Header("レベルアップまでの残り経験値")]
     private float _playerExp;
     [SerializeField, Header("行動の回数")]
@@ -41,28 +46,50 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     private List<Item> _playerItemList;
     [SerializeField, Header("ItemDateBase")]
     private ItemDataBase _itemDataBase;
+    [SerializeField, Header("LevelUpDataScript")]
+    private LevelDataScript _levelDataScript;
     /// <summary>levelが変わった時に通知する</summary>
     public event Action<int> OnLevelChanged;
+
+    public float MaxHp { get => _maxHp.Value; set => _maxHp.Value = value; }
+    public IObservable<float> MaxChanged => _maxHp;
+    private readonly ReactiveProperty<float> _maxHp = new ReactiveProperty<float>();
+
+    public float CurrentHp { get => _currentHp.Value; set => _currentHp.Value = value; }
+    public IObservable<float> CurrentChanged => _currentHp;
+    private readonly ReactiveProperty<float> _currentHp = new ReactiveProperty<float>();
+
+    void Awake()
+    {
+        Debug.Log($"{_maxHp.Value}に{_setmaxHp}をセット");
+        _maxHp.Value = _setmaxHp;
+        _currentHp.Value = _playerHp;
+    }
 
     void Start()
     {
         _gameManager = GameManager.Instance;
     }
 
-    private void Update()
-    {
-
-    }
-
     /// <summary>
     /// 現在のレベルを変更できる
     /// </summary>
-    public void SetLevel(int level) 
+    public void LevelUpSetData(int level)
     {
         _playerLevel = level;
+        //レベルアップしたことを通知する
         OnLevelChanged(level);
+        //レベルアップしたステータスデータを取得する
+        PlayerStatsData LevelUpData = _levelDataScript.GetLevelStatus(level);
+
+        //レベルアップしたデータをセット
+        //_maxHp = LevelUpData.Maxhp;
+        _playerPower = LevelUpData.Attack;
+        _playerExp = LevelUpData.Exp;
+
         Debug.Log("このメソッドが呼ばれました");
     }
+
 
     /// <summary>
     /// Hpの値を変更する
@@ -70,7 +97,10 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     /// <param name=""></param>
     public void SetHp(float value)
     {
-        _playerHp = Mathf.Min(_playerHp += value, _maxHp);
+        // 値を引き出す・書き換える際はValueプロパティを参照すること
+        float _next = _currentHp.Value;
+        _next = Mathf.Min(_next += value, MaxHp);
+        _currentHp.Value = _next;
     }
 
     /// <summary>
@@ -80,7 +110,15 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     public void AddDamage(float damage, GameObject obj)
     {
         LogScript.Instance.OutPutLog($"{damage}のダメージを受けた");
-        _playerHp -= damage;
+        // 値を引き出す・書き換える際はValueプロパティを参照すること
+        float _next = _currentHp.Value;
+        _next -= damage;
+        if (_next < 0)
+        {
+            //死ぬときの処理
+        }
+
+        _currentHp.Value = _next;
     }
 
     /// <summary>
