@@ -75,8 +75,8 @@ public abstract class EnemyBase : MonoBehaviour
         _startX = (int)transform.position.x;
         _startY = (int)transform.position.y;
 
-        _goalX = (int)_gameManager.PlayerX;
-        _goalY = -1 * (int)_gameManager.PlayerY;
+        _goalX = _gameManager.PlayerX;
+        _goalY = -1 * _gameManager.PlayerY;
 
         //UŒ‚‚Å‚«‚é‚©‚Ç‚¤‚©Šm”F‚·‚é
         for (int i = 0; i < 3; i++)
@@ -114,7 +114,7 @@ public abstract class EnemyBase : MonoBehaviour
         if (transform.position == _nextPosition)
         {
             Debug.Log("EnemyActionEnd");
-            _generatorIns.Layer.SetData((int)Mathf.Floor(transform.position.x), (int)Mathf.Floor(transform.position.y) * -1, 2);
+            _generatorIns.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, 2);
             _isMove = false;
             _enemyManager.EnemyActionEnd = false;
         }
@@ -157,13 +157,13 @@ public abstract class EnemyBase : MonoBehaviour
             _isMove = true;
         }
         //Y²‚ª“¯‚¶‚Æ‚«X²•ûŒü‚É‚¾‚¯“®‚­
-        if ((GetMapData(_startX + _xBool, _startY * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _yBool == 0)
+        else if ((GetMapData(_startX + _xBool, _startY * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _yBool == 0)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(_xBool, 0);
             _isMove = true;
         }
         //X²‚ª“¯‚¶‚Æ‚«Y•ûŒü‚É‚¾‚¯“®‚­
-        if ((GetMapData(_startX, _startY + _yBool * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == 0)
+        else if ((GetMapData(_startX, _startY + _yBool * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == 0)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(0, _yBool);
             _isMove = true;
@@ -175,20 +175,17 @@ public abstract class EnemyBase : MonoBehaviour
             _nextPosition = (Vector2)transform.position + new Vector2(1, 0);
             _isMove = true;
         }
-
-        if ((GetMapData(_startX - 1, _startY * -1) == 1 || GetMapData(_startX - 1, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == -1)
+        else if ((GetMapData(_startX - 1, _startY * -1) == 1 || GetMapData(_startX - 1, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == -1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(-1, 0);
             _isMove = true;
         }
-
-        if ((GetMapData(_startX, (_startY * -1) - 1) == 1 || GetMapData(_startX + _xBool, (_startY * -1) - 1) == 3) && !_isMove && _yBool == 1)
+        else if ((GetMapData(_startX, (_startY * -1) - 1) == 1 || GetMapData(_startX + _xBool, (_startY * -1) - 1) == 3) && !_isMove && _yBool == 1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(0, 1);
             _isMove = true;
         }
-
-        if ((GetMapData(_startX, (_startY * -1) + 1) == 1 || GetMapData(_startX + _xBool, (_startY * -1) + 1) == 3) && !_isMove && _yBool == -1)
+        else if ((GetMapData(_startX, (_startY * -1) + 1) == 1 || GetMapData(_startX + _xBool, (_startY * -1) + 1) == 3) && !_isMove && _yBool == -1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(0, -1);
             _isMove = true;
