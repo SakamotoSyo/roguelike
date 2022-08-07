@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1788830347933081623}
   m_RootOrder: 0
@@ -89,6 +90,7 @@ GameObject:
   - component: {fileID: 9210650128385113044}
   - component: {fileID: 7370070937039247821}
   - component: {fileID: 426832329409863320}
+  - component: {fileID: 9059232620902451320}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -106,6 +108,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 144807505786852639}
   m_Father: {fileID: 0}
@@ -122,6 +125,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -240,9 +244,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f0328eb430a7c44e98f7e1fb44a5590, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHp: 100
+  _playerLevel: 1
+  _setmaxHp: 100
   _playerHp: 50
-  _power: 10
+  _playerPower: 10
   _actionNum: 1
   _weaponEquip: {fileID: 0}
   _shieldEquip: {fileID: 0}
@@ -251,3 +256,17 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6f59d48487b6f504da02368eded4dbdb, type: 2}
   - {fileID: 11400000, guid: 6f59d48487b6f504da02368eded4dbdb, type: 2}
   _itemDataBase: {fileID: 11400000, guid: c17f6cdd936d48c46be93f5f8809a761, type: 2}
+  _levelDataScript: {fileID: 9059232620902451320}
+--- !u!114 &9059232620902451320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8775949274584404235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5693e189d45849408d26722373efcfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _levelUpTable: {fileID: 4900000, guid: 35cce23e820d08a4795dda6f0a027120, type: 3}
