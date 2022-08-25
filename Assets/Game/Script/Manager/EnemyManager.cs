@@ -118,9 +118,9 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
                 remainingExp -= _playerStatus.EXP;
                 //レベルアップさせるための処理
                 //プレイヤーを1LevelUpさせる
-                _playerStatus.SetLevel(_playerStatus.Level + 1);
+                _playerStatus.LevelUpSetData(_playerStatus.Level + 1);
 
-                _playerStatus.SetExp(50);
+                //_playerStatus.SetExp(50);
             }
 
             _playerStatus.SetExp(_playerStatus.EXP - remainingExp);
