@@ -91,6 +91,7 @@ GameObject:
   - component: {fileID: 7370070937039247821}
   - component: {fileID: 426832329409863320}
   - component: {fileID: 9059232620902451320}
+  - component: {fileID: 3427604113966133434}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -206,6 +207,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerMoveCs: {fileID: 7370070937039247821}
   _playerAttackCs: {fileID: 9210650128385113044}
+  _afterActionTime: 0.2
 --- !u!114 &9210650128385113044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,6 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7937e46df5e0dc2418cdf205c4029f77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _afterActionTime: 0.1
 --- !u!114 &426832329409863320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,3 +273,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _levelUpTable: {fileID: 4900000, guid: 35cce23e820d08a4795dda6f0a027120, type: 3}
+--- !u!114 &3427604113966133434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8775949274584404235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c12ec166037dd46428e3cd11d187123e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerStatus: {fileID: 426832329409863320}
