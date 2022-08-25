@@ -47,10 +47,11 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     [SerializeField, Header("ItemDateBase")]
     private ItemDataBase _itemDataBase;
     [SerializeField, Header("LevelUpDataScript")]
-    private LevelDataScript _levelDataScript;
+    private LevelManager _levelDataScript;
     /// <summary>levelが変わった時に通知する</summary>
     public event Action<int> OnLevelChanged;
 
+    /// <summary>MVPパターンにおけるModelクラス</summary>
     public float MaxHp { get => _maxHp.Value; set => _maxHp.Value = value; }
     public IObservable<float> MaxChanged => _maxHp;
     private readonly ReactiveProperty<float> _maxHp = new ReactiveProperty<float>();
@@ -83,7 +84,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
         PlayerStatsData LevelUpData = _levelDataScript.GetLevelStatus(level);
 
         //レベルアップしたデータをセット
-        //_maxHp = LevelUpData.Maxhp;
+        _setmaxHp = LevelUpData.Maxhp;
         _playerPower = LevelUpData.Attack;
         _playerExp = LevelUpData.Exp;
 

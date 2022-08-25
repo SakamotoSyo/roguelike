@@ -8,6 +8,6 @@ public class testUiView : MonoBehaviour
     [SerializeField] testUiView _hpProgress;
     [SerializeField] testUiView _ManpukuProgress;
 
-    [SerializeField] TestUiModel _testUiModel;
+    //[SerializeField] TestUiModel _testUiModel;
 
 }
