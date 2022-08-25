@@ -12,6 +12,7 @@ public class GameManager : SingletonBehaviour<GameManager>
         Enemy,
         LogOpen,
         Result,
+        WaitTurn,
     }
 
     public TurnManager TurnType;
