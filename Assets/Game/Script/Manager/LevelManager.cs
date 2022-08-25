@@ -8,7 +8,7 @@ public class LevelManager : MonoBehaviour
     [Header("レベルアップデータ")]
     [SerializeField] private TextAsset _levelUpTable;
 
-    private Dictionary<int, PlayerStatsData> _statusData;
+    private Dictionary<int, PlayerStatsData> _statusData = new Dictionary<int, PlayerStatsData>();
 
     private void Awake()
     {
@@ -32,8 +32,7 @@ public class LevelManager : MonoBehaviour
                 break;
             }
 
-            string[] parts = line.Split(' ');
-
+            string[] parts = line.Split(',');
             int level = int.Parse(parts[0]);
             PlayerStatsData stats = new PlayerStatsData(level, float.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
             _statusData.Add(level, stats);
