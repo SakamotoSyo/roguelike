@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
+using System;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -11,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] PlayerMove _playerMoveCs;
     [Header("PlayerAttackのスクリプト")]
     [SerializeField] PlayerAttack _playerAttackCs;
- 
+
     void Awake()
     {
         _gameManager = GameManager.Instance;
@@ -23,14 +25,8 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (_gameManager.TurnType == GameManager.TurnManager.Player)
-        {
-            //移動の入力処理
-            _playerMoveCs.MoveInputKey();
-            //プレイヤーの攻撃処理
-            _playerAttackCs.Attack();
-        }
-        else if (_gameManager.TurnType == GameManager.TurnManager.LogOpen)
+       
+        if (_gameManager.TurnType == GameManager.TurnManager.LogOpen)
         {
 
         }
@@ -45,4 +41,14 @@ public class PlayerMovement : MonoBehaviour
              
     }
 
+    void FixedUpdate()
+    {
+        if (_gameManager.TurnType == GameManager.TurnManager.Player)
+        {
+            //移動の入力処理
+            _playerMoveCs.MoveInputKey();
+            //プレイヤーの攻撃処理
+            _playerAttackCs.Attack();
+        }
+    }
 }
