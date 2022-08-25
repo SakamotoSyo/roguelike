@@ -98,6 +98,8 @@ public class EnemyStatus : MonoBehaviour,IDamageble
             //©•ª©g‚ğDestroy‚·‚é
             Destroy(this.gameObject);
         }
+
+        EnemyManager.Instance.SetTotalEnemyNum(-1);
     }
 }
 
