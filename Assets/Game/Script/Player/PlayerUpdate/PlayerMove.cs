@@ -1,9 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using Cysharp.Threading.Tasks;
 
 public class PlayerMove : MonoBehaviour
 {
+
+    [Header("行動した後のWaitTime")]
+    [SerializeField] float _afterActionTime;
+
     [Tooltip("GameManegerのインスタンス")]
     private GameManager _gameManager;
 
@@ -27,7 +33,7 @@ public class PlayerMove : MonoBehaviour
     /// <summary>
     /// 移動の入力処理
     /// </summary>
-    public void MoveInputKey()
+    public async void MoveInputKey()
     {
         //_countTime = 0;
         var x = Input.GetAxisRaw("Horizontal");
@@ -56,6 +62,10 @@ public class PlayerMove : MonoBehaviour
 
                 //移動処理
                 transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
+
+                _gameManager.TurnType = GameManager.TurnManager.WaitTurn;
+
+                await TestWait();
 
                 //行動が終わったのでターンフェーズを変える
                 _gameManager.TurnType = GameManager.TurnManager.Enemy;
@@ -133,4 +143,11 @@ public class PlayerMove : MonoBehaviour
             }
         }
     }
+
+    async UniTask TestWait()
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(_afterActionTime));
+    }
+
+
 }
