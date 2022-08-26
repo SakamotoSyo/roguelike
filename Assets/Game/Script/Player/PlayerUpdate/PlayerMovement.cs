@@ -25,8 +25,12 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
-       
-        if (_gameManager.TurnType == GameManager.TurnManager.LogOpen)
+        if (_gameManager.TurnType == GameManager.TurnManager.Player)
+        {
+            //ƒvƒŒƒCƒ„[‚ÌUŒ‚ˆ—
+            _playerAttackCs.Attack();
+        }
+        else if (_gameManager.TurnType == GameManager.TurnManager.LogOpen)
         {
 
         }
