@@ -3045,7 +3045,7 @@ MonoBehaviour:
   _enemyPrefab: {fileID: 86419446158578205, guid: bd7a3628ea032544f9e8e910c9b148bc, type: 3}
   EnemyActionCountNum: 0
   EnemyActionEnd: 0
-  _totalEnemyNum: 5
+  _totalEnemyNum: 1
 --- !u!1 &1411577967
 GameObject:
   m_ObjectHideFlags: 0
@@ -4060,9 +4060,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7370070937039247821, guid: 09ae0a9fb3cb27d41b2c7ab0adcb9238, type: 3}
+      propertyPath: _moveTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8775949274584404235, guid: 09ae0a9fb3cb27d41b2c7ab0adcb9238, type: 3}
       propertyPath: m_Name
       value: PlayerPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 8775949274584404235, guid: 09ae0a9fb3cb27d41b2c7ab0adcb9238, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09ae0a9fb3cb27d41b2c7ab0adcb9238, type: 3}
