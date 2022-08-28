@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Cysharp.Threading.Tasks;
+using System;
 
 public class PlayerBase : MonoBehaviour
 {
 
     [Header("PlayerStatus")]
     [SerializeField] private PlayerStatus _playerStatus;
+
+    [Header("行動した後のWaitTime")]
+    [SerializeField] float _afterActionTime;
 
     [Tooltip("ゲームマネージャー")]
     private GameManager _gameManagerIns;
@@ -42,6 +46,11 @@ public class PlayerBase : MonoBehaviour
     }
     private void Update()
     {
+      
+    }
+
+    void FixedUpdate()
+    {
         if (_gameManagerIns.TurnType == GameManager.TurnManager.Player)
         {
             Attack();
@@ -50,9 +59,9 @@ public class PlayerBase : MonoBehaviour
         {
             MoveInputKey();
         }
-        if (_gameManagerIns.TurnType == GameManager.TurnManager.Result) 
+        if (_gameManagerIns.TurnType == GameManager.TurnManager.Result)
         {
-            
+
         }
         _countTime += Time.deltaTime;
     }
@@ -60,7 +69,7 @@ public class PlayerBase : MonoBehaviour
     /// <summary>
     /// 移動の入力処理
     /// </summary>
-    private void MoveInputKey()
+    private async void MoveInputKey()
     {
         _countTime = 0;
         var x = Input.GetAxisRaw("Horizontal");
@@ -90,6 +99,8 @@ public class PlayerBase : MonoBehaviour
                 //移動処理
                 transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
 
+                //指定した秒数分Waitを入れる
+                await TestWait();
                 //行動が終わったのでターンフェーズを変える
                 _gameManagerIns.TurnType = GameManager.TurnManager.Enemy;
                 Debug.Log("味方の行動が終わりました");
@@ -203,6 +214,11 @@ public class PlayerBase : MonoBehaviour
 
             }
         }
+    }
+
+    async UniTask TestWait() 
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(_afterActionTime));
     }
 
     /// <summary>

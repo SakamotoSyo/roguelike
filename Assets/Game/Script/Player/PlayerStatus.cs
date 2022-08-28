@@ -123,7 +123,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     }
 
     /// <summary>
-    /// 経験値の取得する処理を行うメソッド
+    /// 経験値の総量を変更する処理を行うメソッド
     /// </summary>
     /// <param name="expPoint"></param>
     public void SetExp(float expPoint)
