@@ -10,6 +10,12 @@ public class PlayerMove : MonoBehaviour
     [Header("行動した後のWaitTime")]
     [SerializeField] float _afterActionTime;
 
+    [Header("どのくらい刻んで移動させるか")]
+    [SerializeField] float _moveTime;
+
+    [Header("Animatorコンポーネント")]
+    [SerializeField] Animator _anim; 
+
     [Tooltip("GameManegerのインスタンス")]
     private GameManager _gameManager;
 
@@ -61,7 +67,8 @@ public class PlayerMove : MonoBehaviour
                 _gameManager.SetPlayerPosition((int)x, (int)y * -1);
 
                 //移動処理
-                transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
+                StartCoroutine(TestMove(_nextPosition, x, y));
+                //transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
 
                 _gameManager.TurnType = GameManager.TurnManager.WaitTurn;
 
@@ -143,6 +150,33 @@ public class PlayerMove : MonoBehaviour
             }
         }
     }
+
+
+    IEnumerator TestMove(Vector3 next, float inputX, float inputY)
+    {
+        float t = 0;
+        _anim.SetBool("Move", true);
+        _anim.SetFloat("x", inputX);
+        _anim.SetFloat("y", inputY);
+        while (true) 
+        {
+            yield return new WaitForSeconds(0.02f);
+            t += _moveTime;
+            //移動処理
+            transform.position = Vector3.Lerp(transform.position, _nextPosition, t);
+            if (t >= 1) 
+            {
+                _anim.SetBool("Move", false);
+                _anim.SetFloat("x", 0);
+                _anim.SetFloat("y", 0);
+                //ズレを微調整
+                transform.position = Vector3.Lerp(transform.position, _nextPosition, 1); 
+                break;
+            }
+        }
+        yield return null;
+    }
+
 
     async UniTask TestWait()
     {
