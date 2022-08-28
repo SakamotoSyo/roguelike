@@ -7,11 +7,17 @@ using Cysharp.Threading.Tasks;
 public class PlayerMove : MonoBehaviour
 {
 
-    [Header("行動した後のWaitTime")]
-    [SerializeField] float _afterActionTime;
+    [Header("歩いた後のWaitTime")]
+    [SerializeField] float _afterWalkActionTime;
 
-    [Header("どのくらい刻んで移動させるか")]
-    [SerializeField] float _moveTime;
+    [Header("走った後のWaitTime")]
+    [SerializeField] float _afterRunActionTime;
+
+    [Header("歩くスピード")]
+    [SerializeField] float _walkSpeed;
+
+    [Header("走るスピード")]
+    [SerializeField] float _runSpeed;
 
     [Header("Animatorコンポーネント")]
     [SerializeField] Animator _anim; 
@@ -55,7 +61,7 @@ public class PlayerMove : MonoBehaviour
                 _playerDirection = new Vector3(x, y, 0);
 
                 //ゲームマネージャーでプレイヤーがどの部屋にいるか判定するi
-                // _gameManagerIns.SetPlayerRoomNum((int)(transform.position.x + x)　, (int)(transform.position.y + y) * -1);
+                //_gameManagerIns.SetPlayerRoomNum((int)(transform.position.x + x)　, (int)(transform.position.y + y) * -1);
 
                 //アイテムが足元に落ちていないかどうか
                 ItemJudge(x, y);
@@ -151,17 +157,28 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// 試験的にアニメーションを入れた移動処理の追加
+    /// </summary>
+    /// <param name="next">次に目指す場所</param>
+    /// <param name="inputX">x軸の入力値</param>
+    /// <param name="inputY">ｙ軸の入力値</param>
+    /// <returns></returns>
     IEnumerator TestMove(Vector3 next, float inputX, float inputY)
     {
         float t = 0;
+        float runSpeed = 1;
+        if (Input.GetButton("Dash")) 
+        {
+           runSpeed = _runSpeed;
+        }
         _anim.SetBool("Move", true);
         _anim.SetFloat("x", inputX);
         _anim.SetFloat("y", inputY);
-        while (true) 
+        while (true)
         {
             yield return new WaitForSeconds(0.02f);
-            t += _moveTime;
+            t += _walkSpeed * runSpeed;
             //移動処理
             transform.position = Vector3.Lerp(transform.position, _nextPosition, t);
             if (t >= 1) 
@@ -180,7 +197,12 @@ public class PlayerMove : MonoBehaviour
 
     async UniTask TestWait()
     {
-        await UniTask.Delay(TimeSpan.FromSeconds(_afterActionTime));
+        var t = _afterWalkActionTime;
+        if (Input.GetButton("Dash")) 
+        {
+            t = _afterRunActionTime;
+        }
+        await UniTask.Delay(TimeSpan.FromSeconds(t));
     }
 
 
