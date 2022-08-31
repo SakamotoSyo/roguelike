@@ -6,6 +6,8 @@ using Cysharp.Threading.Tasks;
 
 public class PlayerMove : MonoBehaviour
 {
+    [Header("PlayerMoveMent")]
+    [SerializeField] PlayerMovement _playerMovement;
 
     [Header("歩いた後のWaitTime")]
     [SerializeField] float _afterWalkActionTime;
@@ -20,7 +22,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] float _runSpeed;
 
     [Header("Animatorコンポーネント")]
-    [SerializeField] Animator _anim; 
+    [SerializeField] Animator _anim;
 
     [Tooltip("GameManegerのインスタンス")]
     private GameManager _gameManager;
@@ -53,6 +55,7 @@ public class PlayerMove : MonoBehaviour
         //シフトを押しているときは移動できなくする
         if (!Input.GetButton("Lock"))
         {
+   
             _isMoving = judgeMove((int)x, (int)y);
             //移動先に障害物がないかどうか
             if (_isMoving && (x != 0 || y != 0))
@@ -70,7 +73,7 @@ public class PlayerMove : MonoBehaviour
                 _nextPosition = transform.position + new Vector3(x, y, 0);
 
                 //ゲームマネージャーにプレイヤーの場所を渡す
-                _gameManager.SetPlayerPosition((int)x, (int)y * -1);
+                _gameManager.SetPlayerPosition((int)transform.position.x + (int)x, ((int)transform.position.y + (int)y) * -1);
 
                 //移動処理
                 StartCoroutine(TestMove(_nextPosition, x, y));
@@ -111,19 +114,23 @@ public class PlayerMove : MonoBehaviour
     /// <returns></returns>
     private bool judgeMove(int x, int y)
     {
+        if (x == 0 && y == 0) return false;
         //マップデータにアクセス
         int value = DgGenerator.Instance.Layer.GetMapData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1);
 
-        // Debug.Log(value);
-
         //0は壁、1は道
-        if (value == 0)
+        if (value == MapNum.WallNum)
         {
             return false;
 
         }
-        else if (value == 1 || value == 3)
+        else if (value == MapNum.LoadNum || value == MapNum.ItemNum)
         {
+            return true;
+        }
+        else if (value == MapNum.StairNum)
+        {
+            _playerMovement.StairCheck(true);
             return true;
         }
 
@@ -168,9 +175,10 @@ public class PlayerMove : MonoBehaviour
     {
         float t = 0;
         float runSpeed = 1;
-        if (Input.GetButton("Dash")) 
+        //Debug.Log($"次の目的地は{next}");
+        if (Input.GetButton("Dash"))
         {
-           runSpeed = _runSpeed;
+            runSpeed = _runSpeed;
         }
         _anim.SetBool("Move", true);
         _anim.SetFloat("x", inputX);
@@ -181,13 +189,11 @@ public class PlayerMove : MonoBehaviour
             t += _walkSpeed * runSpeed;
             //移動処理
             transform.position = Vector3.Lerp(transform.position, _nextPosition, t);
-            if (t >= 1) 
+            if (t >= 1)
             {
                 _anim.SetBool("Move", false);
-                _anim.SetFloat("x", 0);
-                _anim.SetFloat("y", 0);
                 //ズレを微調整
-                transform.position = Vector3.Lerp(transform.position, _nextPosition, 1); 
+                transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
                 break;
             }
         }
@@ -198,7 +204,7 @@ public class PlayerMove : MonoBehaviour
     async UniTask TestWait()
     {
         var t = _afterWalkActionTime;
-        if (Input.GetButton("Dash")) 
+        if (Input.GetButton("Dash"))
         {
             t = _afterRunActionTime;
         }
