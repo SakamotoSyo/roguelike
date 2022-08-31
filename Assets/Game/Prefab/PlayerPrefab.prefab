@@ -260,6 +260,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerMoveCs: {fileID: 7370070937039247821}
   _playerAttackCs: {fileID: 9210650128385113044}
+  FindStairs: 0
 --- !u!114 &9210650128385113044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,6 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7937e46df5e0dc2418cdf205c4029f77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerMovement: {fileID: 6862555252454645813}
   _afterWalkActionTime: 0.5
   _afterRunActionTime: 0.05
   _walkSpeed: 0.2
