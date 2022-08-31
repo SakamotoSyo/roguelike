@@ -42,14 +42,22 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     private DgGenerator _dgGenerator;
 
+    protected override void OnAwake() 
+    {
+       
+    }
+
     private void Start()
     {
         _dgGenerator = DgGenerator.Instance;
+        _dgGenerator.MapNotice += MapInit;
     }
 
-    private void Update()
+    /// <summary>マップの再生成による初期化</summary>
+    void MapInit() 
     {
-       
+        _itemObjList.Clear();
+        _playerObj = null;
     }
 
     /// <summary>
@@ -59,8 +67,8 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// <param name="y">y座標</param>
     public void SetPlayerPosition(int x, int y)
     {
-        _playerX += x;
-        _playerY += y;
+        _playerX = x;
+        _playerY = y;
     }
 
     /// <summary>
@@ -98,7 +106,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         _itemObjList.Remove(ItemObj);
     }
-
 
     /// <summary>
     /// レベルアップしたときに呼ばれる

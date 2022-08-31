@@ -53,6 +53,7 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     {
         _generator = DgGenerator.Instance;
         _gameManager = GameManager.Instance;
+        _generator.MapNotice += MapInit;
     }
 
     void Update()
@@ -75,6 +76,14 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
             }
         }
 
+    }
+
+    /// <summary>ƒ}ƒbƒv‚ÌÄ¶¬‚É‚æ‚é‰Šú‰»</summary>
+    void MapInit() 
+    {
+        _enemyBaseList.Clear();
+        _enemyGameObjList.Clear();
+        _nowTotalEnemyNum = 0;
     }
 
     /// <summary>
@@ -138,6 +147,7 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     {
         if (_totalEnemyNum > _nowTotalEnemyNum && _generator.MapGenerateEnd)
         {
+            Debug.Log("“G‚ğ¶¬‚µ‚Ü‚µ‚½");
             _generator.Generatesomething(_enemyPrefab);
         }
     }
