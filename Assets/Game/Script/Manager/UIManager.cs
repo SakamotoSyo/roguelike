@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
         UseItemSelect,
         ItemInfomationPanel,
         ShowText,
+        StairPanel,
 
     }
 
@@ -43,6 +44,9 @@ public class UIManager : MonoBehaviour
 
     [SerializeField, Header("ItemInfomationPanelのオブジェクト")]
     private GameObject _itemInforPanel;
+
+    [SerializeField, Header("StairPanelのObject")]
+    private GameObject _stairPanel;
 
     [SerializeField, Header("ItemInformationのText")]
     private Text _itemInfoText;
@@ -77,8 +81,7 @@ public class UIManager : MonoBehaviour
 
     /// <summary>現在のUIType</summary>
     private UIType _uiType;
-
-
+ 
     // Start is called before the first frame update
     void Start()
     {
@@ -157,6 +160,12 @@ public class UIManager : MonoBehaviour
             else if (_uiType == UIType.ItemInfomationPanel)
             {
                 _itemInforPanel.SetActive(false);
+                _gameManager.TurnType = GameManager.TurnManager.Player;
+                _uiType = UIType.Normal;
+            }
+            else if (_uiType == UIType.StairPanel) 
+            {
+                _stairPanel.SetActive(false);
                 _gameManager.TurnType = GameManager.TurnManager.Player;
                 _uiType = UIType.Normal;
             }
@@ -276,9 +285,10 @@ public class UIManager : MonoBehaviour
         }
 
         _useItemSelectPanel.SetActive(true);
+        Debug.Log("Select");
         _itemGroupCanvasGroup.interactable = false;
         EventSystem.current.SetSelectedGameObject(_useItemSelectPanel.transform.GetChild(0).gameObject);
-        //石井拓斗
+ 
         _uiType = UIType.UseItemSelect;
     }
 
@@ -477,5 +487,15 @@ public class UIManager : MonoBehaviour
 
         _itemInforPanel.SetActive(true);
         _itemInfoText.text = st;
+    }
+
+    /// <summary>階段に関するUIを表示させる処理</summary>
+    public void StairUI() 
+    {
+      
+        _uiType = UIType.StairPanel;
+
+        _stairPanel.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(_stairPanel.transform.GetChild(0).gameObject);
     }
 }
