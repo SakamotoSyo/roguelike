@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 //メモ
 //シングルトンはグローバルなアクセスポイントを提供するもの
@@ -11,30 +12,30 @@ using UnityEngine;
 
 public class SingletonBehaviour<T> : MonoBehaviour where T : MonoBehaviour
 {
-    private static T _instance;
+    protected static T _instance;
 
     //カプセル化
-    public static T Instance => _instance;
+    // public static T Instance => _instance;
 
     //チーム制作の時はこう書いたほうがいい
-    //public static T Instance 
-    //{
-    //    get 
-    //    {
-    //        if (_instance == null) 
-    //        {
-    //            Type t = typeof(T);
-    //            Instance = (T)FindObjectOfType<t>;
+    public static T Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Type t = typeof(T);
+                _instance = (T)FindObjectOfType(t);
 
-    //            if(_instance == null) 
-    //            {
-    //                Debug.LogError($"{t}をアタッチしているGameObjectがありません");
-    //            }
-    //        }
+                if (_instance == null)
+                {
+                    Debug.LogError($"{t}をアタッチしているGameObjectがありません");
+                }
+            }
 
-    //        return _instance;
-    //    }
-    //}
+            return _instance;
+        }
+    }
 
     protected virtual void Awake()
     {

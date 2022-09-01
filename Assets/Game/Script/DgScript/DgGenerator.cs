@@ -517,7 +517,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
 
 }
 
-public static class MapNum 
+public class MapNum 
 {
     /// <summary>•Ç</summary>
     public const int WallNum = 0;

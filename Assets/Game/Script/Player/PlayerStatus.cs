@@ -47,7 +47,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     [SerializeField, Header("ItemDateBase")]
     private ItemDataBase _itemDataBase;
     [SerializeField, Header("LevelUpDataScript")]
-    private LevelManager _levelDataScript;
+    private LevelDataScript _levelDataScript;
     /// <summary>levelが変わった時に通知する</summary>
     public event Action<int> OnLevelChanged;
 
@@ -81,10 +81,12 @@ public class PlayerStatus : MonoBehaviour, IDamageble
         //レベルアップしたことを通知する
         OnLevelChanged(level);
         //レベルアップしたステータスデータを取得する
-        PlayerStatsData LevelUpData = _levelDataScript.GetLevelStatus(level);
+        PlayerStatusData LevelUpData = _levelDataScript.GetLevelStatus(level);
 
         //レベルアップしたデータをセット
-        _setmaxHp = LevelUpData.Maxhp;
+        float next = _maxHp.Value;
+        next = LevelUpData.Maxhp;
+        _maxHp.Value = next;
         _playerPower = LevelUpData.Attack;
         _playerExp = LevelUpData.Exp;
 

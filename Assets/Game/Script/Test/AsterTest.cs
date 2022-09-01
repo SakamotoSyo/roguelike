@@ -6,6 +6,10 @@ using System;
 //Astarノード
 public class AsterTest : MonoBehaviour
 {
+    private void Start()
+    {
+        Astar();
+    }
 
     struct Point2
     {
@@ -298,6 +302,7 @@ public class AsterTest : MonoBehaviour
             mgr.OpenAround(node);
             //最小スコアのノードを探す
             node = mgr.SearchMinScoreNodeFromOpenList();
+            Debug.Log(node);
             if (node == null) 
             {
                 //袋小路なのでおしまい

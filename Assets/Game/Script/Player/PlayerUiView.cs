@@ -25,7 +25,7 @@ public class PlayerUiView : MonoBehaviour
         _hpScroll.value = currentHp / maxHp;
         _maxHpText.text = maxHp.ToString();
         _currentHpText.text = currentHp.ToString();
-        //Debug.Log($"{maxHp}‚Ì’Ê’m‚ðŽó‚¯Žæ‚Á‚½");
+        Debug.Log($"{maxHp}‚Ì’Ê’m‚ðŽó‚¯Žæ‚Á‚½");
     }
 
 
