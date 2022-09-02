@@ -111,7 +111,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     /// <summary>
     /// マップを生成する処理
     /// </summary>
-    public void MapGeneration() 
+    public void MapGeneration()
     {
         //マップの再生成による設定の初期化
         MapNotice();
@@ -404,7 +404,14 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         //階段をランダムに生成
         Generatesomething(_stairSet);
         //プレイヤーの生成
-        Generatesomething(_playerObject);
+        if (GameManager.Instance.PlayerObj == null)
+        {
+            Generatesomething(_playerObject);
+        }
+        else 
+        {
+            PlayerRespawn();
+        }
         //敵の生成
         //Generatesomething(_enemyPrefab);
         //アイテムの生成
@@ -429,19 +436,35 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
 
         var Object = Instantiate(Iobject, new Vector3(x, -1 * y, 0), _stairSet.transform.rotation);
 
-        Object.transform.parent = _mapParent.transform;
+        
 
         if (Iobject == _enemyPrefab)
         {
+            Object.transform.parent = _mapParent.transform;
             //エネミーに今自分がどの部屋にいるか教えてあげる
             var EnemyScript = Object.GetComponent<EnemyBase>();
             //EnemyScript.SetRoomNum(suffix);
             EnemyManager.Instance.SetTotalEnemyNum(1);
         }
-        else if(Iobject == _stairSet) 
+        else if (Iobject == _stairSet)
         {
+            Object.transform.parent = _mapParent.transform;
             Layer.SetData(x, y, MapNum.StairNum);
         }
+    }
+
+    /// <summary>Playerをリスポーンさせる処理</summary>
+    void PlayerRespawn() 
+    {
+        //ランダムな区画を選択する
+        int suffix = Random.Range(0, _divList.Count);
+
+        //区画の中のランダムな場所を選択する
+        int x = Random.Range(_divList[suffix].Room.Left, _divList[suffix].Room.Right);
+        int y = Random.Range(_divList[suffix].Room.Top, _divList[suffix].Room.Bottom);
+
+        GameManager.Instance.PlayerObj.transform.position = new Vector2(x, y * -1);
+        GameManager.Instance.SetPlayerPosition(x, y);
     }
 
     /// <summary>
@@ -508,7 +531,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     }
 
     /// <summary>設定を初期化する</summary>
-    private void MapInit() 
+    private void MapInit()
     {
         Layer = null;
         Destroy(_mapParent);
@@ -517,7 +540,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
 
 }
 
-public class MapNum 
+public class MapNum
 {
     /// <summary>壁</summary>
     public const int WallNum = 0;
