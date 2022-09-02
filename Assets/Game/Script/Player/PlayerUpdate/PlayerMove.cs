@@ -117,7 +117,7 @@ public class PlayerMove : MonoBehaviour
         if (x == 0 && y == 0) return false;
         //マップデータにアクセス
         int value = DgGenerator.Instance.Layer.GetMapData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1);
-
+        Debug.Log(value);
         //0は壁、1は道
         if (value == MapNum.WallNum)
         {

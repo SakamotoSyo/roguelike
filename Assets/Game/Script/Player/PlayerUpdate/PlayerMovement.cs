@@ -69,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
         if (FindStairs) 
         {
             _gameManager.TurnType = GameManager.TurnManager.MenuOpen;
-            Debug.Log("ŠK’i‚ª‚ ‚è‚Ü‚·");
+           // Debug.Log("ŠK’i‚ª‚ ‚è‚Ü‚·");
             _uiManager.StairUI();
         }
         FindStairs = find;
