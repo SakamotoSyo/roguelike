@@ -48,8 +48,6 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     private ItemDataBase _itemDataBase;
     [SerializeField, Header("LevelUpDataScript")]
     private LevelDataScript _levelDataScript;
-    /// <summary>levelが変わった時に通知する</summary>
-    public event Action<int> OnLevelChanged;
 
     /// <summary>MVPパターンにおけるModelクラス</summary>
     public float MaxHp { get => _maxHp.Value; set => _maxHp.Value = value; }
@@ -79,7 +77,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     {
         _playerLevel = level;
         //レベルアップしたことを通知する
-        OnLevelChanged(level);
+        LogScript.Instance.PlayerLevelUpProcess(level);
         //レベルアップしたステータスデータを取得する
         PlayerStatusData LevelUpData = _levelDataScript.GetLevelStatus(level);
 
