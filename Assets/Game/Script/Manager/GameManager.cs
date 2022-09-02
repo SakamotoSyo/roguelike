@@ -22,8 +22,10 @@ public class GameManager : SingletonBehaviour<GameManager>
     public int TotalEnemyNum => _totalEnemyNum;
     public int PlayerX => _playerX;
     public int PlayerY => _playerY;
-
     public List<GameObject> ItemObjList => _itemObjList;
+
+    [Header("現在の階層を表示するテキスト")]
+    [SerializeField] Text _nowFloorText; 
 
     [Tooltip("PlayerのObject")]
     private GameObject _playerObj;
@@ -36,6 +38,10 @@ public class GameManager : SingletonBehaviour<GameManager>
     //プレイヤーのいる部屋i
     // private int _playerRoomNum;
     //public int PlayerRoomNum => _playerRoomNum; S
+
+    [Tooltip("現在の階層")]
+    int _nowFloor = 1;
+
     //プレイヤーの座標
     private int _playerX;
     private int _playerY;
@@ -57,7 +63,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     void MapInit() 
     {
         _itemObjList.Clear();
-        _playerObj = null;
+        //_playerObj = null;
     }
 
     /// <summary>
@@ -105,6 +111,15 @@ public class GameManager : SingletonBehaviour<GameManager>
     public void RemoveItemObjList(GameObject ItemObj)
     {
         _itemObjList.Remove(ItemObj);
+    }
+
+    /// <summary>
+    /// 次の階層に移動する時に呼ぶメゾット
+    /// </summary>
+    public void NextFloor() 
+    {
+        _nowFloor++;
+        _nowFloorText.text = _nowFloor.ToString();
     }
 
     /// <summary>
