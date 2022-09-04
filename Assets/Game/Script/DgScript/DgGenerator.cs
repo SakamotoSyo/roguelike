@@ -454,7 +454,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     }
 
     /// <summary>Playerをリスポーンさせる処理</summary>
-    void PlayerRespawn() 
+    public void PlayerRespawn() 
     {
         //ランダムな区画を選択する
         int suffix = Random.Range(0, _divList.Count);
