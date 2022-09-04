@@ -15,5 +15,5 @@ MonoBehaviour:
   NameString: Enemy
   _useType: 3
   Number: 1
-  MissionInfo: "\u6575\u3092\u4E00\u4F53\u5012\u305B"
+  MissionInfo: "\u6575\u3092\uFF11\u4F53\u5012\u305B"
   MissionAchievement: 0

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feea712086d2a5744a4574fe54fd692f, type: 3}
   m_Name: EnemyMission5Data
   m_EditorClassIdentifier: 
-  NameString: 
-  _useType: 0
-  Number: 0
-  MissionInfo: 
+  NameString: Enemy
+  _useType: 3
+  Number: 5
+  MissionInfo: "\u6575\u3092\uFF15\u4F53\u5012\u305B"
   MissionAchievement: 0
