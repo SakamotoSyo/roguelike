@@ -18,6 +18,7 @@ public class Item : ScriptableObject
     {
         Hearing,
         Food,
+        Special,
 
     }
 
