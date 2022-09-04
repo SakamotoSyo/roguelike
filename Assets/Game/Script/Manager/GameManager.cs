@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using Cysharp.Threading.Tasks;
 public class GameManager : SingletonBehaviour<GameManager>
 {
     public enum TurnManager
@@ -25,7 +26,10 @@ public class GameManager : SingletonBehaviour<GameManager>
     public List<GameObject> ItemObjList => _itemObjList;
 
     [Header("現在の階層を表示するテキスト")]
-    [SerializeField] Text _nowFloorText; 
+    [SerializeField] Text _nowFloorText;
+
+    [Header("フェードにかかる時間")]
+    [SerializeField] int _fadeTime;
 
     [Tooltip("PlayerのObject")]
     private GameObject _playerObj;
@@ -48,9 +52,9 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     private DgGenerator _dgGenerator;
 
-    protected override void OnAwake() 
+    protected override void OnAwake()
     {
-       
+
     }
 
     private void Start()
@@ -60,10 +64,9 @@ public class GameManager : SingletonBehaviour<GameManager>
     }
 
     /// <summary>マップの再生成による初期化</summary>
-    void MapInit() 
+    void MapInit()
     {
         _itemObjList.Clear();
-        //_playerObj = null;
     }
 
     /// <summary>
@@ -104,22 +107,22 @@ public class GameManager : SingletonBehaviour<GameManager>
         _totalEnemyNum += num;
     }
 
-    /// <summary>
-    /// リストから指定したインデックスのアイテムをリムーブする
-    /// </summary>
-    /// <param name="a"></param>
+    /// <summary>リストから指定したインデックスのアイテムをリムーブする</summary>
     public void RemoveItemObjList(GameObject ItemObj)
     {
         _itemObjList.Remove(ItemObj);
     }
 
-    /// <summary>
-    /// 次の階層に移動する時に呼ぶメゾット
-    /// </summary>
-    public void NextFloor() 
+    /// <summary>次の階層に移動する時に呼ぶメゾット</summary>
+    public async void NextFloor()
     {
+        TurnType = TurnManager.WaitTurn;
         _nowFloor++;
         _nowFloorText.text = _nowFloor.ToString();
+        await FadeWait();
+        Debug.Log("Playerのターンです");
+        TurnType = TurnManager.Player;
+
     }
 
     /// <summary>
@@ -127,7 +130,12 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// </summary>
     private void PlayerLevelUpProcess()
     {
-            //OutPutLog($"プレイヤーは{_playerStatus.Level + 1}にアップした");
+        //OutPutLog($"プレイヤーは{_playerStatus.Level + 1}にアップした");
+    }
+
+    async UniTask FadeWait()
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(_fadeTime));
     }
 
     /// <summary>
