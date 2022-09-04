@@ -71,17 +71,17 @@ public class UIManager : MonoBehaviour
     private PlayerMove _playerMoveCs;
 
 
-    [Tooltip("ゲームマネージャー")] 
+    [Tooltip("ゲームマネージャー")]
     private GameManager _gameManager;
 
     [Tooltip("ダンジョン生成")]
-    private  DgGenerator _dgGenerator;
+    private DgGenerator _dgGenerator;
 
     private float _testPosition;
 
     /// <summary>現在のUIType</summary>
     private UIType _uiType;
- 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -163,7 +163,7 @@ public class UIManager : MonoBehaviour
                 _gameManager.TurnType = GameManager.TurnManager.Player;
                 _uiType = UIType.Normal;
             }
-            else if (_uiType == UIType.StairPanel) 
+            else if (_uiType == UIType.StairPanel)
             {
                 _stairPanel.SetActive(false);
                 _gameManager.TurnType = GameManager.TurnManager.Player;
@@ -247,7 +247,6 @@ public class UIManager : MonoBehaviour
                 _uiType = UIType.ItemInfomationPanel;
             }
 
-
         }
         else if (UIType.MainMenuPanel == _uiType && panelName == "footPanel")
         {
@@ -283,12 +282,29 @@ public class UIManager : MonoBehaviour
             ItemSelectButton4.GetComponentInChildren<Text>().text = "説明";
             ItemSelectButton4.GetComponent<Button>().onClick.AddListener(() => ItemExplanation(item));
         }
+        else if (item.GetItemType == Item.ItemType.SpecialItem)
+        {
+            ItemSelectButton.GetComponentInChildren<Text>().text = "振る";
+            ItemSelectButton.GetComponent<Button>().onClick.AddListener(() => UseSelectItem(item));
+
+            var ItemSelectButton2 = Instantiate(_useItemButtonPrehab, _useItemSelectPanel.transform);
+            ItemSelectButton2.GetComponentInChildren<Text>().text = "投げる";
+            ItemSelectButton2.GetComponent<Button>().onClick.AddListener(() => StartCoroutine(ThrowItem(item)));
+
+            var ItemSelectButton3 = Instantiate(_useItemButtonPrehab, _useItemSelectPanel.transform);
+            ItemSelectButton3.GetComponentInChildren<Text>().text = "置く";
+            ItemSelectButton3.GetComponent<Button>().onClick.AddListener(() => ItemPut(item));
+
+            var ItemSelectButton4 = Instantiate(_useItemButtonPrehab, _useItemSelectPanel.transform);
+            ItemSelectButton4.GetComponentInChildren<Text>().text = "説明";
+            ItemSelectButton4.GetComponent<Button>().onClick.AddListener(() => ItemExplanation(item));
+        }
 
         _useItemSelectPanel.SetActive(true);
         Debug.Log("Select");
         _itemGroupCanvasGroup.interactable = false;
         EventSystem.current.SetSelectedGameObject(_useItemSelectPanel.transform.GetChild(0).gameObject);
- 
+
         _uiType = UIType.UseItemSelect;
     }
 
@@ -299,9 +315,9 @@ public class UIManager : MonoBehaviour
     /// <param name="item"></param>
     private void UseSelectItem(Item item)
     {
+        _playerStatusCs.RemoveItem(item);
         if (item.GetEffectType == Item.ItemEffectType.Hearing)
         {
-            _playerStatusCs.RemoveItem(item);
             _playerStatusCs.SetHp(item.GetItemEffect);
 
             ShowText($"{item.GetItemEffect}回復しました");
@@ -309,6 +325,19 @@ public class UIManager : MonoBehaviour
         else if (item.GetEffectType == Item.ItemEffectType.Food)
         {
 
+        }
+        else if (item.GetEffectType == Item.ItemEffectType.Special)
+        {
+            if (item.GetItemName == "ワープの杖")
+            {
+                //プレイヤーをランダムにワープする
+                _dgGenerator.PlayerRespawn();
+                ResetMenu();
+            }
+            else if (item.GetItemName == "吹き飛ばしの杖") 
+            {
+
+            }
         }
 
     }
@@ -339,42 +368,12 @@ public class UIManager : MonoBehaviour
         //アイテムがが壁の座標まで飛び続ける
         while (_dgGenerator.Layer.GetMapData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1) == 1)
         {
-            if (x > 0)
-            {
-                x += 1;
-            }
-            else if (x < 0)
-            {
-                x -= 1;
-            }
-
-            if (y > 0)
-            {
-                y += 1;
-            }
-            else if (y < 0)
-            {
-                y -= 1;
-            }
-        }
-        //このままだと壁の中に入ったままになってしまうためひとつ前の座標に戻す
-        if (x > 0)
-        {
-            x -= 1;
-        }
-        else if (x < 0)
-        {
-            x += 1;
+            x += Math.Sign(x);
+            y += Math.Sign(y);
         }
 
-        if (y > 0)
-        {
-            y -= 1;
-        }
-        else if (y < 0)
-        {
-            y += 1;
-        }
+        x += Math.Sign(x) * -1;
+        y += Math.Sign(y) * -1;
 
         //移動する次の場所
         Vector3 _nextPosition = new Vector3(_gameManager.PlayerX + x, _gameManager.PlayerY * -1 + y, 0);
@@ -490,9 +489,9 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>階段に関するUIを表示させる処理</summary>
-    public void StairUI() 
+    public void StairUI()
     {
-      
+
         _uiType = UIType.StairPanel;
 
         _stairPanel.SetActive(true);
