@@ -27,6 +27,9 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("GameManegerのインスタンス")]
     private GameManager _gameManager;
 
+    [Tooltip("MInimapをUpdateするためのAction")]
+    public Action MiniMapUpdate;
+
     [Tooltip("動作中かどうか")]
     private bool _isMoving;
 
@@ -80,6 +83,8 @@ public class PlayerMove : MonoBehaviour
                 //transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
 
                 _gameManager.TurnType = GameManager.TurnManager.WaitTurn;
+
+                MiniMapUpdate();
 
                 await TestWait();
 
