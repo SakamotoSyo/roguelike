@@ -64,18 +64,9 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
         //敵の生成を管理する
         EnemyGenerator();
 
-        //倒されたEnemy分処理をする
-        if (_gameManager.TurnType == GameManager.TurnManager.Result)
-        {
-            PlayerGetExp();
-
-            //levelアップしない場合ターンを変更する
-            if (_levelUpNum == 0)
-            {
-                _gameManager.TurnType = GameManager.TurnManager.Enemy;
-            }
-        }
-
+        //獲得した経験値を処理する
+        ExpResult();
+       
     }
 
     /// <summary>マップの再生成による初期化</summary>
@@ -91,18 +82,39 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     /// </summary>
     private void EnemyActionMgr()
     {
-        if (GameManager.Instance.TurnType == GameManager.TurnManager.Enemy && !EnemyActionEnd && _enemyBaseList.Count > EnemyActionCountNum)
+        if (GameManager.Instance.TurnType == GameManager.TurnManager.Enemy) 
         {
-            EnemyActionEnd = true;
-            _enemyBaseList[EnemyActionCountNum].EnemyAction();
-            EnemyActionCountNum++;
+            if (!EnemyActionEnd && _enemyBaseList.Count > EnemyActionCountNum)
+            {
+                EnemyActionEnd = true;
+                _enemyBaseList[EnemyActionCountNum].EnemyAction();
+                EnemyActionCountNum++;
+            }
+            //Enemyの行動がすべて終わったらプレイヤーのターンに移す
+            else if (_enemyBaseList.Count <= EnemyActionCountNum && !EnemyActionEnd)
+            {
+                EnemyActionCountNum = 0;
+                GameManager.Instance.TurnType = GameManager.TurnManager.Player;
+            }
         }
-        //Enemyの行動がすべて終わったらプレイヤーのターンに移す
-        else if (_enemyBaseList.Count <= EnemyActionCountNum && !EnemyActionEnd)
+        
+    }
+
+    /// <summary>獲得した経験値を処理する</summary>
+    void ExpResult() 
+    {
+        //倒されたEnemy分処理をする
+        if (_gameManager.TurnType == GameManager.TurnManager.Result)
         {
-            EnemyActionCountNum = 0;
-            GameManager.Instance.TurnType = GameManager.TurnManager.Player;
+            PlayerGetExp();
+
+            //levelアップしない場合ターンを変更する
+            if (_levelUpNum == 0)
+            {
+                _gameManager.TurnType = GameManager.TurnManager.Enemy;
+            }
         }
+
     }
 
     /// <summary>
