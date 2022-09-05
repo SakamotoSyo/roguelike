@@ -63,6 +63,9 @@ public class UIManager : MonoBehaviour
     [SerializeField, Header("ItemObjectのPrefab")]
     private GameObject _itemObjectPrehab;
 
+    [Header("吹き飛ばしの杖を振った時に生成されるObj")]
+    [SerializeField] GameObject _blowObj;
+
 
     [Tooltip("PlayerStatusのスクリプト")]
     private PlayerStatus _playerStatusCs;
@@ -336,7 +339,7 @@ public class UIManager : MonoBehaviour
             }
             else if (item.GetItemName == "吹き飛ばしの杖") 
             {
-
+                Instantiate(_blowObj, new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), transform.rotation);
             }
         }
 
@@ -378,12 +381,12 @@ public class UIManager : MonoBehaviour
         //移動する次の場所
         Vector3 _nextPosition = new Vector3(_gameManager.PlayerX + x, _gameManager.PlayerY * -1 + y, 0);
         //今の場所から目的地までの距離
-        var _distance_Two = Vector3.Distance(Item.transform.position, _nextPosition);
+        //var _distance_Two = Vector3.Distance(Item.transform.position, _nextPosition);
         //配列にアイテムの場所をセットする
         _dgGenerator.Layer.SetData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1, 3);
         Debug.Log(_dgGenerator.Layer.GetMapData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1));
         //移動処理
-        StartCoroutine(ItemThrowMove(Item, _nextPosition, _distance_Two));
+        StartCoroutine(ItemThrowMove(Item, _nextPosition));
 
         yield return new WaitForSeconds(0.08f);
         //アイテムのオブジェクトをゲームマネージャーに渡す
@@ -399,7 +402,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     /// <param name="Item"></param>
     /// <param name="_nextPosition"></param>
-    private IEnumerator ItemThrowMove(GameObject Item, Vector3 _nextPosition, float _distance_Two)
+    private IEnumerator ItemThrowMove(GameObject Item, Vector3 _nextPosition)
     {
         while (Item.transform.position != _nextPosition)
         {
