@@ -84,8 +84,6 @@ public class PlayerMove : MonoBehaviour
 
                 _gameManager.TurnType = GameManager.TurnManager.WaitTurn;
 
-                MiniMapUpdate();
-
                 await TestWait();
 
                 //行動が終わったのでターンフェーズを変える
@@ -190,7 +188,7 @@ public class PlayerMove : MonoBehaviour
         _anim.SetFloat("y", inputY);
         while (true)
         {
-            yield return new WaitForSeconds(0.02f);
+            yield return null;
             t += _walkSpeed * runSpeed;
             //移動処理
             transform.position = Vector3.Lerp(transform.position, _nextPosition, t);
