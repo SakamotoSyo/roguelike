@@ -66,6 +66,8 @@ public class UIManager : MonoBehaviour
     [Header("吹き飛ばしの杖を振った時に生成されるObj")]
     [SerializeField] GameObject _blowObj;
 
+    [Header("雷の石を使ったときに生成されるObj")]
+    [SerializeField] GameObject _thunderStone;
 
     [Tooltip("PlayerStatusのスクリプト")]
     private PlayerStatus _playerStatusCs;
@@ -337,9 +339,16 @@ public class UIManager : MonoBehaviour
                 _dgGenerator.PlayerRespawn();
                 ResetMenu();
             }
-            else if (item.GetItemName == "吹き飛ばしの杖") 
+            else if (item.GetItemName == "吹き飛ばしの杖")
             {
+                //敵に当たると吹き飛ばすObjectを生成
                 Instantiate(_blowObj, new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), transform.rotation);
+                ResetMenu(true);
+            }
+            else if (item.GetItemName == "雷の石") 
+            {
+                Instantiate(_thunderStone, new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), transform.rotation);
+                ResetMenu(true);
             }
         }
 
@@ -454,7 +463,7 @@ public class UIManager : MonoBehaviour
     /// メニュー画面をすべて閉じるメソッド
     /// アイテムを使った後などに使う
     /// </summary>
-    private void ResetMenu()
+    private void ResetMenu(bool specialItem = false)
     {
         _mainMenuPanel.SetActive(false);
         _itemPanel.SetActive(false);
@@ -475,7 +484,14 @@ public class UIManager : MonoBehaviour
         }
 
         _uiType = UIType.Normal;
-        _gameManager.TurnType = GameManager.TurnManager.Player;
+        if (specialItem)
+        {
+            
+        }
+        else 
+        {
+            _gameManager.TurnType = GameManager.TurnManager.Player;
+        }
     }
 
     /// <summary>
