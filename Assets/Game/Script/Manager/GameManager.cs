@@ -28,6 +28,9 @@ public class GameManager : SingletonBehaviour<GameManager>
     [Header("現在の階層を表示するテキスト")]
     [SerializeField] Text _nowFloorText;
 
+    [Header("最終階層")]
+    [SerializeField] int _finalStratum;
+
     [Header("フェードにかかる時間")]
     [SerializeField] int _fadeTime;
 
@@ -120,8 +123,18 @@ public class GameManager : SingletonBehaviour<GameManager>
         _nowFloor++;
         _nowFloorText.text = _nowFloor.ToString();
         await FadeWait();
-        Debug.Log("Playerのターンです");
-        TurnType = TurnManager.Player;
+        //フェードが終わるまで待つ
+        if (_nowFloor != _finalStratum)
+        {
+            Debug.Log("Playerのターンです");
+            TurnType = TurnManager.Player;
+        }
+        else 
+        {
+            Debug.Log("最終層");
+            TurnType = TurnManager.Player;
+        }
+        
 
     }
 
