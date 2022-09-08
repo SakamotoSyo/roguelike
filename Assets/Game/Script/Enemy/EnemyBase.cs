@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
+using Cysharp.Threading.Tasks;
+using System;
 public abstract class EnemyBase : MonoBehaviour
 {
-  
+    [Header("移動にかける時間")]
+    [SerializeField] float _moveTime;
+
+    [SerializeField] Animator _anim;
 
     [Tooltip("自分自身の座標")]
     protected int _startX;
@@ -26,6 +31,9 @@ public abstract class EnemyBase : MonoBehaviour
     [Tooltip("次の目的地")]
     protected Vector3 _nextPosition;
 
+    [Tooltip("進んだ方向を保存しておく変数")]
+    protected Vector2 _dir;
+
     [Tooltip("DgGeneratorのインスタンス")]
     protected DgGenerator _generatorIns;
 
@@ -36,7 +44,7 @@ public abstract class EnemyBase : MonoBehaviour
     protected GameManager _gameManager;
 
     [Tooltip("EnemyStatusのScript")]
-    [SerializeField]protected EnemyStatus _enemyStatus;
+    [SerializeField] protected EnemyStatus _enemyStatus;
 
     [Tooltip("PlayerIDamageble")]
     protected IDamageble _playerBase;
@@ -46,7 +54,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     private Vector2 _position;
 
-    public Vector3 EnemyPos => this.gameObject.transform.position; 
+    public Vector3 EnemyPos => this.gameObject.transform.position;
 
 
     protected void Start()
@@ -63,14 +71,14 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Update()
     {
-      
+
     }
 
 
     /// <summary>
     /// 敵の移動AI
     /// </summary>
-    public virtual void EnemyAction()
+    public virtual async void EnemyAction()
     {
         _startX = (int)transform.position.x;
         _startY = (int)transform.position.y;
@@ -90,6 +98,7 @@ public abstract class EnemyBase : MonoBehaviour
                 {
                     //攻撃処理
                     _playerBase.AddDamage(_enemyStatus.GetPower(), this.gameObject);
+                    _anim.SetTrigger("Attack");
                     _isAttack = true;
                     //コルーチンでアニメーションの処理を書いてもいいかも
                 }
@@ -107,14 +116,27 @@ public abstract class EnemyBase : MonoBehaviour
         }
 
         //自分が今どこの部屋にいるか判定するi
-       // _nowRoomNum = _gameManager.GetRoomNum((int)transform.position.x, (int)transform.position.y);
+        // _nowRoomNum = _gameManager.GetRoomNum((int)transform.position.x, (int)transform.position.y);
         //移動する
-        transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
+        DOTween.To(() => transform.position,
+                   x => transform.position = x,
+                   _nextPosition, _moveTime)
+                   .OnComplete(() => transform.position = _nextPosition);
 
+        _anim.SetBool("Move", true);
+        _anim.SetFloat("x", _dir.x);
+        _anim.SetFloat("y", _dir.y);
+
+        await TestWait();
+
+        //transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
+        Debug.Log("EnemyActions");
         if (transform.position == _nextPosition)
         {
+            _anim.SetBool("Move", false);
+
             Debug.Log("EnemyActionEnd");
-            _generatorIns.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, 2);
+            _generatorIns.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, MapNum.EnemyNum);
             _isMove = false;
             _enemyManager.EnemyActionEnd = false;
         }
@@ -123,7 +145,7 @@ public abstract class EnemyBase : MonoBehaviour
     /// <summary>
     /// どう移動するかの処理
     /// </summary>
-    public virtual void EnemyMove() 
+    public virtual void EnemyMove()
     {
         _xBool = -1;
         _yBool = -1;
@@ -133,39 +155,45 @@ public abstract class EnemyBase : MonoBehaviour
         {
             _xBool = 1;
         }
-        //目的地のX軸が同じだった場合
+        //??I?n??X????????????????
         else if (_goalX - _startX == 0)
         {
             _xBool = 0;
         }
 
-        //目的地のY軸がした方向だった場合
+        //??I?n??Y????????????????????
         if (_goalY - _startY > 0)
         {
             _yBool = 1;
         }
-        //目的地のY軸が同じだった場合
+        //??I?n??Y????????????????
         else if (_goalY - _startY == 0)
         {
             _yBool = 0;
         }
+        // _xBool = (int)Mathf.Sign(_goalX - _startX);
+
+        //_yBool = (int)Mathf.Sign(_goalY - _startY);
 
         //通常の移動
         if ((GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(_xBool, _yBool);
+            _dir = new Vector2(_xBool, _yBool);
             _isMove = true;
         }
         //Y軸が同じときX軸方向にだけ動く
         else if ((GetMapData(_startX + _xBool, _startY * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _yBool == 0)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(_xBool, 0);
+            _dir = new Vector2(_xBool, _yBool);
             _isMove = true;
         }
         //X軸が同じときY方向にだけ動く
         else if ((GetMapData(_startX, _startY + _yBool * -1) == 1 || GetMapData(_startX + _xBool, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == 0)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(0, _yBool);
+            _dir = new Vector2(_xBool, _yBool);
             _isMove = true;
         }
 
@@ -173,21 +201,25 @@ public abstract class EnemyBase : MonoBehaviour
         if ((GetMapData(_startX + 1, _startY * -1) == 1 || GetMapData(_startX + 1, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == 1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(1, 0);
+            _dir = new Vector2(_xBool, _yBool);
             _isMove = true;
         }
         else if ((GetMapData(_startX - 1, _startY * -1) == 1 || GetMapData(_startX - 1, (_startY + _yBool) * -1) == 3) && !_isMove && _xBool == -1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(-1, 0);
+            _dir = new Vector2(_xBool, _yBool);
             _isMove = true;
         }
         else if ((GetMapData(_startX, (_startY * -1) - 1) == 1 || GetMapData(_startX + _xBool, (_startY * -1) - 1) == 3) && !_isMove && _yBool == 1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(0, 1);
+            _dir = new Vector2(_xBool, _yBool);
             _isMove = true;
         }
         else if ((GetMapData(_startX, (_startY * -1) + 1) == 1 || GetMapData(_startX + _xBool, (_startY * -1) + 1) == 3) && !_isMove && _yBool == -1)
         {
             _nextPosition = (Vector2)transform.position + new Vector2(0, -1);
+            _dir = new Vector2(_xBool, _yBool);
             _isMove = true;
         }
         else
@@ -215,7 +247,7 @@ public abstract class EnemyBase : MonoBehaviour
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    private int GetMapData(int x, int y) 
+    private int GetMapData(int x, int y)
     {
         return _generatorIns.Layer.GetMapData(x, y);
     }
@@ -224,12 +256,17 @@ public abstract class EnemyBase : MonoBehaviour
     ///このスクリプトがついているGameObjectを返す
     /// </summary>
     /// <returns></returns>
-    public GameObject GetThisScriptObj() 
+    public GameObject GetThisScriptObj()
     {
         return this.gameObject;
     }
 
-  
+    async UniTask TestWait()
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(0.05));
+    }
+
+
 
     /// <summary> Enemyにどこの部屋に今いるのか値をセットするi </summary>
     //public void SetRoomNum(int nowRoom) 
@@ -252,29 +289,29 @@ public abstract class EnemyBase : MonoBehaviour
 //    }
 //}
 
-    ///// <summary>
-    ///// Playerの方向にRayを飛ばしPlayerのIDamgageを取得してダメージを与える
-    ///// </summary>
-    //protected virtual IEnumerator Attack()
-    //{
-    //    //エネミーからプレイヤー対する方向ベクトルを取得
-    //    //_position = new Vector2(this.transform.position.x, this.transform.position.y) - new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1);
-    //    _position = new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1) - new Vector2(this.transform.position.x, this.transform.position.y);
+///// <summary>
+///// Playerの方向にRayを飛ばしPlayerのIDamgageを取得してダメージを与える
+///// </summary>
+//protected virtual IEnumerator Attack()
+//{
+//    //エネミーからプレイヤー対する方向ベクトルを取得
+//    //_position = new Vector2(this.transform.position.x, this.transform.position.y) - new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1);
+//    _position = new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1) - new Vector2(this.transform.position.x, this.transform.position.y);
 
 
-    //    //RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), 10.0f, _testLayerMask);
-    //    RaycastHit2D hit = Physics2D.Linecast(this.transform.position, _position, _testLayerMask);
+//    //RaycastHit2D hit = Physics2D.Raycast(new Vector2(this.transform.position.x, this.transform.position.y), new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), 10.0f, _testLayerMask);
+//    RaycastHit2D hit = Physics2D.Linecast(this.transform.position, _position, _testLayerMask);
 
-    //    yield return new WaitForSeconds(0.1f);
- 
-    //    Debug.Log(hit);
-    //    if (hit.collider.gameObject.TryGetComponent(out IDamageble ID))
-    //    {
-    //        ID.AddDamage(_power);
-    //    }
-     
+//    yield return new WaitForSeconds(0.1f);
 
-    //    _enemyManager.EnemyActionEnd = false;
-    //    _isAttack = false;
+//    Debug.Log(hit);
+//    if (hit.collider.gameObject.TryGetComponent(out IDamageble ID))
+//    {
+//        ID.AddDamage(_power);
+//    }
 
-    //}
+
+//    _enemyManager.EnemyActionEnd = false;
+//    _isAttack = false;
+
+//}
