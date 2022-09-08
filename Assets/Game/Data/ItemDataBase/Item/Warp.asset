@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0ca2e1c1604da1468aabd559b2af340, type: 3}
+  m_Name: Warp
+  m_EditorClassIdentifier: 
+  _itemType: 4
+  _itemName: "\u30EF\u30FC\u30D7\u306E\u6756"
+  _itemEffectNum: 0
+  _itemInformationText: "\u632F\u308B\u3068\u30E9\u30F3\u30C0\u30E0\u306A\u5834\u6240\u306B\u30EF\u30FC\u30D7\u3059\u308B"
+  _itemImage: {fileID: 1424697382229734607, guid: 199412c0b9a88e640babb4a3832dd8fb, type: 3}
+  _itemEffectType: 2
