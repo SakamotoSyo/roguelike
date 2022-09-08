@@ -162,12 +162,6 @@ public class UIManager : MonoBehaviour
                 }
                 _uiType = UIType.ItemPanel;
             }
-            else if (_uiType == UIType.ItemInfomationPanel)
-            {
-                _itemInforPanel.SetActive(false);
-                _gameManager.TurnType = GameManager.TurnManager.Player;
-                _uiType = UIType.Normal;
-            }
             else if (_uiType == UIType.StairPanel)
             {
                 _stairPanel.SetActive(false);
@@ -175,6 +169,16 @@ public class UIManager : MonoBehaviour
                 _uiType = UIType.Normal;
             }
 
+        }
+
+        if (Input.GetButtonDown("Submit")) 
+        {
+            if (_uiType == UIType.ItemInfomationPanel)
+            {
+                _itemInforPanel.SetActive(false);
+                _gameManager.TurnType = GameManager.TurnManager.Player;
+                _uiType = UIType.Normal;
+            }
         }
 
     }
@@ -326,6 +330,7 @@ public class UIManager : MonoBehaviour
             _playerStatusCs.SetHp(item.GetItemEffect);
 
             ShowText($"{item.GetItemEffect}âÒïúÇµÇ‹ÇµÇΩ");
+            Input.ResetInputAxes();
         }
         else if (item.GetEffectType == Item.ItemEffectType.Food)
         {
@@ -348,7 +353,7 @@ public class UIManager : MonoBehaviour
             else if (item.GetItemName == "óãÇÃêŒ") 
             {
                 Instantiate(_thunderStone, new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), transform.rotation);
-                ResetMenu(true);
+                ResetMenu();
             }
         }
 
