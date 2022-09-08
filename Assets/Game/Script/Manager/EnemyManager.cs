@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniRx;
-using UniRx.Triggers;
 using System;
+using Cysharp.Threading.Tasks;
 
 public class EnemyManager : SingletonBehaviour<EnemyManager>
 {
@@ -58,14 +57,20 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
 
     void Update()
     {
-        //敵の行動順を管理する
-        EnemyActionMgr();
-
         //敵の生成を管理する
         EnemyGenerator();
 
         //獲得した経験値を処理する
         ExpResult();
+
+        //敵の行動順を管理する
+        EnemyActionMgr();
+
+
+    }
+
+    void FixedUpdate()
+    {
        
     }
 
@@ -80,11 +85,11 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     /// <summary>
     /// ターンがEnemyに移った時に各Enemyの行動を始める
     /// </summary>
-    private void EnemyActionMgr()
+    private async void EnemyActionMgr()
     {
         if (GameManager.Instance.TurnType == GameManager.TurnManager.Enemy) 
         {
-            if (_enemyBaseList.Count > EnemyActionCountNum)
+            if (!EnemyActionEnd && _enemyBaseList.Count> EnemyActionCountNum)
             {
                 EnemyActionEnd = true;
                 _enemyBaseList[EnemyActionCountNum].EnemyAction();
@@ -161,6 +166,7 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
         {
             var a = UnityEngine.Random.Range(0, _enemyList.Count);
             Debug.Log("敵を生成しました");
+            _nowTotalEnemyNum++;
             _generator.Generatesomething(_enemyList[a]);
         }
     }
@@ -219,4 +225,5 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
             }
         }
     }
+
 }
