@@ -10,8 +10,8 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     [Tooltip("GameManagerのインスタンス")]
     GameManager _gameManager;
 
-    [Tooltip("Enemyのプレハブ")]
-    [SerializeField] private GameObject _enemyPrefab;
+    [Tooltip("生成するEnemyのList")]
+    [SerializeField] private List<GameObject> _enemyList;
 
     [Tooltip("EnemyBaseのリスト")]
     private List<EnemyBase> _enemyBaseList = new List<EnemyBase>();
@@ -84,7 +84,7 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     {
         if (GameManager.Instance.TurnType == GameManager.TurnManager.Enemy) 
         {
-            if (!EnemyActionEnd && _enemyBaseList.Count > EnemyActionCountNum)
+            if (_enemyBaseList.Count > EnemyActionCountNum)
             {
                 EnemyActionEnd = true;
                 _enemyBaseList[EnemyActionCountNum].EnemyAction();
@@ -159,8 +159,9 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     {
         if (_totalEnemyNum > _nowTotalEnemyNum && _generator.MapGenerateEnd)
         {
+            var a = UnityEngine.Random.Range(0, _enemyList.Count);
             Debug.Log("敵を生成しました");
-            _generator.Generatesomething(_enemyPrefab);
+            _generator.Generatesomething(_enemyList[a]);
         }
     }
 
