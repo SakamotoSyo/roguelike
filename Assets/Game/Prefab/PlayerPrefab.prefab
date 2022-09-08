@@ -304,7 +304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerMovement: {fileID: 6862555252454645813}
   _afterWalkActionTime: 0.5
-  _afterRunActionTime: 0.05
+  _afterRunActionTime: 0.001
   _walkSpeed: 0.2
   _runSpeed: 5
   _anim: {fileID: 3148681650318677119}
@@ -334,7 +334,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 47835032301aa6c479c8363305d63cb1, type: 2}
   - {fileID: 11400000, guid: 95195ace8ca5cd54bbe7a57be8fc6763, type: 2}
   - {fileID: 11400000, guid: 95195ace8ca5cd54bbe7a57be8fc6763, type: 2}
-  - {fileID: 11400000, guid: 95195ace8ca5cd54bbe7a57be8fc6763, type: 2}
+  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
+  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
   _itemDataBase: {fileID: 11400000, guid: c17f6cdd936d48c46be93f5f8809a761, type: 2}
   _levelDataScript: {fileID: 1776630213438975392}
 --- !u!114 &3427604113966133434
