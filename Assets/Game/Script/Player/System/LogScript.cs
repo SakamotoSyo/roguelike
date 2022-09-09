@@ -30,8 +30,6 @@ public class LogScript : SingletonBehaviour<LogScript>
 
     void Start()
     {
-       var playerStatus = GameManager.Instance.PlayerObj.GetComponent<PlayerStatus>();
-        playerStatus.OnLevelChanged += PlayerLevelUpProcess;
     }
 
     private void Update()
@@ -113,8 +111,9 @@ public class LogScript : SingletonBehaviour<LogScript>
     /// <summary>
     /// レベルアップしたときに呼ばれる
     /// </summary>
-    private void PlayerLevelUpProcess(int level)
+    public void PlayerLevelUpProcess(int level)
     {
         OutPutLog($"プレイヤーはレベル{level}にアップした");
     }
+
 }
