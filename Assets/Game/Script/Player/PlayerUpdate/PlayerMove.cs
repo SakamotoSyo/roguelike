@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Cysharp.Threading.Tasks;
+using UnityEngine.Playables;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -23,6 +24,12 @@ public class PlayerMove : MonoBehaviour
 
     [Header("Animatorコンポーネント")]
     [SerializeField] Animator _anim;
+
+    [Header("Playableコンポーネント")]
+    [SerializeField] PlayableDirector _moveArrowDirector;
+
+    [Header("移動方向をナビゲーションするObj")]
+    [SerializeField] GameObject _moveArrowObj;
 
     [Tooltip("GameManegerのインスタンス")]
     private GameManager _gameManager;
@@ -58,7 +65,9 @@ public class PlayerMove : MonoBehaviour
         //シフトを押しているときは移動できなくする
         if (!Input.GetButton("Lock"))
         {
-   
+            _moveArrowDirector.Stop();
+            _moveArrowObj.SetActive(false);
+
             _isMoving = judgeMove((int)x, (int)y);
             //移動先に障害物がないかどうか
             if (_isMoving && (x != 0 || y != 0))
@@ -97,6 +106,9 @@ public class PlayerMove : MonoBehaviour
         }
         else
         {
+            //移動歩行のナビゲーションを出す
+            _moveArrowObj.SetActive(true);
+            _moveArrowDirector.Play();
             if (x != 0 || y != 0)
             {
                 _playerDirection = new Vector2(x, y);
@@ -184,8 +196,8 @@ public class PlayerMove : MonoBehaviour
             runSpeed = _runSpeed;
         }
         _anim.SetBool("Move", true);
-        _anim.SetFloat("x", inputX);
-        _anim.SetFloat("y", inputY);
+        _anim.SetFloat("x", _playerDirection.x);
+        _anim.SetFloat("y", _playerDirection.y);
         while (true)
         {
             yield return null;
