@@ -78,6 +78,9 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Update()
     {
         stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
+
+        _anim.SetFloat("x", _dir.x);
+        _anim.SetFloat("y", _dir.y);
     }
 
 
@@ -141,8 +144,6 @@ public abstract class EnemyBase : MonoBehaviour
                        .OnComplete(() => transform.position = _nextPosition);
 
             _anim.SetBool("Move", true);
-            _anim.SetFloat("x", _dir.x);
-            _anim.SetFloat("y", _dir.y);
             //transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
             StartCoroutine(NextJudge());
 
@@ -299,6 +300,7 @@ public abstract class EnemyBase : MonoBehaviour
         await UniTask.DelayFrame(1);
 
         stateInfo = default;
+        _dir = new Vector2(_gameManager.PlayerX - (int)transform.position.x, _gameManager.PlayerY * -1 - (int)transform.position.y);
 
         await UniTask.WaitUntil(() => 0.5f <= stateInfo.normalizedTime);
         //UŒ‚
