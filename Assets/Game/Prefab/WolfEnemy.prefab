@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 1174962889633571077}
   - component: {fileID: 7559201016850401175}
   - component: {fileID: 5568235794653460558}
+  - component: {fileID: 846263039439735295}
   m_Layer: 0
   m_Name: WolfEnemy
   m_TagString: Enemy
@@ -134,7 +135,7 @@ Transform:
   m_GameObject: {fileID: 6269954591505561632}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 63, y: -44, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5272455053106573719}
@@ -153,6 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47cb449fb9a778c4d9239a7994bdc8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _daiksutoraCs: {fileID: 846263039439735295}
   _moveTime: 0.01
   _anim: {fileID: 1818095438676542772}
   _enemyStatus: {fileID: 1174962889633571077}
@@ -213,3 +215,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMove: {fileID: 0}
+--- !u!114 &846263039439735295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6269954591505561632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93d94d453039145419cd606e726c6b3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

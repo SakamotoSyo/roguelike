@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5079518293087439672}
   - component: {fileID: 4528353182800194986}
   - component: {fileID: 1978774070193050227}
+  - component: {fileID: 6527135946243088511}
   m_Layer: 0
   m_Name: CrowEnemy
   m_TagString: Enemy
@@ -48,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47cb449fb9a778c4d9239a7994bdc8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _daiksutoraCs: {fileID: 6527135946243088511}
   _moveTime: 0.01
   _anim: {fileID: 7467277194499364156}
   _enemyStatus: {fileID: 5079518293087439672}
@@ -108,6 +110,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMove: {fileID: 0}
+--- !u!114 &6527135946243088511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86419446158578205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93d94d453039145419cd606e726c6b3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &790742774938544549
 GameObject:
   m_ObjectHideFlags: 0
