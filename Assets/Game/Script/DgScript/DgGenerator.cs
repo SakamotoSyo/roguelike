@@ -35,6 +35,9 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     [Header("Layer2Dに入れる壁を表す数字")]
     [SerializeField] private int _chipWall;
 
+    [Header("生成時の壁と区画の余白")]
+    [SerializeField] int _startMergin;
+
     [Header("部屋の最小サイズ")]
     [SerializeField] private int _minRoom;
 
@@ -104,6 +107,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     // Start is called before the first frame update
     protected override void OnAwake()
     {
+
         MapNotice += MapInit;
         MapGeneration();
     }
@@ -128,7 +132,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         Layer.Fill(MapNum.WallNum);
 
         //最初の区画を作る
-        CreateDivision(0, 0, _width - 1, _height - 1);
+        CreateDivision(_startMergin, _startMergin, _width - _startMergin, _height - _startMergin);
 
         //区画を分割する
         SplitDivison(isVertical);
@@ -444,7 +448,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
             //エネミーに今自分がどの部屋にいるか教えてあげる
             var EnemyScript = Object.GetComponent<EnemyBase>();
             //EnemyScript.SetRoomNum(suffix);
-            EnemyManager.Instance.SetTotalEnemyNum(1);
+            //EnemyManager.Instance.SetTotalEnemyNum(1);
         }
         else if (Iobject == _stairSet)
         {
@@ -522,12 +526,12 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     }
 
     /// <summary>
-    /// DivListを返す
+    /// ランダムな部屋の情報を返す
     /// </summary>
-    /// <returns></returns>
-    public List<DgDivision> GetDivList()
+    public DgDivision GetDivList()
     {
-        return _divList;
+        int suffix = Random.Range(0, _divList.Count);
+        return _divList[suffix];
     }
 
     /// <summary>設定を初期化する</summary>
@@ -538,14 +542,38 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         _mapParent = Instantiate(_mapParentPrefab, new Vector3(0, 0, 0), transform.rotation);
     }
 
+    /// <summary>
+    ///Positionを使ってMapDataにアクセスする用の関数
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public int LayerGetPos(int x, int y) 
+    {
+        return Layer.GetMapData(x ,y * -1);
+    }
+
+    /// <summary>
+    ///Positionを使ってMapDataにアクセスする用の関数
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public void LayerSetPos(int x, int y, int SetNum)
+    {
+         Layer.SetData(x, y * -1, SetNum);
+    }
+
 }
 
 public class MapNum
 {
     /// <summary>壁</summary>
     public const int WallNum = 0;
-    /// <summary></summary>
+    /// <summary>道</summary>
     public const int LoadNum = 1;
+    /// <summary>敵</summary>
+    public const int EnemyNum = 2;   
     /// <summary>アイテム</summary>
     public const int ItemNum = 3;
     /// <summary>階段</summary>
