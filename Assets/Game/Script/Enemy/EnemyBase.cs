@@ -57,11 +57,12 @@ public abstract class EnemyBase : MonoBehaviour
     [Tooltip("自分がどこの部屋にいるか")]
     protected int _nowRoomNum;
 
+    [Tooltip("監視するアニメーションを入れる")]
+    protected AnimatorStateInfo stateInfo;
+
     private Vector2 _position;
 
     public Vector3 EnemyPos => this.gameObject.transform.position;
-
-
     protected void Start()
     {
         //インスタンスを取得
@@ -76,14 +77,14 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Update()
     {
-
+        stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
     }
 
 
     /// <summary>
     /// 敵の移動AI
     /// </summary>
-    public virtual void EnemyAction()
+    public virtual async void EnemyAction()
     {
         _startX = (int)transform.position.x;
         _startY = (int)transform.position.y;
@@ -91,7 +92,6 @@ public abstract class EnemyBase : MonoBehaviour
         _goalX = _gameManager.PlayerX;
         _goalY = -1 * _gameManager.PlayerY;
 
-        Debug.Log($"ダイクストラあわわわｗ{_daiksutoraCs.Dijkstra(_startX, _startY * -1).PlayerX}{_daiksutoraCs.Dijkstra(_startX, _startY * -1).PlayerY}");
 
         //攻撃できるかどうか確認する
         for (int i = 0; i < 3; i++)
@@ -104,9 +104,12 @@ public abstract class EnemyBase : MonoBehaviour
                 if (a == _goalX && b == _goalY)
                 {
                     //攻撃処理
-                    _playerBase.AddDamage(_enemyStatus.GetPower(), this.gameObject);
-                    _anim.SetTrigger("Attack");
+                    //_playerBase.AddDamage(_enemyStatus.GetPower(), this.gameObject);
+                    // _anim.SetTrigger("Attack");
                     _isAttack = true;
+                    await EnemyAttack();
+                    //_enemyManager.EnemyActionEnd = false;
+
                     //コルーチンでアニメーションの処理を書いてもいいかも
                 }
             }
@@ -115,6 +118,9 @@ public abstract class EnemyBase : MonoBehaviour
 
         if (!_isMove && !_isAttack)
         {
+            //var data = _daiksutoraCs.Dijkstra(_startX, _startY * -1);
+            //Debug.Log($"{_startX - data.PlayerX}da{_startY - data.PlayerY * -1}");
+            //_nextPosition = new Vector2(_startX - data.PlayerX, _startY  - data.PlayerY * -1);
             EnemyMove();
         }
         else if (_isAttack)
@@ -124,17 +130,24 @@ public abstract class EnemyBase : MonoBehaviour
 
         //自分が今どこの部屋にいるか判定するi
         // _nowRoomNum = _gameManager.GetRoomNum((int)transform.position.x, (int)transform.position.y);
-        //移動する
-        DOTween.To(() => transform.position,
-                   x => transform.position = x,
-                   _nextPosition, _moveTime)
-                   .OnComplete(() => transform.position = _nextPosition);
-       
-        _anim.SetBool("Move", true);
-        _anim.SetFloat("x", _dir.x);
-        _anim.SetFloat("y", _dir.y);
-        //transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
-        StartCoroutine(NextJudge());
+
+        if (_isMove)
+        {
+            _generatorIns.Layer.SetData((int)_nextPosition.x, (int)_nextPosition.y * -1, MapNum.EnemyNum);
+            //移動する
+            DOTween.To(() => transform.position,
+                       x => transform.position = x,
+                       _nextPosition, _moveTime)
+                       .OnComplete(() => transform.position = _nextPosition);
+
+            _anim.SetBool("Move", true);
+            _anim.SetFloat("x", _dir.x);
+            _anim.SetFloat("y", _dir.y);
+            //transform.position = Vector3.Lerp(transform.position, _nextPosition, 1);
+            StartCoroutine(NextJudge());
+
+        }
+
     }
 
     /// <summary>
@@ -227,6 +240,7 @@ public abstract class EnemyBase : MonoBehaviour
         {
             _xBool = 0;
             _yBool = 0;
+            _enemyManager.EnemyActionEnd = false;
         }
         else
         {
@@ -256,24 +270,18 @@ public abstract class EnemyBase : MonoBehaviour
         return this.gameObject;
     }
 
-    async UniTask TestWait()
-    {
-        await UniTask.Delay(TimeSpan.FromSeconds(0.01));
-    }
 
     /// <summary>
     /// 指定した目的地に着くまでループを回し続ける関数
     /// </summary>
     /// <returns></returns>
-    IEnumerator NextJudge() 
+    IEnumerator NextJudge()
     {
         while (true)
         {
             if (transform.position == _nextPosition)
             {
                 _anim.SetBool("Move", false);
-                Debug.Log("EnemyActionEnd");
-                _generatorIns.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, MapNum.EnemyNum);
                 _isMove = false;
                 _enemyManager.EnemyActionEnd = false;
                 break;
@@ -283,6 +291,25 @@ public abstract class EnemyBase : MonoBehaviour
         yield return null;
     }
 
+
+    async UniTask EnemyAttack()
+    {
+        _anim.SetTrigger("Attack");
+        //攻撃実行前のステートを取得しないように１フレーム待つ
+        await UniTask.DelayFrame(1);
+
+        stateInfo = default;
+
+        await UniTask.WaitUntil(() => 0.5f <= stateInfo.normalizedTime);
+        //攻撃
+        _playerBase.AddDamage(_enemyStatus.GetPower(), this.gameObject);
+        Debug.Log("ダメージを与えた");
+
+        await UniTask.WaitUntil(() => 1f <= stateInfo.normalizedTime);
+
+        _enemyManager.EnemyActionEnd = false;
+
+    }
 
     /// <summary> Enemyにどこの部屋に今いるのか値をセットするi </summary>
     //public void SetRoomNum(int nowRoom) 
