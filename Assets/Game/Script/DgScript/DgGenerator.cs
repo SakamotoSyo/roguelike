@@ -81,8 +81,14 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     [Header("プレイヤーのオブジェクト")]
     [SerializeField] private GameObject _playerObject;
 
+    [Header("最終層に行ったときに生成するPlayerPrefab")]
+    [SerializeField] GameObject _lastPlayer;
+
     [Header("敵のプレハブ")]
     [SerializeField] private GameObject _enemyPrefab;
+
+    [Header("ボスのプレハブ")]
+    [SerializeField] GameObject _bossPrefab;
 
     [Header("トラップのプレハブ")]
     [SerializeField] private GameObject _trapPrefab;
@@ -102,12 +108,12 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
 
     private bool isVertical = false;
 
-    public const int StairSet = 3;
+    GameManager _gameManager;
     //縦で分割するかどうか
     // Start is called before the first frame update
     protected override void OnAwake()
     {
-
+        _gameManager = GameManager.Instance;
         MapNotice += MapInit;
         MapGeneration();
     }
@@ -117,6 +123,9 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     /// </summary>
     public void MapGeneration()
     {
+        //最終層に行ったら生成する部屋の設定を変える
+        LastFloorCheck();
+
         //マップの再生成による設定の初期化
         MapNotice();
 
@@ -405,21 +414,30 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         }
 
         ///テスト用
-        //階段をランダムに生成
-        Generatesomething(_stairSet);
-        //プレイヤーの生成
         if (GameManager.Instance.PlayerObj == null)
         {
             Generatesomething(_playerObject);
         }
-        else 
+        else
         {
             PlayerRespawn();
         }
+
+        //プレイヤーの生成
+        if (_gameManager.NowFloor == _gameManager.FinalFloor)
+        {
+            Instantiate(_lastPlayer, new Vector3(24, -38, 0), transform.rotation);
+            Instantiate(_bossPrefab, new Vector3(24, -29, 0), transform.rotation);
+        }
+        else 
+        {
+            //アイテムの生成
+            ItemGeneratesomething();
+            //階段をランダムに生成
+            Generatesomething(_stairSet);
+        }
         //敵の生成
         //Generatesomething(_enemyPrefab);
-        //アイテムの生成
-        ItemGeneratesomething();
         _mapGenerateEnd = true;
 
     }
@@ -440,7 +458,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
 
         var Object = Instantiate(Iobject, new Vector3(x, -1 * y, 0), _stairSet.transform.rotation);
 
-        
+
 
         if (Iobject == _enemyPrefab)
         {
@@ -458,7 +476,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     }
 
     /// <summary>Playerをリスポーンさせる処理</summary>
-    public void PlayerRespawn() 
+    public void PlayerRespawn()
     {
         //ランダムな区画を選択する
         int suffix = Random.Range(0, _divList.Count);
@@ -548,9 +566,9 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    public int LayerGetPos(int x, int y) 
+    public int LayerGetPos(int x, int y)
     {
-        return Layer.GetMapData(x ,y * -1);
+        return Layer.GetMapData(x, y * -1);
     }
 
     /// <summary>
@@ -561,7 +579,27 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     /// <returns></returns>
     public void LayerSetPos(int x, int y, int SetNum)
     {
-         Layer.SetData(x, y * -1, SetNum);
+        Layer.SetData(x, y * -1, SetNum);
+    }
+
+    /// <summary>
+    /// 最終階層かどうかチェックする
+    /// </summary>
+    void LastFloorCheck()
+    {
+        //最終層だったら
+        if (_gameManager.NowFloor == _gameManager.FinalFloor)
+        {
+            #region 部屋の設定
+            _height = 55;
+            _width = 55;
+            _startMergin = 10;
+            _minRoom = 30;
+            _outerMergin = 4;
+            _maxRoom = 30;
+            _posMergin = 2;
+            #endregion
+        }
     }
 
 }
@@ -573,7 +611,7 @@ public class MapNum
     /// <summary>道</summary>
     public const int LoadNum = 1;
     /// <summary>敵</summary>
-    public const int EnemyNum = 2;   
+    public const int EnemyNum = 2;
     /// <summary>アイテム</summary>
     public const int ItemNum = 3;
     /// <summary>階段</summary>

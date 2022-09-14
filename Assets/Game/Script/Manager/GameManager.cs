@@ -14,6 +14,7 @@ public class GameManager : SingletonBehaviour<GameManager>
         LogOpen,
         Result,
         WaitTurn,
+        Story,
     }
 
     public TurnManager TurnType;
@@ -23,6 +24,8 @@ public class GameManager : SingletonBehaviour<GameManager>
     public int TotalEnemyNum => _totalEnemyNum;
     public int PlayerX => _playerX;
     public int PlayerY => _playerY;
+    public int NowFloor => _nowFloor;
+    public int FinalFloor => _finalStratum;
     public List<GameObject> ItemObjList => _itemObjList;
 
     [Header("現在の階層を表示するテキスト")]
@@ -121,17 +124,23 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         TurnType = TurnManager.WaitTurn;
         _nowFloor++;
-        _nowFloorText.text = _nowFloor.ToString();
-        await FadeWait();
+
         //フェードが終わるまで待つ
         if (_nowFloor != _finalStratum)
         {
-            Debug.Log("Playerのターンです");
+            //マップの生成
+            _dgGenerator.MapGeneration();
+            _nowFloorText.text = _nowFloor.ToString() + "F";
+            await FadeWait();
             TurnType = TurnManager.Player;
         }
         else 
         {
+            _nowFloorText.text = "最終層";
+            _dgGenerator.MapGeneration();
+            await FadeWait();
             Debug.Log("最終層");
+            //マップの生成
             TurnType = TurnManager.Player;
         }
         
