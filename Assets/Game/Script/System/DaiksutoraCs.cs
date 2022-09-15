@@ -13,9 +13,9 @@ public class DaiksutoraCs: MonoBehaviour
     int[] PosX = { 1, 0, -1, 0 };
     int[] PosY = { 0, 1, 0, -1 };
     //プレイヤーのデータを作成
-    EnemyData _enemyData;
+    EnemyData _playerData;
     //ゴールのデータを仮作成
-    EnemyData _goal;
+    EnemyData _enemyData;
 
     EnemyData _result;
     int movePoint = 0;
@@ -33,10 +33,12 @@ public class DaiksutoraCs: MonoBehaviour
     public EnemyData Dijkstra(int x, int y)
     {
         _result = new EnemyData(0, 0, 1000);
+        mapData = DgGenerator.Instance.GetDivList(x, y * -1);
         //Enemyの座標を入れる
+        Debug.Log($"マップデータTop{mapData.Room.Top}");
         Init();
-        _enemyData = new EnemyData(x - mapData.Room.Left, y - mapData.Room.Top, 100);
-        _goal = new EnemyData(_gameManager.PlayerX - mapData.Room.Left, _gameManager.PlayerY - mapData.Room.Top, 0);
+        _playerData = new EnemyData(_gameManager.PlayerX - mapData.Room.Left, _gameManager.PlayerY - mapData.Room.Top, 100);
+        _enemyData = new EnemyData(x - mapData.Room.Left, y - mapData.Room.Top, 0);
         for (int i = 0; i < mapY; i++)
         {
             for (int j = 0; j < mapX; j++)
@@ -47,31 +49,32 @@ public class DaiksutoraCs: MonoBehaviour
         }
 
         movePoint = 0;
-        UpTansaku(_enemyData.PlayerY);
+        UpTansaku(_playerData.PlayerY);
         movePoint = 0;
-        DownTansaku(_enemyData.PlayerY);
+        DownTansaku(_playerData.PlayerY);
 
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 3; j++)
             {
-                var k = _enemyData.PlayerX + i - 1;
+                var k = _enemyData.PlayerX+ i - 1;
                 var l = _enemyData.PlayerY + j - 1;
                 if (k < 0 || l < 0 || k > asiato.Length / mapY - 1 || l > asiato.Length / mapX - 1) 
                 {
-                    Debug.Log($"{k > asiato.Length / mapY - 1}と{l > asiato.Length / mapX - 1}");
+                   // Debug.Log($"{k > asiato.Length / mapY - 1}と{l > asiato.Length / mapX - 1}");
                     continue;
                 }
                 Debug.Log($"{k}to{asiato.Length / mapY - 1}と{l}to{ asiato.Length / mapX - 1}");
-                var a =  new EnemyData(k, l, asiato[l,k]);
-                if (_result.MovePoint < a.MovePoint) 
+                var a =  new EnemyData(k + mapData.Room.Left, l + mapData.Room.Top, asiato[l,k]);
+                if (_result.MovePoint > a.MovePoint) 
                 {
+                    Debug.Log($"入れ替えーーーーー");
                     _result = a;
                 }
             }
         }
 
-        return _enemyData;
+        return _result;
     }
 
     /// <summary>
@@ -81,9 +84,8 @@ public class DaiksutoraCs: MonoBehaviour
     {
         _gameManager = GameManager.Instance;
         _dgGenerator = DgGenerator.Instance;
-        mapData = DgGenerator.Instance.GetDivList();
-        mapX = mapData.Room.Right - mapData.Room.Left;
-        mapY = mapData.Room.Bottom - mapData.Room.Top;
+        mapX = mapData.Room.Right - mapData.Room.Left + 2;
+        mapY = mapData.Room.Bottom - mapData.Room.Top + 2;
         mapArray = new int[mapY, mapX];
         asiato = new int[mapY, mapX];
     }
@@ -96,9 +98,8 @@ public class DaiksutoraCs: MonoBehaviour
         var smovePoint = movePoint;
 
         //左端まで足跡をつける
-        for (int i = _enemyData.PlayerX -1; i >= 0; i--)
+        for (int i = _playerData.PlayerX; i >= 0; i--)
         {
-            
             if (movePlayerY < 0 || asiato.Length / mapX - 1 < movePlayerY)
             {
 
@@ -133,7 +134,7 @@ public class DaiksutoraCs: MonoBehaviour
 
         smovePoint = movePoint;
         //右端まで足跡をつける
-        for (int i = _enemyData.PlayerX; i < mapX; i++)
+        for (int i = _playerData.PlayerX; i < mapX; i++)
         {
             if (movePlayerY < 0 || asiato.Length / mapX - 1 < movePlayerY)
             {
@@ -189,7 +190,7 @@ public class DaiksutoraCs: MonoBehaviour
         var smovePoint = movePoint;
 
         //左端まで足跡をつける
-        for (int i = _enemyData.PlayerX - 1; i >= 0; i--)
+        for (int i = _playerData.PlayerX - 1; i >= 0; i--)
         {
             if (movePlayerY < 0 || asiato.Length / mapX - 1 < movePlayerY)
             {
@@ -198,6 +199,7 @@ public class DaiksutoraCs: MonoBehaviour
             //足跡をつける
             else if (asiato[movePlayerY, i] > smovePoint)
             {
+                Debug.Log($"{asiato.Length / mapY - 1}da{movePlayerY}と {asiato.Length / mapX}la{i}");
                 asiato[movePlayerY, i] = smovePoint;
             }
 
@@ -224,9 +226,10 @@ public class DaiksutoraCs: MonoBehaviour
 
         smovePoint = movePoint;
         //右端まで足跡をつける
-        for (int i = _enemyData.PlayerX; i < mapX; i++)
+        for (int i = _playerData.PlayerX; i < mapX; i++)
         {
-            if (movePlayerY < 0 || asiato.Length / mapX - 1 < movePlayerY)
+               // Debug.Log($"{asiato.Length / mapX}da{movePlayerY}と {asiato.Length / mapX}la{i}");
+            if (movePlayerY < 0 || i < 0 || asiato.Length / mapX  - 1 < movePlayerY || asiato.Length / mapY -1 < i)
             {
 
             }
@@ -268,18 +271,6 @@ public class DaiksutoraCs: MonoBehaviour
         else
         {
             //end
-        }
-    }
-
-    void DebugTY()
-    {
-        for (int i = 0; i < asiato.Length / mapX; i++)
-        {
-            //Console.WriteLine("");
-            for (int j = 0; j < asiato.Length / mapY; j++)
-            {
-                //Console.Write($" {asiato[i, j]}");
-            }
         }
     }
 
