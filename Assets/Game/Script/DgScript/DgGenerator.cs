@@ -429,7 +429,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
             Instantiate(_lastPlayer, new Vector3(24, -38, 0), transform.rotation);
             Instantiate(_bossPrefab, new Vector3(24, -29, 0), transform.rotation);
         }
-        else 
+        else
         {
             //アイテムの生成
             ItemGeneratesomething();
@@ -546,7 +546,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     /// <summary>
     /// ランダムな部屋の情報を返す
     /// </summary>
-    public DgDivision GetDivList()
+    public DgDivision GetRanDivList()
     {
         int suffix = Random.Range(0, _divList.Count);
         return _divList[suffix];
@@ -561,25 +561,44 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     }
 
     /// <summary>
-    ///Positionを使ってMapDataにアクセスする用の関数
+    /// ポジションを入れることで自身のいる部屋を返してくれる
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    public int LayerGetPos(int x, int y)
+    public DgDivision GetDivList(int x, int y)
     {
-        return Layer.GetMapData(x, y * -1);
+        foreach (var i in _divList)
+        {
+            //いる部屋が見つかったらそれを返す
+            if ((i.Room.Left <= x && i.Room.Right > x) && (i.Room.Top <= y * -1 && i.Room.Bottom > y * -1))
+            {
+                return i;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
-    ///Positionを使ってMapDataにアクセスする用の関数
+    ///ポジションを入れるとその座標の部屋番号で返してくれる 
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    public void LayerSetPos(int x, int y, int SetNum)
+    public int GetDivNum(int x, int y)
     {
-        Layer.SetData(x, y * -1, SetNum);
+        for (int i = 0; i < _divList.Count; i++)
+        {
+            //いる部屋が見つかったらそれを返す
+            if ((_divList[i].Room.Left <= x && _divList[i].Room.Right > x) && (_divList[i].Room.Top <= y * -1 && _divList[i].Room.Bottom > y * -1))
+            {
+                return i;
+            }
+        }
+
+        //どこの部屋にもいなかった場合-1を返す
+        return -1;
     }
 
     /// <summary>
