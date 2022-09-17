@@ -89,6 +89,9 @@ public abstract class EnemyBase : MonoBehaviour
     /// </summary>
     public virtual async void EnemyAction()
     {
+        //自分が今どこの部屋にいるか判定するi
+        _nowRoomNum = _generatorIns.GetDivNum((int)transform.position.x, (int)transform.position.y);
+
         _startX = (int)transform.position.x;
         _startY = (int)transform.position.y;
 
@@ -121,21 +124,40 @@ public abstract class EnemyBase : MonoBehaviour
 
         if (!_isMove && !_isAttack)
         {
-            //var data = _daiksutoraCs.Dijkstra(_startX, _startY * -1);
-            //Debug.Log($"{_startX - data.PlayerX}da{_startY - data.PlayerY * -1}");
-            //_nextPosition = new Vector2(_startX - data.PlayerX, _startY  - data.PlayerY * -1);
-            EnemyMove();
+            Debug.Log($"現在の部屋{_generatorIns.GetDivNum((int)transform.position.x, (int)transform.position.y)}");
+            Debug.Log($"{_nowRoomNum}to{_generatorIns.GetDivNum(_gameManager.PlayerX, _gameManager.PlayerY * -1)}");
+            //プレイヤーと同じ部屋だった時追跡する
+            if (_nowRoomNum == _generatorIns.GetDivNum(_gameManager.PlayerX, _gameManager.PlayerY * -1) &&
+                DgGenerator.Instance.GetDivList((int)transform.position.x, (int)transform.position.y * -1) != null)
+            {
+                Debug.Log("大工");
+                var data = _daiksutoraCs.Dijkstra(_startX, _startY * -1);
+                _nextPosition = new Vector2(data.PlayerX, data.PlayerY * -1);
+                _isMove = true;
+            }
+            //通路にいるときはテスト用に使っていたもので追跡する
+            else
+            {
+                Debug.Log("通路");
+                EnemyMove();
+            }
+            //どちらでもないときはランダムに移動する
+            //else
+            //{
+            //    Debug.Log("soreigai");
+            //    RandomMove();
+            //}
+
+            //EnemyMove();
         }
         else if (_isAttack)
         {
             _isAttack = false;
         }
 
-        //自分が今どこの部屋にいるか判定するi
-        // _nowRoomNum = _gameManager.GetRoomNum((int)transform.position.x, (int)transform.position.y);
-
         if (_isMove)
         {
+            _generatorIns.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, MapNum.LoadNum);
             _generatorIns.Layer.SetData((int)_nextPosition.x, (int)_nextPosition.y * -1, MapNum.EnemyNum);
             //移動する
             DOTween.To(() => transform.position,
@@ -235,8 +257,8 @@ public abstract class EnemyBase : MonoBehaviour
         {
             Debug.Log("壁です");
         }
-
-
+       
+       
         if (!_isMove)
         {
             _xBool = 0;
@@ -247,7 +269,26 @@ public abstract class EnemyBase : MonoBehaviour
         {
             //ゲームマネージャーにプレイヤーの場所を渡す
             //EnemyManager.Instance.EnemyList[0].transform.position += new Vector3(_xBool, _yBool, 0);
-            _generatorIns.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, MapNum.LoadNum);
+        }
+    }
+
+    void RandomMove() 
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                var x = (int)transform.position.x + i - 1;
+                var y = (int)transform.position.y + j - 1;
+
+                if (GetMapData((int)transform.position.x + x, (int)transform.position.y * -1 + y) == 1)
+                {
+                    _nextPosition = new Vector2((int)transform.position.x + x, (int)transform.position.y + y);
+                    _isMove = true;
+                    Debug.Log("ランダムに");
+                    return;
+                }
+            }
         }
     }
 
