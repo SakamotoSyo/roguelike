@@ -37,6 +37,9 @@ public class GameManager : SingletonBehaviour<GameManager>
     [Header("フェードにかかる時間")]
     [SerializeField] int _fadeTime;
 
+    [Header("マップの光")]
+    [SerializeField] GameObject _mapLight;
+
     [Tooltip("PlayerのObject")]
     private GameObject _playerObj;
 
@@ -117,6 +120,14 @@ public class GameManager : SingletonBehaviour<GameManager>
     public void RemoveItemObjList(GameObject ItemObj)
     {
         _itemObjList.Remove(ItemObj);
+    }
+
+    /// <summary>
+    /// Objectのアクティブ非アクティブを入れ替える
+    /// </summary>
+    public void SetLight(bool Setbool) 
+    {
+        _mapLight.SetActive(Setbool);
     }
 
     /// <summary>次の階層に移動する時に呼ぶメゾット</summary>

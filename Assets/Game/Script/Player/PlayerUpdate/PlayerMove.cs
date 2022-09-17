@@ -31,6 +31,9 @@ public class PlayerMove : MonoBehaviour
     [Header("移動方向をナビゲーションするObj")]
     [SerializeField] GameObject _moveArrowObj;
 
+    [Header("通路に入った時に周りを照らす光")]
+    [SerializeField] GameObject _playerLight;
+
     [Tooltip("GameManegerのインスタンス")]
     private GameManager _gameManager;
 
@@ -52,6 +55,12 @@ public class PlayerMove : MonoBehaviour
     private void Start()
     {
         _gameManager = GameManager.Instance;
+    }
+
+    void Update()
+    {
+        _anim.SetFloat("x", _playerDirection.x);
+        _anim.SetFloat("y", _playerDirection.y);
     }
 
     /// <summary>
@@ -81,8 +90,9 @@ public class PlayerMove : MonoBehaviour
                 //アイテムが足元に落ちていないかどうか
                 ItemJudge(x, y);
 
-                //ここに岩や敵があった時移動できないという処理を追加する
                 _nextPosition = transform.position + new Vector3(x, y, 0);
+
+                PlayerLightSet();
 
                 //ゲームマネージャーにプレイヤーの場所を渡す
                 _gameManager.SetPlayerPosition((int)transform.position.x + (int)x, ((int)transform.position.y + (int)y) * -1);
@@ -97,7 +107,6 @@ public class PlayerMove : MonoBehaviour
 
                 //行動が終わったのでターンフェーズを変える
                 _gameManager.TurnType = GameManager.TurnManager.Enemy;
-                Debug.Log("味方の行動が終わりました");
             }
             else
             {
@@ -132,7 +141,7 @@ public class PlayerMove : MonoBehaviour
         if (x == 0 && y == 0) return false;
         //マップデータにアクセス
         int value = DgGenerator.Instance.Layer.GetMapData(_gameManager.PlayerX + x, _gameManager.PlayerY + y * -1);
-        Debug.Log(value);
+        //Debug.Log(value);
         //0は壁、1は道
         if (value == MapNum.WallNum)
         {
@@ -196,8 +205,6 @@ public class PlayerMove : MonoBehaviour
             runSpeed = _runSpeed;
         }
         _anim.SetBool("Move", true);
-        _anim.SetFloat("x", _playerDirection.x);
-        _anim.SetFloat("y", _playerDirection.y);
         while (true)
         {
             yield return null;
@@ -215,6 +222,22 @@ public class PlayerMove : MonoBehaviour
         yield return null;
     }
 
+    /// <summary>
+    /// Playerが通路に入った時にLightのOnOffをする
+    /// </summary>
+    void PlayerLightSet() 
+    {
+        if (DgGenerator.Instance.GetDivNum((int)_nextPosition.x, (int)_nextPosition.y) == -1)
+        {
+            _gameManager.SetLight(false);
+            _playerLight.SetActive(true);
+        }
+        else 
+        {
+            _gameManager.SetLight(true);
+            _playerLight.SetActive(false);
+        }
+    }
 
     async UniTask TestWait()
     {
