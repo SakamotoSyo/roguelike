@@ -16,9 +16,9 @@ public class PlayerPresenter : MonoBehaviour
     {
         _playerStatus = GameManager.Instance.PlayerObj.GetComponent<PlayerStatus>();
         //Å‰‚ÉÅ‘å’l‚ÌÝ’è
-        _playerStatus.MaxChanged.Subscribe(_ => _playerUiView.SetHp(_playerStatus.MaxHp, _playerStatus.CurrentHp));
+        _playerStatus.MaxChanged.Subscribe(value => _playerUiView.SetMax((int)value));
         //•ÏX‚ª‚ ‚Á‚½Žž‚ÉView‚É’Ê’m‚·‚é
-        _playerStatus.CurrentChanged.Subscribe(_ => _playerUiView.SetHp(_playerStatus.MaxHp, _playerStatus.CurrentHp)); 
+        _playerStatus.CurrentChanged.Subscribe(value => _playerUiView.SetCurrent((int)value)); 
     }
 
     // Update is called once per frame
