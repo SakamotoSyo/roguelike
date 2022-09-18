@@ -29,14 +29,12 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// プレイヤがどう行動するか決定する
     /// </summary>
-    void Update()
+    async void Update()
     {
         if (_gameManager.TurnType == GameManager.TurnManager.Player)
         {
             //自分の足元に階段があるどうか
             StairCheck(false);
-            //プレイヤーの攻撃処理
-            _playerAttackCs.Attack();
         }
         else if (_gameManager.TurnType == GameManager.TurnManager.LogOpen)
         {
@@ -50,17 +48,21 @@ public class PlayerMovement : MonoBehaviour
         {
 
         }
+        else if (_gameManager.TurnType == GameManager.TurnManager.Story) 
+        {
+
+        }
 
     }
 
-    void FixedUpdate()
+    async void FixedUpdate()
     {
         if (_gameManager.TurnType == GameManager.TurnManager.Player)
         {
             //移動の入力処理
             _playerMoveCs.MoveInputKey();
             //プレイヤーの攻撃処理
-            //_playerAttackCs.Attack();
+            await _playerAttackCs.Attack();
         }
     }
 

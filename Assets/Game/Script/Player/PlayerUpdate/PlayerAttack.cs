@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public class PlayerAttack : MonoBehaviour
 {
     EnemyManager _enemyManager;
     GameManager _gameManager;
 
-    [Tooltip("playerStatusのスクリプト")]
+    [Header("Animator")]
+    [SerializeField] Animator _anim;
+
+    [Header("playerStatusのスクリプト")]
     [SerializeField] PlayerStatus _playerStatus;
 
-    [Tooltip("playerMoveのスクリプト")]
+    [Header("playerMoveのスクリプト")]
     [SerializeField] PlayerMove _playerMoveCs;
 
+     AnimatorStateInfo _stateInfo;
 
     private void Start()
     {
@@ -20,22 +25,39 @@ public class PlayerAttack : MonoBehaviour
         _enemyManager = EnemyManager.Instance;
     }
 
+    void Update()
+    {
+        _stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
+        
+    }
+
     /// <summary>
     ///プレイヤーの攻撃処理
     /// </summary>
-    public void Attack()
+    public async UniTask Attack()
     {
         if (Input.GetButtonDown("Submit"))
         {
-            Debug.Log("攻撃がよばれた");
             //プレイヤーが向いている方向に敵がいた場合
             foreach (var i in _enemyManager.EnemyBaseList)
             {
                 if (transform.position.x + _playerMoveCs.PlayerDirection.x == i.EnemyPos.x && transform.position.y + _playerMoveCs.PlayerDirection.y == i.EnemyPos.y)
                 {
                     LogScript.Instance.OutPutLog("攻撃の処理が成功した");
-                    //アニメーションの処理を入れる
+                    _anim.SetTrigger("Attack");
+                    _gameManager.TurnType = GameManager.TurnManager.WaitTurn;
+                    //攻撃実行前のステートを取得しないように１フレーム待つ
+                    await UniTask.DelayFrame(1);
+
+                    _stateInfo = default;
+                    //_dir = new Vector2(_gameManager.PlayerX - (int)transform.position.x, _gameManager.PlayerY * -1 - (int)transform.position.y);
+
+                    await UniTask.WaitUntil(() => 0.5f <= _stateInfo.normalizedTime);
+                    //攻撃
                     i.GetComponent<IDamageble>().AddDamage(_playerStatus.Power, this.gameObject);
+
+                    await UniTask.WaitUntil(() => 1f <= _stateInfo.normalizedTime);
+
                     //ダメージを与え終わったら処理を終える
                     break;
 
@@ -44,9 +66,6 @@ public class PlayerAttack : MonoBehaviour
 
             //経験値をゲットしたかどうか確認する
             _gameManager.TurnType = GameManager.TurnManager.Result;
-
-            //元の設定
-            //_gameManager.TurnType = GameManager.TurnManager.Enemy;
         }
     }
 
