@@ -1,4 +1,4 @@
-using System.Collections;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -48,6 +48,8 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     private ItemDataBase _itemDataBase;
     [SerializeField, Header("LevelUpDataScript")]
     private LevelDataScript _levelDataScript;
+    [Header("ダメージのUIPrefab")]
+    [SerializeField] GameObject _damegeUI;
 
     /// <summary>MVPパターンにおけるModelクラス</summary>
     public float MaxHp { get => _maxHp.Value; set => _maxHp.Value = value; }
@@ -111,6 +113,8 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     public void AddDamage(float damage, GameObject obj)
     {
         LogScript.Instance.OutPutLog($"{damage}のダメージを受けた");
+        var UI = Instantiate(_damegeUI, transform.position + new Vector3(0, 0.5f, 0), transform.rotation);
+        UI.GetComponentInChildren<Text>().text = damage.ToString();
         // 値を引き出す・書き換える際はValueプロパティを参照すること
         float _next = _currentHp.Value;
         _next -= damage;
