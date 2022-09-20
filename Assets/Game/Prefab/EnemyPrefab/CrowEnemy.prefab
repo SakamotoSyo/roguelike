@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2206224333058383175}
-  - component: {fileID: 8157977600769754943}
   - component: {fileID: 5079518293087439672}
+  - component: {fileID: 6517223674699665592}
   - component: {fileID: 4528353182800194986}
   - component: {fileID: 1978774070193050227}
   - component: {fileID: 6527135946243088511}
@@ -37,22 +37,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8157977600769754943
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 86419446158578205}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47cb449fb9a778c4d9239a7994bdc8f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _daiksutoraCs: {fileID: 6527135946243088511}
-  _moveTime: 0.01
-  _anim: {fileID: 7467277194499364156}
-  _enemyStatus: {fileID: 5079518293087439672}
 --- !u!114 &5079518293087439672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,11 +50,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyName: ookami
-  _maxHp: 100
-  _hp: 50
+  _maxHp: 10
+  _hp: 10
   _power: 10
   _actionNum: 1
   _enemyExp: 10
+  _damageUI: {fileID: 7898895933514986489, guid: a140d019f31777843beee879bf49c3fc, type: 3}
+--- !u!114 &6517223674699665592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86419446158578205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45653a5d8c3a6c841ac8a0ace6765b44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _daiksutoraCs: {fileID: 6527135946243088511}
+  _moveTime: 0.01
+  _moveCount: 1
+  _anim: {fileID: 7467277194499364156}
+  _enemyStatus: {fileID: 5079518293087439672}
+  _rangeAttack: 70
+  _blowOffAttack: 2
+  _rangeEffect: {fileID: 8084532680761079974, guid: ff1ea780b38f7cd4db9f8e29def27219, type: 3}
+  _effectCs: {fileID: 1978774070193050227}
 --- !u!61 &4528353182800194986
 BoxCollider2D:
   m_ObjectHideFlags: 0
