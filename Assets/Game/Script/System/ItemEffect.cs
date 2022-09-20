@@ -18,7 +18,7 @@ public class ItemEffect : MonoBehaviour
     {
         _generator = DgGenerator.Instance;
         _gameManager = GameManager.Instance;
-        if (_playerMove == null) _playerMove = _gameManager.PlayerObj.GetComponent<PlayerMove>();
+        _playerMove = _gameManager.PlayerObj.GetComponent<PlayerMove>();  
     }
 
     // Update is called once per frame
@@ -35,7 +35,7 @@ public class ItemEffect : MonoBehaviour
         switch (ItemName)
         {
             case "吹き飛ばしの杖":
-                BlowAwayEffect();
+                BlowAwayEffect(_playerMove.GetDirection());
                 break;
             default:
                 break;
@@ -45,13 +45,14 @@ public class ItemEffect : MonoBehaviour
     /// <summary>
     /// 吹き飛ばす処理をする関数
     /// </summary>
-    void BlowAwayEffect()
+    public void BlowAwayEffect(Vector2 dir)
     {
+        _gameManager.TurnType = GameManager.TurnManager.WaitTurn;
         int PosX = (int)transform.position.x;
         int PosY = (int)transform.position.y * -1;
 
-        int dirX = (int)_playerMove.PlayerDirection.x;
-        int dirY = (int)_playerMove.PlayerDirection.y;
+        int dirX = (int)dir.x;
+        int dirY = (int)dir.y;
 
         //プレイヤーがまだ動いていないとき
         if (dirX == 0 && dirY == 0)
@@ -91,8 +92,20 @@ public class ItemEffect : MonoBehaviour
             transform.position = Vector3.Lerp(MyPos, _nextPosition, posKeep);
             yield return new WaitForSeconds(0.01f);
         }
-        //敵の座標を移動させる
-        _generator.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, MapNum.EnemyNum);
-        _gameManager.TurnType = GameManager.TurnManager.Enemy;
+
+        //効果を受けたのは誰か
+        if (gameObject.tag == "Enemy")
+        {
+            //敵の座標を移動させる
+            _generator.Layer.SetData((int)transform.position.x, (int)transform.position.y * -1, MapNum.EnemyNum);
+            _gameManager.TurnType = GameManager.TurnManager.Enemy;
+        }
+        else if (gameObject.tag == "Player") 
+        {
+            //敵の座標を移動させる
+            _gameManager.SetPlayerPosition((int)transform.position.x, (int)transform.position.y * -1);
+            _gameManager.TurnType = GameManager.TurnManager.Player;
+        }
+        
     }
 }
