@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyStatus : MonoBehaviour,IDamageble
 {
@@ -17,6 +18,8 @@ public class EnemyStatus : MonoBehaviour,IDamageble
     [SerializeField] int _actionNum;
     [Header("敵の経験値")]
     [SerializeField] float _enemyExp;
+    [Header("ダメージを受けるUI")]
+    [SerializeField] GameObject _damageUI;
     [Tooltip("EnemyBaseのスクリプト")]
     private EnemyBase _enemyBase;
     [Tooltip("GameManagerのインスタンス")]
@@ -77,6 +80,9 @@ public class EnemyStatus : MonoBehaviour,IDamageble
     {
          _hp -= damage;
         LogScript.Instance.OutPutLog($"{damage}のダメージを与えた");
+        var UI = Instantiate(_damageUI, transform.position, transform.rotation);
+        UI.GetComponentInChildren<Text>().text = damage.ToString();
+
         if (_hp <= 0)
         {
             OnDeath(obj);
@@ -100,6 +106,7 @@ public class EnemyStatus : MonoBehaviour,IDamageble
         }
 
         EnemyManager.Instance.SetTotalEnemyNum(-1);
+        Debug.Log("-1adsdas");
     }
 }
 
