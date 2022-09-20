@@ -5,7 +5,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine.Playables;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : MonoBehaviour,IDirection
 {
     [Header("PlayerMoveMent")]
     [SerializeField] PlayerMovement _playerMovement;
@@ -44,8 +44,7 @@ public class PlayerMove : MonoBehaviour
     private bool _isMoving;
 
     [Tooltip("プレイヤーが動いた方向")]
-    private Vector3 _playerDirection;
-    public Vector3 PlayerDirection => _playerDirection;
+    private Vector2 _playerDirection;
 
     [Tooltip("プレイヤーが次に移動する場所")]
     private Vector3 _nextPosition;
@@ -82,7 +81,7 @@ public class PlayerMove : MonoBehaviour
             if (_isMoving && (x != 0 || y != 0))
             {
                 //プレイヤーの方向を保存する
-                _playerDirection = new Vector3(x, y, 0);
+                _playerDirection = new Vector2(x, y);
 
                 //ゲームマネージャーでプレイヤーがどの部屋にいるか判定するi
                 //_gameManagerIns.SetPlayerRoomNum((int)(transform.position.x + x)　, (int)(transform.position.y + y) * -1);
@@ -249,5 +248,5 @@ public class PlayerMove : MonoBehaviour
         await UniTask.Delay(TimeSpan.FromSeconds(t));
     }
 
-
+    public Vector2 GetDirection() => _playerDirection;
 }

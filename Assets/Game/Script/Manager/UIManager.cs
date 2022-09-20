@@ -109,6 +109,10 @@ public class UIManager : MonoBehaviour
         {
             PlayerMainUI();
         }
+        else if (_gameManager.TurnType == GameManager.TurnManager.Story) 
+        {
+           
+        }
         else
         {
             CancelUI();
@@ -372,10 +376,10 @@ public class UIManager : MonoBehaviour
         //アイテムに情報を設定
         ItemObjectCs.SetItemInfor(item);
         ItemObjectCs.SetItemSprite(item.GetItemImage);
-        _playerMoveCs = _gameManager.PlayerObj.GetComponent<PlayerMove>();
+        var _playerDir = _gameManager.PlayerObj.GetComponent<IDirection>();
         //プレイヤーの動いた方向を持ってくる
-        int x = (int)_playerMoveCs.PlayerDirection.x;
-        int y = (int)_playerMoveCs.PlayerDirection.y;
+        int x = (int)_playerDir.GetDirection().x;
+        int y = (int)_playerDir.GetDirection().y;
 
         if (x == 0 && y == 0)
         {
@@ -520,5 +524,10 @@ public class UIManager : MonoBehaviour
 
         _stairPanel.SetActive(true);
         EventSystem.current.SetSelectedGameObject(_stairPanel.transform.GetChild(0).gameObject);
+    }
+
+    public void PlayerStory() 
+    {
+
     }
 }
