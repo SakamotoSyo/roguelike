@@ -34,6 +34,9 @@ public class PlayerMove : MonoBehaviour,IDirection
     [Header("通路に入った時に周りを照らす光")]
     [SerializeField] GameObject _playerLight;
 
+    [Header("PlayerStatusのScript")]
+    [SerializeField] PlayerStatus _playerStatus;
+
     [Tooltip("GameManegerのインスタンス")]
     private GameManager _gameManager;
 
@@ -49,7 +52,8 @@ public class PlayerMove : MonoBehaviour,IDirection
     [Tooltip("プレイヤーが次に移動する場所")]
     private Vector3 _nextPosition;
 
-
+    [Tooltip("入力値を保存しておく変数")]
+    float x, y;
 
     private void Start()
     {
@@ -62,14 +66,19 @@ public class PlayerMove : MonoBehaviour,IDirection
         _anim.SetFloat("y", _playerDirection.y);
     }
 
+    public void InputKey()
+    {
+        x = Input.GetAxisRaw("Horizontal");
+        y = Input.GetAxisRaw("Vertical");
+    }
+
+
     /// <summary>
     /// 移動の入力処理
     /// </summary>
-    public async void MoveInputKey()
+    public async void Move()
     {
         //_countTime = 0;
-        var x = Input.GetAxisRaw("Horizontal");
-        var y = Input.GetAxisRaw("Vertical");
         //シフトを押しているときは移動できなくする
         if (!Input.GetButton("Lock"))
         {
@@ -95,6 +104,9 @@ public class PlayerMove : MonoBehaviour,IDirection
 
                 //ゲームマネージャーにプレイヤーの場所を渡す
                 _gameManager.SetPlayerPosition((int)transform.position.x + (int)x, ((int)transform.position.y + (int)y) * -1);
+
+                //1歩歩くと1回復する
+                _playerStatus.SetHp(1);
 
                 //移動処理
                 StartCoroutine(TestMove(_nextPosition, x, y));
