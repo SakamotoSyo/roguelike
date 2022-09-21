@@ -169,7 +169,7 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
             Debug.Log("aa");
         }
 
-        _enemyManager.EnemyActionEnd = false;   
+        _enemyManager.EnemyActionEnd();   
     }
 
     /// <summary>
@@ -267,7 +267,6 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
         {
             _xBool = 0;
             _yBool = 0;
-            _enemyManager.EnemyActionEnd = false;
         }
         else
         {
@@ -356,8 +355,6 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
             Debug.Log("ƒ_ƒ[ƒW‚ð—^‚¦‚½");
 
             await UniTask.WaitUntil(() => 1f <= _stateInfo.normalizedTime);
-
-            _enemyManager.EnemyActionEnd = false;
         }        
 
     }

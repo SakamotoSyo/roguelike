@@ -27,10 +27,10 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     private PlayerStatus _playerStatus;
 
     //敵の総数のどこまで敵が行動したか
-    public int EnemyActionCountNum = 0;
+    bool _enemyAction;
 
     //敵一体の攻撃が終わったかどうか
-    public bool EnemyActionEnd = false;
+    int _actionEnd = 0;
 
     [Header("ダンジョンに湧かせたい敵の量")]
     [SerializeField] private int _totalEnemyNum;
@@ -89,20 +89,29 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     {
         if (GameManager.Instance.TurnType == GameManager.TurnManager.Enemy) 
         {
-            if (!EnemyActionEnd && _enemyBaseList.Count> EnemyActionCountNum)
+            if (!_enemyAction)
             {
-                EnemyActionEnd = true;
-                _enemyBaseList[EnemyActionCountNum].EnemyAction();
-                EnemyActionCountNum++;
+                _enemyAction = true;
+                for (int i = 0; i < _enemyBaseList.Count; i++)
+                {
+                    await TestWait();
+                    _enemyBaseList[i].EnemyAction();
+                }
             }
             //Enemyの行動がすべて終わったらプレイヤーのターンに移す
-            else if (_enemyBaseList.Count <= EnemyActionCountNum && !EnemyActionEnd)
+            else if (_enemyAction && _actionEnd >= _enemyBaseList.Count)
             {
-                EnemyActionCountNum = 0;
+                _enemyAction = false;
+                _actionEnd = 0;
                 GameManager.Instance.TurnType = GameManager.TurnManager.Player;
             }
         }
         
+    }
+
+    public void EnemyActionEnd() 
+    {
+        _actionEnd++;
     }
 
     /// <summary>獲得した経験値を処理する</summary>
@@ -226,4 +235,13 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
         }
     }
 
+    async UniTask TestWait()
+    {
+        var t = 0.001f;
+        if (Input.GetButton("Dash"))
+        {
+            
+        }
+        await UniTask.Delay(TimeSpan.FromSeconds(t));
+    }
 }
