@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UniRx;
+using UnityEngine.SceneManagement;
 
 public class PlayerStatus : MonoBehaviour, IDamageble
 {
@@ -50,6 +51,8 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     private LevelDataScript _levelDataScript;
     [Header("ダメージのUIPrefab")]
     [SerializeField] GameObject _damegeUI;
+    [Header("Animation")]
+    [SerializeField] Animator _anim;
 
     /// <summary>MVPパターンにおけるModelクラス</summary>
     public float MaxHp { get => _maxHp.Value; set => _maxHp.Value = value; }
@@ -112,6 +115,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
     /// <param name="damage">食らうダメージ</param>
     public void AddDamage(float damage, GameObject obj)
     {
+        _anim.SetTrigger("Damage");
         LogScript.Instance.OutPutLog($"{damage}のダメージを受けた");
         var UI = Instantiate(_damegeUI, transform.position + new Vector3(0, 0.5f, 0), transform.rotation);
         UI.GetComponentInChildren<Text>().text = damage.ToString();
@@ -121,6 +125,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
         if (_next < 0)
         {
             //死ぬときの処理
+
         }
 
         _currentHp.Value = _next;
@@ -163,4 +168,11 @@ public class PlayerStatus : MonoBehaviour, IDamageble
         _playerItemList.Remove(item);
     }
 
+    /// <summary>
+    /// 死んだときの処理
+    /// </summary>
+    void Dead() 
+    {
+        SceneManager.LoadScene("MainScene");
+    }
 }

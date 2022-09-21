@@ -35,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
         {
             //自分の足元に階段があるどうか
             StairCheck(false);
+            _playerMoveCs.InputKey();
         }
         else if (_gameManager.TurnType == GameManager.TurnManager.LogOpen)
         {
@@ -60,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
         if (_gameManager.TurnType == GameManager.TurnManager.Player)
         {
             //移動の入力処理
-            _playerMoveCs.MoveInputKey();
+            _playerMoveCs.Move();
             //プレイヤーの攻撃処理
             await _playerAttackCs.Attack();
         }
