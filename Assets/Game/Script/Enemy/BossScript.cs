@@ -31,12 +31,12 @@ public class BossScript : EnemyBase
                 if (_gameManager.PlayerY * -1 == transform.position.y)
                 {
                     //エフェクトを生成する
-                    Instantiate(_rangeEffect, transform.position + new Vector3(_dir.x, _dir.y, 0), new Quaternion(0, 0, 90, 90));
+                    Instantiate(_rangeEffect, _gameManager.PlayerObj.transform.position, new Quaternion(0, 0, 90, 90));
                 }
                 else 
                 {
                     //エフェクトを生成する
-                    Instantiate(_rangeEffect, transform.position + new Vector3(_dir.x * 2, _dir.y * 2, 0), transform.rotation);
+                    Instantiate(_rangeEffect, _gameManager.PlayerObj.transform.position, transform.rotation);
                 }                
             }
         }
@@ -79,8 +79,6 @@ public class BossScript : EnemyBase
             _playerBase.AddDamage(_enemyStatus.GetPower(), this.gameObject);
 
             await UniTask.WaitUntil(() => 1f <= _stateInfo.normalizedTime);
-
-            _enemyManager.EnemyActionEnd = false;
         }
         else if (count == 3)
         {
