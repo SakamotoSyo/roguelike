@@ -17,6 +17,9 @@ public class PlayerAttack : MonoBehaviour
     [Header("playerMoveのスクリプト")]
     [SerializeField] PlayerMove _playerMoveCs;
 
+    [Header("ThunderのEffect")]
+    [SerializeField] GameObject _thunderPrefab;
+
      AnimatorStateInfo _stateInfo;
 
     private void Start()
@@ -41,7 +44,7 @@ public class PlayerAttack : MonoBehaviour
             //プレイヤーが向いている方向に敵がいた場合
             foreach (var i in _enemyManager.EnemyBaseList)
             {
-                if (transform.position.x + _playerMoveCs.PlayerDirection.x == i.EnemyPos.x && transform.position.y + _playerMoveCs.PlayerDirection.y == i.EnemyPos.y)
+                if (transform.position.x + _playerMoveCs.GetDirection().x == i.EnemyPos.x && transform.position.y + _playerMoveCs.GetDirection().y == i.EnemyPos.y)
                 {
                     LogScript.Instance.OutPutLog("攻撃の処理が成功した");
                     _anim.SetTrigger("Attack");
@@ -53,6 +56,7 @@ public class PlayerAttack : MonoBehaviour
                     //_dir = new Vector2(_gameManager.PlayerX - (int)transform.position.x, _gameManager.PlayerY * -1 - (int)transform.position.y);
 
                     await UniTask.WaitUntil(() => 0.5f <= _stateInfo.normalizedTime);
+                    Instantiate(_thunderPrefab, transform.position, transform.rotation);
                     //攻撃
                     i.GetComponent<IDamageble>().AddDamage(_playerStatus.Power, this.gameObject);
 
