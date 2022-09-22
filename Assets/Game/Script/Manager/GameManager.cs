@@ -29,7 +29,10 @@ public class GameManager : SingletonBehaviour<GameManager>
     public List<GameObject> ItemObjList => _itemObjList;
 
     [Header("現在の階層を表示するテキスト")]
-    [SerializeField] Text _nowFloorText;
+    [SerializeField] Text _nowfloorText;
+
+    [Header("現在の階層を移動時表示するテキスト")]
+    [SerializeField] Text _moveFloorText;
 
     [Header("最終階層")]
     [SerializeField] int _finalStratum;
@@ -133,6 +136,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// <summary>次の階層に移動する時に呼ぶメゾット</summary>
     public async void NextFloor()
     {
+        _nowfloorText.text = (_nowFloor + 1).ToString();
         TurnType = TurnManager.WaitTurn;
         _nowFloor++;
 
@@ -141,18 +145,17 @@ public class GameManager : SingletonBehaviour<GameManager>
         {
             //マップの生成
             _dgGenerator.MapGeneration();
-            _nowFloorText.text = _nowFloor.ToString() + "F";
+            _moveFloorText.text = _nowFloor.ToString() + "F";
             await FadeWait();
             TurnType = TurnManager.Player;
         }
         else 
         {
-            _nowFloorText.text = "最終層";
+            _moveFloorText.text = "最終層";
             _dgGenerator.MapGeneration();
             await FadeWait();
-            Debug.Log("最終層");
-            //マップの生成
-            TurnType = TurnManager.Player;
+            PlayerObj.SetActive(false);
+            TurnType = TurnManager.Story;
         }
         
 
