@@ -75,6 +75,9 @@ public class UIManager : MonoBehaviour
     [Header("どのボタンから下にスクロールするか")]
     [SerializeField] int _scrollUpButtonNum = 10;
 
+    [Header("ScrollBar")]
+    [SerializeField] ScrollManager _scrollManager;
+
     [Tooltip("PlayerStatusのスクリプト")]
     private PlayerStatus _playerStatusCs;
 
@@ -152,7 +155,7 @@ public class UIManager : MonoBehaviour
                 {
                     Destroy(_itemContent.transform.GetChild(i).gameObject);
                 }
-
+                _scrollManager.Reset();
                 EventSystem.current.SetSelectedGameObject(_SelectMenuPanel.transform.GetChild(0).gameObject);
                 _uiType = UIType.MainMenuPanel;
             }
