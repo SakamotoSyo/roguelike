@@ -69,6 +69,12 @@ public class UIManager : MonoBehaviour
     [Header("雷の石を使ったときに生成されるObj")]
     [SerializeField] GameObject _thunderStone;
 
+    [Header("どのボタンから上にスクロールするか")]
+    [SerializeField] int _scrollDownButtonNum = 8;
+
+    [Header("どのボタンから下にスクロールするか")]
+    [SerializeField] int _scrollUpButtonNum = 10;
+
     [Tooltip("PlayerStatusのスクリプト")]
     private PlayerStatus _playerStatusCs;
 
@@ -219,7 +225,7 @@ public class UIManager : MonoBehaviour
             {
                 _playerStatusCs = _gameManager.PlayerObj.GetComponent<PlayerStatus>();
             }
-
+            int itemPanelButtonNum = 0;
             GameObject ItemButtonIns;
             //持っているアイテムの生成
             foreach (var item in _playerStatusCs.PlayerItemList)
@@ -231,6 +237,18 @@ public class UIManager : MonoBehaviour
                 //ボタンイベントを追加する
                 ItemButtonIns.GetComponent<Button>().onClick.AddListener(() => SelectItem(item));
 
+                if (itemPanelButtonNum != 0
+                    && (itemPanelButtonNum % _scrollDownButtonNum == 0))
+                {
+                    ItemButtonIns.AddComponent<ScrollDownScript>();
+                    Debug.Log("呼ばれた");
+                }
+                else if (itemPanelButtonNum != 0
+                    && itemPanelButtonNum % _scrollUpButtonNum == 0) 
+                {
+                    ItemButtonIns.AddComponent<ScrollUpScript>();
+                }
+
                 if (_playerStatusCs.WeaponEquip == item)
                 {
                     ItemButtonIns.transform.Find("Equip").GetComponent<Text>().text = "E";
@@ -238,6 +256,14 @@ public class UIManager : MonoBehaviour
                 else if (_playerStatusCs.ShieldEquip == item)
                 {
                     ItemButtonIns.transform.Find("Equip").GetComponent<Text>().text = "E";
+                }
+
+                itemPanelButtonNum++;
+
+                if (itemPanelButtonNum == _scrollUpButtonNum + 2)
+                {
+                    Debug.Log(itemPanelButtonNum);
+                    itemPanelButtonNum = 2;
                 }
 
             }
@@ -259,6 +285,7 @@ public class UIManager : MonoBehaviour
 
                 _uiType = UIType.ItemInfomationPanel;
             }
+
 
         }
         else if (UIType.MainMenuPanel == _uiType && panelName == "footPanel")
