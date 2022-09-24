@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _itemType: 0
   _itemName: Kaihukunosyo
-  _itemEffectNum: 10
-  _itemInformationText: kaihukunosyo
-  _itemImage: {fileID: -2437364280568402399, guid: 199412c0b9a88e640babb4a3832dd8fb, type: 3}
+  _itemEffectNum: 30
+  _itemInformationText: "\u5531\u3048\u308B\u3053\u3068\u3067\u4F53\u529B\u30923\uFF10\u56DE\u5FA9\u3059\u308B"
+  _itemImage: {fileID: -933052057, guid: ea69d1b9b5b5c7b4eb31e4dcf4bffc72, type: 3}
+  _itemEffectType: 0

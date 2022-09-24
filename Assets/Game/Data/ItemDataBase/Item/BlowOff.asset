@@ -15,6 +15,6 @@ MonoBehaviour:
   _itemType: 4
   _itemName: "\u5439\u304D\u98DB\u3070\u3057\u306E\u6756"
   _itemEffectNum: 0
-  _itemInformationText: "\u5F53\u305F\u3063\u305F\u5BFE\u8C61\u3092\u5439\u304D\u98DB\u3070\u3059"
-  _itemImage: {fileID: 8977247530602722876, guid: 199412c0b9a88e640babb4a3832dd8fb, type: 3}
+  _itemInformationText: "\u5411\u3044\u3066\u3044\u308B\u65B9\u5411\u306B\u9B54\u6CD5\u3092\u51FA\u3057\u3066\u5F53\u305F\u3063\u305F\u5BFE\u8C61\u3092\u5439\u304D\u98DB\u3070\u3059"
+  _itemImage: {fileID: 21300000, guid: 7253ebfee4e75dc41a2b3f36ee483073, type: 3}
   _itemEffectType: 2
