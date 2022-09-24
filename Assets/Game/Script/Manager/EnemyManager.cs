@@ -183,7 +183,7 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     /// <summary>
     /// “G‚Ì‘”‚É•ÏX‚ª‚ ‚Á‚½‚Ég‚¤
     /// </summary>
-    public void SetTotalEnemyNum(int num)
+    public void SetNowEnemyNum(int num)
     {
         _nowTotalEnemyNum += num;
     }
@@ -233,6 +233,15 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
                 break;
             }
         }
+    }
+
+    /// <summary>
+    /// ƒ_ƒ“ƒWƒ‡ƒ“‚É—N‚­“G‚Ì‘”‚ğ•Ï‰»‚³‚¹‚é‚±‚Æ‚ª‚Å‚«‚é
+    /// </summary>
+    /// <param name="num"></param>
+    public void SetTotalEnemyNum(int num) 
+    {
+        _totalEnemyNum = num;
     }
 
     async UniTask TestWait()
