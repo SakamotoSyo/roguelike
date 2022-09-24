@@ -17,6 +17,12 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
     [Header("移動できる回数")]
     [SerializeField] int _moveCount = 1;
 
+    [Header("AudioSource")]
+    [SerializeField] AudioSource _audioSource;
+
+    [Header("攻撃の音")]
+    [SerializeField] AudioClip _attackClip;
+
     [SerializeField] protected Animator _anim;
 
     [Tooltip("自分自身の座標")]
@@ -124,20 +130,24 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
 
             if (!_isMove && !_isAttack)
             {
+                Debug.Log(_nowRoomNum == _generatorIns.GetDivNum(_gameManager.PlayerX, _gameManager.PlayerY * -1));
                 //プレイヤーと同じ部屋だった時追跡する
-                if (_nowRoomNum == _generatorIns.GetDivNum(_gameManager.PlayerX, _gameManager.PlayerY * -1) &&
-                    DgGenerator.Instance.GetDivList((int)transform.position.x, (int)transform.position.y * -1) != null)
-                {
-                    var data = _daiksutoraCs.Dijkstra(_startX, _startY * -1);
-                    _nextPosition = new Vector2(data.PlayerX, data.PlayerY * -1);
-                    _isMove = true;
-                }
+                //if (_nowRoomNum == _generatorIns.GetDivNum(_gameManager.PlayerX, _gameManager.PlayerY * -1) &&
+                //    DgGenerator.Instance.GetDivList((int)transform.position.x, (int)transform.position.y) != null)
+                //{
+                //    Debug.Log("大工");
+                //    var data = _daiksutoraCs.Dijkstra(_startX, _startY * -1);
+                //    _dir = new Vector2(data.PlayerX - transform.position.x   ,transform.position.y * -1 - data.PlayerY);
+                //    _nextPosition = new Vector2(data.PlayerX, data.PlayerY * -1);
+                //    _isMove = true;
+                //}
                 //通路にいるときはテスト用に使っていたもので追跡する
-                else
-                {
+                 /*if(_generatorIns.GetDivNum((int)transform.position.x, (int)transform.position.y) == -1
+                    || (Mathf.Abs(transform.position.x - _gameManager.PlayerX) < 4 && Mathf.Abs(transform.position.y - _gameManager.PlayerY * -1) < 4))*/
+                
                     EnemyMove();
-                }
-                //どちらでもないときはランダムに移動する
+                
+                ////どちらでもないときはランダムに移動する
                 //else
                 //{
                 //    Debug.Log("soreigai");
@@ -166,7 +176,6 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
                 await StartCoroutine(NextJudge());
 
             }
-            Debug.Log("aa");
         }
 
         _enemyManager.EnemyActionEnd();   
@@ -259,7 +268,7 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
         }
         else
         {
-            Debug.Log("壁です");
+           // Debug.Log("壁です");
         }
        
        
@@ -277,15 +286,17 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
 
     void RandomMove() 
     {
+        List<Vector2> moveList = new List<Vector2>(); 
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 3; j++)
             {
-                var x = (int)transform.position.x + i - 1;
-                var y = (int)transform.position.y + j - 1;
-
-                if (GetMapData((int)transform.position.x + x, (int)transform.position.y * -1 + y) == 1)
+                var x = i - 1;
+                var y = j - 1;
+                Debug.Log(GetMapData((int)transform.position.x, (int)transform.position.y * -1));
+                if (GetMapData((int)transform.position.x + x, (int)transform.position.y * -1 + y * -1) == MapNum.LoadNum)
                 {
+                    moveList.Add(new Vector2((int)transform.position.x + x, (int)transform.position.y + y));
                     _nextPosition = new Vector2((int)transform.position.x + x, (int)transform.position.y + y);
                     _isMove = true;
                     Debug.Log("ランダムに");
@@ -293,6 +304,10 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
                 }
             }
         }
+
+        _nextPosition = moveList[UnityEngine.Random.Range(0, moveList.Count)];
+        _dir = new Vector2(transform.position.x - _nextPosition.x, transform.position.y - _nextPosition.y);
+        _isMove = true;
     }
 
     /// <summary>
@@ -346,6 +361,7 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
             //攻撃実行前のステートを取得しないように１フレーム待つ
             await UniTask.DelayFrame(1);
 
+            _audioSource.PlayOneShot(_attackClip);
             _stateInfo = default;
             _dir = new Vector2(_gameManager.PlayerX - (int)transform.position.x, _gameManager.PlayerY * -1 - (int)transform.position.y);
 
