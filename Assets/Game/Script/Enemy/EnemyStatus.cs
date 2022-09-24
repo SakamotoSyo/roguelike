@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnemyStatus : MonoBehaviour,IDamageble
+public class EnemyStatus : MonoBehaviour, IDamageble
 {
 
     [Header("敵の名前")]
@@ -13,13 +13,17 @@ public class EnemyStatus : MonoBehaviour,IDamageble
     [Header("HP")]
     [SerializeField] float _hp;
     [Header("攻撃力")]
-    [SerializeField] float _power;
+    [SerializeField] float _power = 2;
     [Header("行動の回数")]
     [SerializeField] int _actionNum;
     [Header("敵の経験値")]
     [SerializeField] float _enemyExp;
+    [Header("階層によってかかるステータス倍率")]
+    [SerializeField] float _statusUp;
     [Header("ダメージを受けるUI")]
     [SerializeField] GameObject _damageUI;
+    [Header("Animator")]
+    [SerializeField] Animator _anim;
     [Tooltip("EnemyBaseのスクリプト")]
     private EnemyBase _enemyBase;
     [Tooltip("GameManagerのインスタンス")]
@@ -28,7 +32,20 @@ public class EnemyStatus : MonoBehaviour,IDamageble
 
     private void Start()
     {
-      _gameManager = GameManager.Instance;
+        _gameManager = GameManager.Instance;
+        StartStatus();
+    }
+
+    /// <summary>
+    /// 階層によってステータスに倍率をかける
+    /// </summary>
+    void StartStatus()
+    {
+        _statusUp = 1.2f;
+        _maxHp = (int)(_maxHp * _gameManager.NowFloor * _statusUp);
+        _hp = _hp * _gameManager.NowFloor * _statusUp;
+        _power = (int)(_power * _gameManager.NowFloor * _statusUp);
+        _enemyExp = _enemyExp * _gameManager.NowFloor * _statusUp;
     }
 
     /// <summary>
@@ -65,7 +82,7 @@ public class EnemyStatus : MonoBehaviour,IDamageble
 
     public float GetPower() => _power;
 
-    public void SetExp(float exp) 
+    public void SetExp(float exp)
     {
         _enemyExp = exp;
     }
@@ -78,13 +95,18 @@ public class EnemyStatus : MonoBehaviour,IDamageble
     /// <param name="damage">受けるダメージ</param>
     public void AddDamage(float damage, GameObject obj)
     {
-         _hp -= damage;
+        _hp -= damage;
+        _anim.SetTrigger("Damage");
         LogScript.Instance.OutPutLog($"{damage}のダメージを与えた");
         var UI = Instantiate(_damageUI, transform.position, transform.rotation);
         UI.GetComponentInChildren<Text>().text = damage.ToString();
 
         if (_hp <= 0)
         {
+            if (gameObject.name == "Boss") 
+            {
+                _gameManager.GameClearBool(true);
+            }
             OnDeath(obj);
         }
         Debug.Log(damage);
@@ -105,14 +127,14 @@ public class EnemyStatus : MonoBehaviour,IDamageble
             Destroy(this.gameObject);
         }
 
-        EnemyManager.Instance.SetTotalEnemyNum(-1);
+        EnemyManager.Instance.SetNowEnemyNum(-1);
         Debug.Log("-1adsdas");
     }
 }
 
-public struct EnemyStatusData 
+public struct EnemyStatusData
 {
-    public EnemyStatusData(string name, float exp) 
+    public EnemyStatusData(string name, float exp)
     {
         Name = name;
         Exp = exp;
