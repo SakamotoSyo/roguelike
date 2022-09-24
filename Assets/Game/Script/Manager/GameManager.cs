@@ -4,6 +4,9 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
+using UnityEngine.SceneManagement;
+using UniRx;
+using UniRx.Triggers;
 public class GameManager : SingletonBehaviour<GameManager>
 {
     public enum TurnManager
@@ -14,6 +17,7 @@ public class GameManager : SingletonBehaviour<GameManager>
         LogOpen,
         Result,
         WaitTurn,
+        GameEnd,
         Story,
     }
 
@@ -27,6 +31,12 @@ public class GameManager : SingletonBehaviour<GameManager>
     public int NowFloor => _nowFloor;
     public int FinalFloor => _finalStratum;
     public List<GameObject> ItemObjList => _itemObjList;
+
+    [Header("Gameが終わった時に出すパネル")]
+    [SerializeField] GameObject _gameEndPanel;
+
+    [Header("GameEndPanelのText")]
+    [SerializeField] Text _gameEndText;
 
     [Header("現在の階層を表示するテキスト")]
     [SerializeField] Text _nowfloorText;
@@ -45,6 +55,12 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     [Tooltip("PlayerのObject")]
     private GameObject _playerObj;
+
+    [Header("AudioSource")]
+    [SerializeField] AudioSource _audioSource;
+
+    [Header("階段を上る音")]
+    [SerializeField] AudioClip _floorClip;
 
     [Tooltip("アイテムのゲームオブジェクトをリストで管理する")]
     private List<GameObject> _itemObjList = new List<GameObject>();
@@ -73,6 +89,11 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         _dgGenerator = DgGenerator.Instance;
         _dgGenerator.MapNotice += MapInit;
+    }
+
+    void Update()
+    {
+
     }
 
     /// <summary>マップの再生成による初期化</summary>
@@ -136,6 +157,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     /// <summary>次の階層に移動する時に呼ぶメゾット</summary>
     public async void NextFloor()
     {
+        _audioSource.PlayOneShot(_floorClip);
         _nowfloorText.text = (_nowFloor + 1).ToString();
         TurnType = TurnManager.WaitTurn;
         _nowFloor++;
@@ -174,6 +196,41 @@ public class GameManager : SingletonBehaviour<GameManager>
         await UniTask.Delay(TimeSpan.FromSeconds(_fadeTime));
     }
 
+    public async void GameClearBool(bool isClear) 
+    {
+        TurnType = TurnManager.GameEnd;
+        if (isClear)
+        {
+            _gameEndText.text = "GameClear\n遊んでくれてありがとう";
+            _gameEndPanel.SetActive(true);
+            await TestWait();
+            this.UpdateAsObservable()
+           .Where(_ => Input.anyKey)
+           .Subscribe(_ => SceneManager.LoadScene("StartScene"));
+        }
+        else 
+        {
+            _gameEndText.color = Color.red;
+            _gameEndText.text = $"GameOver\n {_nowFloor}階で力尽きた";
+            _gameEndPanel.SetActive(true);
+            await TestWait();
+            this.UpdateAsObservable()
+           .Where(_ => Input.anyKey)
+           .Subscribe(_ => SceneManager.LoadScene("StartScene"));
+        }
+
+    }
+
+    public void GameEndTrigger() 
+    {
+       
+    }
+
+    async UniTask TestWait()
+    {
+        var t = 2f;
+        await UniTask.Delay(TimeSpan.FromSeconds(t));
+    }
     /// <summary>
     /// プレイヤーのいる部屋を判定して変数に入れるi
     /// </summary>
