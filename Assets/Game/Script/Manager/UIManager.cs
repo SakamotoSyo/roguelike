@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
+using Cysharp.Threading.Tasks;
 
 public class UIManager : MonoBehaviour
 {
@@ -18,8 +19,18 @@ public class UIManager : MonoBehaviour
         ItemInfomationPanel,
         ShowText,
         StairPanel,
+        HelpPanel,
 
     }
+
+    [Header("AudioSouse")]
+    [SerializeField] AudioSource _audioSource;
+
+    [Header("メニューの選択音")]
+    [SerializeField] AudioClip _selectSound;
+
+    [Header("メニューのキャンセル音")]
+    [SerializeField] AudioClip _cancelSound;
 
     [SerializeField, Header("MainMenuのオブジェクト")]
     private GameObject _mainMenuPanel;
@@ -30,6 +41,9 @@ public class UIManager : MonoBehaviour
     [SerializeField, Header("ItemPanelのオブジェクト")]
     private GameObject _itemPanel;
 
+    [SerializeField, Header("HelpPanelのオブジェクト")]
+    private GameObject _helpPanel;
+
     [SerializeField, Header("Itemを生成する場所")]
     private GameObject _itemContent;
 
@@ -38,6 +52,9 @@ public class UIManager : MonoBehaviour
 
     [SerializeField, Header("アイテムをどう使うか決めるパネル")]
     private GameObject _useItemSelectPanel;
+
+    [SerializeField, Header("アイテムをどう使うか決めるパネルのSprite")]
+    private GameObject _useItemSprite;
 
     [SerializeField, Header("アイテムをどう使うか表示するボタン")]
     private GameObject _useItemButtonPrehab;
@@ -97,17 +114,23 @@ public class UIManager : MonoBehaviour
     private UIType _uiType;
 
     // Start is called before the first frame update
-    void Start()
+    async void Start()
     {
         _gameManager = GameManager.Instance;
         _dgGenerator = DgGenerator.Instance;
 
+        _gameManager.TurnType = GameManager.TurnManager.WaitTurn;
         //最初にあらかじめ持ち物の上限分のボタンを作成
         for (int i = 0; i > 20; i++)
         {
             var a = Instantiate(_itemButtonPrefab, _itemContent.transform);
         }
         //_playerBaseCs = _gameManager.PlayerObj.GetComponent<PlayerBase>();
+
+        await TestWait();
+        _uiType = UIType.HelpPanel;
+        _helpPanel.SetActive(true);
+
     }
 
     // Update is called once per frame
@@ -142,13 +165,14 @@ public class UIManager : MonoBehaviour
             if (_uiType == UIType.MainMenuPanel)
             {
                 _mainMenuPanel.SetActive(false);
-
+                _audioSource.PlayOneShot(_cancelSound);
                 _uiType = UIType.Normal;
                 _gameManager.TurnType = GameManager.TurnManager.Player;
             }
             else if (_uiType == UIType.ItemPanel)
             {
                 _itemPanel.SetActive(false);
+                _audioSource.PlayOneShot(_cancelSound);
                 _mainPanelCanvasGroup.interactable = true;
                 //生成されたボタンの削除
                 for (int i = _itemContent.transform.childCount - 1; i >= 0; i--)
@@ -162,12 +186,13 @@ public class UIManager : MonoBehaviour
             else if (_uiType == UIType.FootPanel)
             {
                 _footPanel.SetActive(false);
+                _audioSource.PlayOneShot(_cancelSound);
                 _uiType = UIType.MainMenuPanel;
             }
             else if (_uiType == UIType.UseItemSelect)
             {
-                _useItemSelectPanel.SetActive(false);
-
+                _useItemSprite.SetActive(false);
+                _audioSource.PlayOneShot(_cancelSound);
                 //生成されたボタンの削除
                 for (int i = _useItemSelectPanel.transform.childCount - 1; i >= 0; i--)
                 {
@@ -178,8 +203,24 @@ public class UIManager : MonoBehaviour
             else if (_uiType == UIType.StairPanel)
             {
                 _stairPanel.SetActive(false);
+                _audioSource.PlayOneShot(_cancelSound);
                 _gameManager.TurnType = GameManager.TurnManager.Player;
                 _uiType = UIType.Normal;
+            }
+            else if (_uiType == UIType.ItemInfomationPanel)
+            {
+                _itemInforPanel.SetActive(false);
+                _audioSource.PlayOneShot(_cancelSound);
+                EventSystem.current.SetSelectedGameObject(_useItemSelectPanel.transform.GetChild(0).gameObject);
+                _uiType = UIType.UseItemSelect;
+
+            }
+            else if (_uiType == UIType.HelpPanel) 
+            {
+                _helpPanel.SetActive(false);
+                _audioSource.PlayOneShot(_cancelSound);
+                _uiType = UIType.Normal;
+                _gameManager.TurnType = GameManager.TurnManager.Player;
             }
 
         }
@@ -189,6 +230,7 @@ public class UIManager : MonoBehaviour
             if (_uiType == UIType.ItemInfomationPanel)
             {
                 _itemInforPanel.SetActive(false);
+                _audioSource.PlayOneShot(_cancelSound);
                 _gameManager.TurnType = GameManager.TurnManager.Player;
                 _uiType = UIType.Normal;
             }
@@ -206,6 +248,7 @@ public class UIManager : MonoBehaviour
         {
             _gameManager.TurnType = GameManager.TurnManager.MenuOpen;
             _mainMenuPanel.SetActive(true);
+            _audioSource.PlayOneShot(_selectSound);
             EventSystem.current.SetSelectedGameObject(_SelectMenuPanel.transform.GetChild(0).gameObject);
             _uiType = UIType.MainMenuPanel;
 
@@ -343,7 +386,7 @@ public class UIManager : MonoBehaviour
             ItemSelectButton4.GetComponent<Button>().onClick.AddListener(() => ItemExplanation(item));
         }
 
-        _useItemSelectPanel.SetActive(true);
+        _useItemSprite.SetActive(true);
         Debug.Log("Select");
         _itemGroupCanvasGroup.interactable = false;
         EventSystem.current.SetSelectedGameObject(_useItemSelectPanel.transform.GetChild(0).gameObject);
@@ -495,7 +538,11 @@ public class UIManager : MonoBehaviour
     /// <param name="item"></param>
     private void ItemExplanation(Item item)
     {
-
+        Input.ResetInputAxes();
+        Debug.Log("ｄじょあいｊどいわｊ");
+        _itemInfoText.text = item.GetItemInformationText;
+        _itemInforPanel.SetActive(true);
+        _uiType = UIType.ItemInfomationPanel;
     }
 
     /// <summary>
@@ -506,7 +553,7 @@ public class UIManager : MonoBehaviour
     {
         _mainMenuPanel.SetActive(false);
         _itemPanel.SetActive(false);
-        _useItemSelectPanel.SetActive(false);
+        _useItemSprite.SetActive(false);
 
         _mainPanelCanvasGroup.interactable = true;
         _itemGroupCanvasGroup.interactable = true;
@@ -559,5 +606,11 @@ public class UIManager : MonoBehaviour
     public void PlayerStory() 
     {
 
+    }
+
+    async UniTask TestWait()
+    {
+        var t = 4.5f;
+        await UniTask.Delay(TimeSpan.FromSeconds(t));
     }
 }
