@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animation: {fileID: 0}
-  _damage: 10
+  _damage: 25
   _attackRange: 3
   ThunderObj: {fileID: 100002, guid: 6422340191d2291478e7e4f77bbc5204, type: 3}
 --- !u!95 &5934538640188018599

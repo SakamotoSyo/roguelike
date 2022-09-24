@@ -626,7 +626,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 7cd30f6e6a35aed4894f8102804b1e32, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -781,6 +781,7 @@ GameObject:
   - component: {fileID: 3568828094140246500}
   - component: {fileID: 5361161273516776981}
   - component: {fileID: 4677129901652850915}
+  - component: {fileID: 8204410543989507597}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Player
@@ -878,6 +879,8 @@ MonoBehaviour:
   _anim: {fileID: 3865232734636903713}
   _playerStatus: {fileID: 2015963691116595142}
   _playerMoveCs: {fileID: 8669866399756189843}
+  _thunderPrefab: {fileID: 3164107794830771969, guid: 68ed1c8e7f242a747a64cdda59507bf7, type: 3}
+  _audioSource: {fileID: 8204410543989507597}
 --- !u!114 &8669866399756189843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -899,6 +902,7 @@ MonoBehaviour:
   _moveArrowDirector: {fileID: 2633000571687291603}
   _moveArrowObj: {fileID: 1541786923052493083}
   _playerLight: {fileID: 4889167075686457550}
+  _playerStatus: {fileID: 2015963691116595142}
 --- !u!114 &2015963691116595142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -912,33 +916,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerLevel: 1
-  _setmaxHp: 100
-  _playerHp: 100
+  _setmaxHp: 10
+  _playerHp: 10
   _playerPower: 10
   _actionNum: 1
   _weaponEquip: {fileID: 0}
   _shieldEquip: {fileID: 0}
-  _playerItemList:
-  - {fileID: 11400000, guid: 6f59d48487b6f504da02368eded4dbdb, type: 2}
-  - {fileID: 11400000, guid: 6f59d48487b6f504da02368eded4dbdb, type: 2}
-  - {fileID: 11400000, guid: 6f59d48487b6f504da02368eded4dbdb, type: 2}
-  - {fileID: 11400000, guid: 47835032301aa6c479c8363305d63cb1, type: 2}
-  - {fileID: 11400000, guid: 95195ace8ca5cd54bbe7a57be8fc6763, type: 2}
-  - {fileID: 11400000, guid: 95195ace8ca5cd54bbe7a57be8fc6763, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
-  - {fileID: 11400000, guid: 5400b4ed4ee296d49b7498b50bdf2ddb, type: 2}
+  _playerItemList: []
   _itemDataBase: {fileID: 11400000, guid: c17f6cdd936d48c46be93f5f8809a761, type: 2}
   _levelDataScript: {fileID: 482331776957953278}
   _damegeUI: {fileID: 7898895933514986489, guid: a140d019f31777843beee879bf49c3fc, type: 3}
+  _anim: {fileID: 3865232734636903713}
 --- !u!114 &3568828094140246500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -986,6 +974,102 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMove: {fileID: 8669866399756189843}
+--- !u!82 &8204410543989507597
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7483894787649882197}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: b23bc4c32e09c994ba1a6687401d27df, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &8147699981230320112
 GameObject:
   m_ObjectHideFlags: 0
@@ -1002,7 +1086,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8528818495506564489
 Transform:
   m_ObjectHideFlags: 0
@@ -1012,7 +1096,7 @@ Transform:
   m_GameObject: {fileID: 8147699981230320112}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 487935014551091529}
@@ -1058,7 +1142,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 3
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 1, g: 1, b: 0, a: 1}
   m_FlipX: 0
