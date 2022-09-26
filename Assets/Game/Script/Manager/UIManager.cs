@@ -401,12 +401,14 @@ public class UIManager : MonoBehaviour
     /// <param name="item"></param>
     private void UseSelectItem(Item item)
     {
+        _gameManager.TurnType = GameManager.TurnManager.WaitTurn;
         _playerStatusCs.RemoveItem(item);
         if (item.GetEffectType == Item.ItemEffectType.Hearing)
         {
             _playerStatusCs.SetHp(item.GetItemEffect);
 
             ShowText($"{item.GetItemEffect}回復しました");
+            _gameManager.TurnType = GameManager.TurnManager.Player;
             Input.ResetInputAxes();
         }
         else if (item.GetEffectType == Item.ItemEffectType.Food)
@@ -419,12 +421,14 @@ public class UIManager : MonoBehaviour
             {
                 //プレイヤーをランダムにワープする
                 _dgGenerator.PlayerRespawn();
+                _gameManager.TurnType = GameManager.TurnManager.Player;
                 ResetMenu();
             }
             else if (item.GetItemName == "吹き飛ばしの杖")
             {
                 //敵に当たると吹き飛ばすObjectを生成
                 Instantiate(_blowObj, new Vector2(_gameManager.PlayerX, _gameManager.PlayerY * -1), transform.rotation);
+
                 ResetMenu(true);
             }
             else if (item.GetItemName == "雷の石") 
