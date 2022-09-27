@@ -44,7 +44,7 @@ public class PlayerUiView : MonoBehaviour
 
     public void SetCurrent(int newCurrentHp) 
     {
-        Debug.Log(newCurrentHp);
+        //Debug.Log(newCurrentHp);
         bool isPlus = newCurrentHp > _currentHp;
 
         _currentHp = newCurrentHp;

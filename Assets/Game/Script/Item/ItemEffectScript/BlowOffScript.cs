@@ -22,7 +22,7 @@ public class BlowOffScript : MonoBehaviour
     void Start()
     {
         _playerMove = GameManager.Instance.PlayerObj.GetComponent<PlayerMove>();
-        var dir = _playerMove.PlayerDirection;
+        var dir = _playerMove.GetDirection();
         _rb.velocity = dir * _speed;
         _gameManager = GameManager.Instance;
         _generator = DgGenerator.Instance;

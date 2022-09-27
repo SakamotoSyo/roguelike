@@ -76,7 +76,7 @@ public class BossScript : EnemyBase
             await UniTask.WaitUntil(() => 0.5f <= _stateInfo.normalizedTime);
 
             //UŒ‚
-            _playerBase.AddDamage(_enemyStatus.GetPower(), this.gameObject);
+            _playerBase.AddDamage(_enemyStatus.GetPower, this.gameObject);
 
             await UniTask.WaitUntil(() => 1f <= _stateInfo.normalizedTime);
         }

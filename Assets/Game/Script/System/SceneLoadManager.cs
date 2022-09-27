@@ -5,6 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoadManager : MonoBehaviour
 {
+    void Update()
+    {
+        if (Input.anyKey) 
+        {
+            SceneManager.LoadScene("MainScene");
+        }
+        
+    }
+
     /// <summary>
     ///ボタンイベントなどから呼ぶ用の関数
     /// </summary>

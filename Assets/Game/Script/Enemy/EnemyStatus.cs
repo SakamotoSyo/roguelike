@@ -1,10 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class EnemyStatus : MonoBehaviour, IDamageble
 {
+    public float Exp => _enemyExp;
+    public float GetHp => _hp;
+    public int GetMaxHp => _maxHp;
+    public float GetPower => _power;
 
     [Header("敵の名前")]
     [SerializeField] string _enemyName;
@@ -30,7 +32,7 @@ public class EnemyStatus : MonoBehaviour, IDamageble
     private GameManager _gameManager;
     //public int MaxHp1 { get => MaxHp; set => MaxHp = value; }
 
-    private void Start()
+    void Start()
     {
         _gameManager = GameManager.Instance;
         StartStatus();
@@ -57,19 +59,14 @@ public class EnemyStatus : MonoBehaviour, IDamageble
         _maxHp = hp;
     }
 
-    public int GetMaxHp() => _maxHp;
-
     /// <summary>
     /// 現在のHp
     /// </summary>
     /// <param name="hp"></param>
     public void SetHp(float hp)
     {
-        _hp = Mathf.Max(0, Mathf.Min(GetMaxHp(), hp));
+        _hp = Mathf.Max(0, Mathf.Min(GetMaxHp, hp));
     }
-
-
-    public float GetHp() => _hp;
 
     /// <summary>
     /// 現在の攻撃力
@@ -80,14 +77,11 @@ public class EnemyStatus : MonoBehaviour, IDamageble
         _power = power;
     }
 
-    public float GetPower() => _power;
 
     public void SetExp(float exp)
     {
         _enemyExp = exp;
     }
-
-    public float Exp => _enemyExp;
 
     /// <summary>
     /// ダメージを受ける処理
@@ -98,6 +92,7 @@ public class EnemyStatus : MonoBehaviour, IDamageble
         _hp -= damage;
         _anim.SetTrigger("Damage");
         LogScript.Instance.OutPutLog($"{damage}のダメージを与えた");
+        //ダメージの数字を表示する処理
         var UI = Instantiate(_damageUI, transform.position, transform.rotation);
         UI.GetComponentInChildren<Text>().text = damage.ToString();
 
@@ -113,7 +108,7 @@ public class EnemyStatus : MonoBehaviour, IDamageble
     }
 
     /// <summary>自分自身が倒されたときに呼ばれる</summary>
-    private void OnDeath(GameObject obj)
+    void OnDeath(GameObject obj)
     {
         LogScript.Instance.OutPutLog("Enemyは倒れた");
         if (obj == _gameManager.PlayerObj)

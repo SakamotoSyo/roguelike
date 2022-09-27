@@ -12,10 +12,6 @@ public class PlayerStatus : MonoBehaviour, IDamageble
 
     /// <summary>現在のレベルを返す</summary>
     public int Level => _playerLevel;
-    ///// <summary>現在の最大HPを返す</summary>
-    //public float MaxHp => _maxHp;
-    ///// <summary>現在のHPを返す</summary>
-    //public float PlayerHp => _playerHp;
     /// <summary>現在の攻撃力を返す</summary>
     public float Power => _playerPower;
     /// <summary>レベルアップまでの経験値を返す</summary>
@@ -92,10 +88,7 @@ public class PlayerStatus : MonoBehaviour, IDamageble
         _maxHp.Value = next;
         _playerPower = LevelUpData.Attack;
         _playerExp = LevelUpData.Exp;
-
-        Debug.Log("このメソッドが呼ばれました");
     }
-
 
     /// <summary>
     /// Hpの値を変更する
@@ -122,9 +115,10 @@ public class PlayerStatus : MonoBehaviour, IDamageble
         // 値を引き出す・書き換える際はValueプロパティを参照すること
         float _next = _currentHp.Value;
         _next -= damage;
-        if (_next < 0)
+        if (_next <= 0)
         {
             //死ぬときの処理
+            _gameManager.GameClearBool(false);
 
         }
 

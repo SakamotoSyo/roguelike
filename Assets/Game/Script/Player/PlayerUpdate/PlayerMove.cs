@@ -38,24 +38,24 @@ public class PlayerMove : MonoBehaviour,IDirection
     [SerializeField] PlayerStatus _playerStatus;
 
     [Tooltip("GameManegerのインスタンス")]
-    private GameManager _gameManager;
+    GameManager _gameManager;
 
     [Tooltip("MInimapをUpdateするためのAction")]
     public Action MiniMapUpdate;
 
     [Tooltip("動作中かどうか")]
-    private bool _isMoving;
+    bool _isMoving;
 
     [Tooltip("プレイヤーが動いた方向")]
-    private Vector2 _playerDirection;
+    Vector2 _playerDirection;
 
     [Tooltip("プレイヤーが次に移動する場所")]
-    private Vector3 _nextPosition;
+    Vector3 _nextPosition;
 
     [Tooltip("入力値を保存しておく変数")]
     float x, y;
 
-    private void Start()
+    void Start()
     {
         _gameManager = GameManager.Instance;
     }
@@ -114,7 +114,7 @@ public class PlayerMove : MonoBehaviour,IDirection
 
                 _gameManager.TurnType = GameManager.TurnManager.WaitTurn;
 
-                await TestWait();
+                await MoveWait();
 
                 //行動が終わったのでターンフェーズを変える
                 _gameManager.TurnType = GameManager.TurnManager.Enemy;
@@ -147,7 +147,7 @@ public class PlayerMove : MonoBehaviour,IDirection
     /// <param name="x">移動するｘ座標</param>
     /// <param name="y">移動するy座標</param>
     /// <returns></returns>
-    private bool judgeMove(int x, int y)
+    bool judgeMove(int x, int y)
     {
         if (x == 0 && y == 0) return false;
         //マップデータにアクセス
@@ -250,7 +250,7 @@ public class PlayerMove : MonoBehaviour,IDirection
         }
     }
 
-    async UniTask TestWait()
+    async UniTask MoveWait()
     {
         var t = _afterWalkActionTime;
         if (Input.GetButton("Dash"))

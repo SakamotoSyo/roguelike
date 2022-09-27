@@ -20,6 +20,9 @@ public class PlayerAttack : MonoBehaviour
     [Header("ThunderのEffect")]
     [SerializeField] GameObject _thunderPrefab;
 
+    [Header("AudioSource")]
+    [SerializeField] AudioSource _audioSource;
+
      AnimatorStateInfo _stateInfo;
 
     private void Start()
@@ -46,7 +49,8 @@ public class PlayerAttack : MonoBehaviour
             {
                 if (transform.position.x + _playerMoveCs.GetDirection().x == i.EnemyPos.x && transform.position.y + _playerMoveCs.GetDirection().y == i.EnemyPos.y)
                 {
-                    LogScript.Instance.OutPutLog("攻撃の処理が成功した");
+                    _audioSource.Play();
+                   // LogScript.Instance.OutPutLog("攻撃の処理が成功した");
                     _anim.SetTrigger("Attack");
                     _gameManager.TurnType = GameManager.TurnManager.WaitTurn;
                     //攻撃実行前のステートを取得しないように１フレーム待つ

@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using UniRx.Triggers;
 using UniRx;
-public abstract class EnemyBase : MonoBehaviour,IDirection
+public abstract class EnemyBase : MonoBehaviour, IDirection
 {
     [Header("ダイクストラスクリプト")]
     [SerializeField] DaiksutoraCs _daiksutoraCs;
@@ -98,7 +98,7 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
     /// </summary>
     public virtual async void EnemyAction()
     {
-        for (int k = 0; k < _moveCount; k++) 
+        for (int k = 0; k < _moveCount; k++)
         {
             //自分が今どこの部屋にいるか判定するi
             _nowRoomNum = _generatorIns.GetDivNum((int)transform.position.x, (int)transform.position.y);
@@ -132,21 +132,23 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
             {
                 Debug.Log(_nowRoomNum == _generatorIns.GetDivNum(_gameManager.PlayerX, _gameManager.PlayerY * -1));
                 //プレイヤーと同じ部屋だった時追跡する
-                //if (_nowRoomNum == _generatorIns.GetDivNum(_gameManager.PlayerX, _gameManager.PlayerY * -1) &&
-                //    DgGenerator.Instance.GetDivList((int)transform.position.x, (int)transform.position.y) != null)
-                //{
-                //    Debug.Log("大工");
-                //    var data = _daiksutoraCs.Dijkstra(_startX, _startY * -1);
-                //    _dir = new Vector2(data.PlayerX - transform.position.x   ,transform.position.y * -1 - data.PlayerY);
-                //    _nextPosition = new Vector2(data.PlayerX, data.PlayerY * -1);
-                //    _isMove = true;
-                //}
-                //通路にいるときはテスト用に使っていたもので追跡する
-                 /*if(_generatorIns.GetDivNum((int)transform.position.x, (int)transform.position.y) == -1
-                    || (Mathf.Abs(transform.position.x - _gameManager.PlayerX) < 4 && Mathf.Abs(transform.position.y - _gameManager.PlayerY * -1) < 4))*/
-                
+                if (_nowRoomNum == _generatorIns.GetDivNum(_gameManager.PlayerX, _gameManager.PlayerY * -1) &&
+                    DgGenerator.Instance.GetDivList((int)transform.position.x, (int)transform.position.y) != null)
+                {
+                    Debug.Log("大工");
+                    //ダイクストラ開始
+                    var data = _daiksutoraCs.Dijkstra(_startX, _startY * -1);
+                    //移動
+                    _dir = new Vector2(data.PlayerX - transform.position.x, transform.position.y * -1 - data.PlayerY);
+                    _nextPosition = new Vector2(data.PlayerX, data.PlayerY * -1);
+                    _isMove = true;
+                }
+                // 通路にいるときはテスト用に使っていたもので追跡する
+                if (_generatorIns.GetDivNum((int)transform.position.x, (int)transform.position.y) == -1
+                   || (Mathf.Abs(transform.position.x - _gameManager.PlayerX) < 4 && Mathf.Abs(transform.position.y - _gameManager.PlayerY * -1) < 4))
+                {
                     EnemyMove();
-                
+                }
                 ////どちらでもないときはランダムに移動する
                 //else
                 //{
@@ -178,7 +180,7 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
             }
         }
 
-        _enemyManager.EnemyActionEnd();   
+        _enemyManager.EnemyActionEnd();
     }
 
     /// <summary>
@@ -199,24 +201,23 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
         {
             _xBool = 1;
         }
-        //??I?n??X????????????????
+        //X軸が同じだった時
         else if (_goalX - _startX == 0)
         {
             _xBool = 0;
         }
 
-        //??I?n??Y????????????????????
+        //目的地のY軸が右方向だった場合
         if (_goalY - _startY > 0)
         {
             _yBool = 1;
         }
-        //??I?n??Y????????????????
+        //Y軸が同じだった時
         else if (_goalY - _startY == 0)
         {
             _yBool = 0;
         }
         // _xBool = (int)Mathf.Sign(_goalX - _startX);
-
         //_yBool = (int)Mathf.Sign(_goalY - _startY);
 
         //通常の移動
@@ -268,10 +269,10 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
         }
         else
         {
-           // Debug.Log("壁です");
+            // Debug.Log("壁です");
         }
-       
-       
+
+
         if (!_isMove)
         {
             _xBool = 0;
@@ -284,9 +285,12 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
         }
     }
 
-    void RandomMove() 
+    /// <summary>
+    /// ランダムに移動する
+    /// </summary>
+    void RandomMove()
     {
-        List<Vector2> moveList = new List<Vector2>(); 
+        List<Vector2> moveList = new List<Vector2>();
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 3; j++)
@@ -350,13 +354,17 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
         yield return null;
     }
 
-
+    /// <summary>
+    /// 敵の攻撃処理
+    /// </summary>
+    /// <param name="count">攻撃の種類</param>
+    /// <returns></returns>
     protected virtual async UniTask EnemyAttack(int count = 1)
     {
         _isAttack = true;
         var ramCount = count;
         _anim.SetTrigger($"Attack{ramCount}");
-        if (count == 1) 
+        if (count == 1)
         {
             //攻撃実行前のステートを取得しないように１フレーム待つ
             await UniTask.DelayFrame(1);
@@ -367,21 +375,15 @@ public abstract class EnemyBase : MonoBehaviour,IDirection
 
             await UniTask.WaitUntil(() => 0.5f <= _stateInfo.normalizedTime);
             //攻撃
-            _playerBase.AddDamage(_enemyStatus.GetPower(), this.gameObject);
+            _playerBase.AddDamage(_enemyStatus.GetPower, this.gameObject);
             Debug.Log("ダメージを与えた");
 
             await UniTask.WaitUntil(() => 1f <= _stateInfo.normalizedTime);
-        }        
+        }
 
     }
 
     public Vector2 GetDirection() => _dir;
-
-    /// <summary> Enemyにどこの部屋に今いるのか値をセットするi </summary>
-    //public void SetRoomNum(int nowRoom) 
-    //{
-    //    _nowRoomNum = nowRoom;
-    //}
 }
 
 //public struct EnemyStatusData 

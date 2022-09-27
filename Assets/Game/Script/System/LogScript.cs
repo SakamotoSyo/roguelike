@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class LogScript : SingletonBehaviour<LogScript>
 {
@@ -34,7 +35,7 @@ public class LogScript : SingletonBehaviour<LogScript>
 
     private void Update()
     {
-         LogActive();
+        LogActive();
 
         if (_scrollbar.value != 0)
         {
@@ -90,22 +91,12 @@ public class LogScript : SingletonBehaviour<LogScript>
     }
 
     /// <summary>•¶š‚ªŒ©Ø‚ê‚½‚ÉText‚ğScroll‚·‚éˆ—</summary>
-    private void LogScroll()
+    void LogScroll()
     {
-        _messageCountTime += Time.deltaTime;
-        if (_messageScroll > _messageCountTime)
-        {
-            return;
-        }
-
-        _scrollbar.value -= 0.01f;
-
-        if (_scrollbar.value <= 0)
-        {
-            _scrollbar.value = 0;
-        }
-
-        _messageCountTime = 0;
+        DOTween.To(() => _scrollbar.value,
+            x => _scrollbar.value = x,
+            0, _messageScroll)
+            .OnComplete(() => _scrollbar.value = 0);
     }
 
     /// <summary>

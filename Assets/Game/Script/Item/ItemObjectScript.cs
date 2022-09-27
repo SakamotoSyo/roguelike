@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class ItemObjectScript : MonoBehaviour
 {
-    private SpriteRenderer _sp;
+    SpriteRenderer _sp;
 
-    private Item _itemInformation;
+    Item _itemInformation;
     public Item ItemInfomation => _itemInformation;
-
-    private void Start()
-    {
-        
-    }
 
     /// <summary>
     /// アイテムの情報をセットする

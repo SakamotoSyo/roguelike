@@ -297,7 +297,7 @@ public class AsterTest : MonoBehaviour
         int cnt = 0;
         while (cnt < 1000) 
         {
-            //mgr.RemoveOpenList(node);
+            mgr.RemoveOpenList(node);
             //周囲を開く
             mgr.OpenAround(node);
             //最小スコアのノードを探す

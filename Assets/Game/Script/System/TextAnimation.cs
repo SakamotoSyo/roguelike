@@ -6,20 +6,20 @@ using UnityEngine.EventSystems;
 
 public class TextAnimation : MonoBehaviour
 {
-    [SerializeField] private float _waitColor;
-    [SerializeField] private Text _text;
+    [SerializeField] float _waitColor;
+    [SerializeField] Text _text;
 
-    private float _timeCount;
-    private float _colorA = 0f;
+    float _timeCount;
+    float _colorA = 0f;
 
-    private bool _isColorUp = false;
+    bool _isColorUp = false;
 
-    private void Start()
+    void Start()
     {
         _text = GetComponent<Text>();
     }
 
-    private void Update()
+    void Update()
     {
         _timeCount += Time.deltaTime;
         if (_colorA <= 0.9 && !_isColorUp && _waitColor < _timeCount)

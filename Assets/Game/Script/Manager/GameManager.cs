@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -54,7 +53,7 @@ public class GameManager : SingletonBehaviour<GameManager>
     [SerializeField] GameObject _mapLight;
 
     [Tooltip("PlayerのObject")]
-    private GameObject _playerObj;
+    GameObject _playerObj;
 
     [Header("AudioSource")]
     [SerializeField] AudioSource _audioSource;
@@ -63,10 +62,10 @@ public class GameManager : SingletonBehaviour<GameManager>
     [SerializeField] AudioClip _floorClip;
 
     [Tooltip("アイテムのゲームオブジェクトをリストで管理する")]
-    private List<GameObject> _itemObjList = new List<GameObject>();
+    List<GameObject> _itemObjList = new List<GameObject>();
 
     [Tooltip("ダンジョンにいる敵の総数")]
-    private int _totalEnemyNum;
+    int _totalEnemyNum;
     //プレイヤーのいる部屋i
     // private int _playerRoomNum;
     //public int PlayerRoomNum => _playerRoomNum; S
@@ -74,26 +73,16 @@ public class GameManager : SingletonBehaviour<GameManager>
     [Tooltip("現在の階層")]
     int _nowFloor = 1;
 
-    //プレイヤーの座標
-    private int _playerX;
-    private int _playerY;
+    [Tooltip("プレイヤーの座標")]
+    int _playerX;
+    int _playerY;
 
-    private DgGenerator _dgGenerator;
+    DgGenerator _dgGenerator;
 
-    protected override void OnAwake()
-    {
-
-    }
-
-    private void Start()
+    void Start()
     {
         _dgGenerator = DgGenerator.Instance;
         _dgGenerator.MapNotice += MapInit;
-    }
-
-    void Update()
-    {
-
     }
 
     /// <summary>マップの再生成による初期化</summary>
@@ -182,20 +171,15 @@ public class GameManager : SingletonBehaviour<GameManager>
         
 
     }
-
-    /// <summary>
-    /// レベルアップしたときに呼ばれる
-    /// </summary>
-    private void PlayerLevelUpProcess()
-    {
-        //OutPutLog($"プレイヤーは{_playerStatus.Level + 1}にアップした");
-    }
-
     async UniTask FadeWait()
     {
         await UniTask.Delay(TimeSpan.FromSeconds(_fadeTime));
     }
 
+    /// <summary>
+    /// Gameが終わった時に呼ばれる
+    /// </summary>
+    /// <param name="isClear"></param>
     public async void GameClearBool(bool isClear) 
     {
         TurnType = TurnManager.GameEnd;
@@ -219,11 +203,6 @@ public class GameManager : SingletonBehaviour<GameManager>
            .Subscribe(_ => SceneManager.LoadScene("StartScene"));
         }
 
-    }
-
-    public void GameEndTrigger() 
-    {
-       
     }
 
     async UniTask TestWait()

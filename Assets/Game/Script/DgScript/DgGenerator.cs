@@ -571,7 +571,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         foreach (var i in _divList)
         {
             //‚¢‚é•”‰®‚ªŒ©‚Â‚©‚Á‚½‚ç‚»‚ê‚ğ•Ô‚·
-            if ((i.Room.Left <= x && i.Room.Right > x) && (i.Room.Top <= y * -1 && i.Room.Bottom > y * -1))
+            if ((i.Room.Left <= x && i.Room.Right >= x) && (i.Room.Top <= y * -1 && i.Room.Bottom >= y * -1))
             {
                 return i;
             }
@@ -591,14 +591,17 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         for (int i = 0; i < _divList.Count; i++)
         {
             //‚¢‚é•”‰®‚ªŒ©‚Â‚©‚Á‚½‚ç‚»‚ê‚ğ•Ô‚·
-            if ((_divList[i].Room.Left <= x && _divList[i].Room.Right > x) && (_divList[i].Room.Top <= y * -1 && _divList[i].Room.Bottom > y * -1))
+            if ((_divList[i].Room.Left <= x && _divList[i].Room.Right >= x) && (_divList[i].Room.Top <= y * -1 && _divList[i].Room.Bottom >= y * -1))
             {
+                //Debug.Log("Œ©‚Â‚©‚Á‚½");
                 return i;
             }
         }
 
+        //Debug.Log("Œ©‚Â‚©‚ç‚È‚©‚Á‚½");
         //‚Ç‚±‚Ì•”‰®‚É‚à‚¢‚È‚©‚Á‚½ê‡-1‚ğ•Ô‚·
         return -1;
+       
     }
 
     /// <summary>
