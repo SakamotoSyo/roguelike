@@ -5,28 +5,33 @@ using UnityEngine;
 //ダンジョンの区画情報
 public class DgDivision
 {
-    //外周の矩形情報
-    public DgRect Outer;
+    /// <summary> 外周の矩形情報</summary>
+    public DgRect Outer => _outer;
+    DgRect _outer;
 
-    //区画内に作ったルーム情報
-    public DgRect Room;
+    /// <summary>区画内に作ったルーム情報</summary>
+    public DgRect Room => _room;
+    DgRect _room;
 
-    //コンストラクタ
-    public DgDivision() 
+    /// <summary> コンストラクタ</summary>
+    public DgDivision()
     {
-        Outer = new DgRect();
-        Room = new DgRect();
+        _outer = new DgRect();
+        _room = new DgRect();
     }
 
-    
-     //矩形管理
-   public class DgRect 
+    //矩形管理
+    public class DgRect
     {
-        public int Left = 0;
-        public int Top = 0;
-        public int Right = 0;
-        public int Bottom = 0;
+        public int Left => _left;
+        public int Top => _top;
+        public int Right => _right;
+        public int Bottom => _bottom;
 
+        int _left = 0;
+        int _right = 0;
+        int _top = 0;
+        int _bottom = 0;
 
         /// <summary>
         /// 矩形の情報をまとめて設定する
@@ -35,19 +40,37 @@ public class DgDivision
         /// <param name="top"></param>
         /// <param name="right"></param>
         /// <param name="bottom"></param>
-        public void Set(int left, int top, int right, int bottom) 
+        public void Set(int left, int top, int right, int bottom)
         {
-            Left = left;
-            Top = top;
-            Right = right;
-            Bottom = bottom;
+            _left = left;
+            _top = top;
+            _right = right;
+            _bottom = bottom;
+        }
+
+        /// <summary>
+        /// 値をセットする
+        /// </summary>
+        /// <param name="num"></param>
+        public void SetBottom(int num)
+        {
+            _bottom = num;
+        }
+
+        /// <summary>
+        /// 値をセットする
+        /// </summary>
+        /// <param name="num"></param>
+        public void SetRight(int num)
+        {
+            _right = num;
         }
 
         /// <summary>
         /// 矩形の幅を返してくれる
         /// </summary>
         /// <returns></returns>
-        public int Width() 
+        public int Width()
         {
             return Right - Left;
         }
@@ -56,16 +79,16 @@ public class DgDivision
         /// 矩形の高さを返してくれる
         /// </summary>
         /// <returns></returns>
-        public int Height() 
+        public int Height()
         {
             return Bottom - Top;
         }
-       
+
         /// <summary>
         /// 面積を返してくれる
         /// </summary>
         /// <returns></returns>
-        public int Measure() 
+        public int Measure()
         {
             return Width() * Height();
         }
@@ -74,12 +97,12 @@ public class DgDivision
         /// 矩形の情報をコピーする
         /// </summary>
         /// <param name="rect"></param>
-        public void Copy(DgRect rect) 
+        public void Copy(DgRect rect)
         {
-            Left = rect.Left;
-            Top = rect.Top;
-            Right = rect.Right;
-            Bottom = rect.Bottom;
+            _left = rect.Left;
+            _top = rect.Top;
+            _right = rect.Right;
+            _bottom = rect.Bottom;
         }
     }
 

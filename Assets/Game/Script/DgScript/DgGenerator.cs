@@ -15,40 +15,46 @@ using UnityEngine;
 /// </summary>
 public class DgGenerator : SingletonBehaviour<DgGenerator>
 {
-    //2次元配列情報
-    public Layer2D Layer = null;
-
-    //区画リスト
-    private List<DgDivision> _divList = null;
-
+    /// <summary>二次元配列の情報</summary>
+    public Layer2D Layer => _layer;
+    /// <summary>区画リスト</summary>
     public List<DgDivision> DivList => _divList;
 
     /// <summary>マップの再生成を通知する</summary>
     public event System.Action MapNotice;
 
+    /// <summary>マップの生成が終わったかどうか</summary>
+    public bool MapGenerateEnd => _mapGenerateEnd;
+
+    [Tooltip("2次元配列情報")]
+    Layer2D _layer = null;
+
+    [Tooltip("区画リスト")]    
+    List<DgDivision> _divList = null;
+
     [Header("高さを設定する")]
-    [SerializeField] private int _height;
+    [SerializeField] int _height;
 
     [Header("幅を設定する")]
-    [SerializeField] private int _width;
+    [SerializeField] int _width;
 
     [Header("Layer2Dに入れる壁を表す数字")]
-    [SerializeField] private int _chipWall;
+    [SerializeField] int _chipWall;
 
     [Header("生成時の壁と区画の余白")]
     [SerializeField] int _startMergin;
 
     [Header("部屋の最小サイズ")]
-    [SerializeField] private int _minRoom;
+    [SerializeField] int _minRoom;
 
     [Header("部屋周りの余白")]
-    [SerializeField] private int _outerMergin;
+    [SerializeField] int _outerMergin;
 
     [Header("部屋の最大サイズ")]
-    [SerializeField] private int _maxRoom;
+    [SerializeField] int _maxRoom;
 
     [Header("区分けした中の部屋の余白")]
-    [SerializeField] private int _posMergin;
+    [SerializeField] int _posMergin;
     #region タイルマップ変数
     //[Header("地面のタイルマップ")]
     //[SerializeField] private Tilemap _groundTileMap;
@@ -70,43 +76,42 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     [SerializeField] GameObject _mapParentPrefab;
 
     [Header("グラウンドのオブジェクト")]
-    [SerializeField] private GameObject _kusanyaObject;
+    [SerializeField] GameObject _kusanyaObject;
 
     [Header("岩のオブジェクト")]
-    [SerializeField] private GameObject _iwaObject;
+    [SerializeField] GameObject _iwaObject;
 
     [Header("階段のオブジェクト")]
-    [SerializeField] private GameObject _stairSet;
+    [SerializeField] GameObject _stairSet;
 
     [Header("プレイヤーのオブジェクト")]
-    [SerializeField] private GameObject _playerObject;
+    [SerializeField] GameObject _playerObject;
 
     [Header("最終層に行ったときに生成するPlayerPrefab")]
     [SerializeField] GameObject _lastPlayer;
 
     [Header("敵のプレハブ")]
-    [SerializeField] private GameObject _enemyPrefab;
+    [SerializeField] GameObject _enemyPrefab;
 
     [Header("ボスのプレハブ")]
     [SerializeField] GameObject _bossPrefab;
 
     [Header("トラップのプレハブ")]
-    [SerializeField] private GameObject _trapPrefab;
+    [SerializeField] GameObject _trapPrefab;
 
     [Header("ItemDataBase")]
-    [SerializeField] private ItemDataBase _itemDataBase;
+    [SerializeField] ItemDataBase _itemDataBase;
 
     [Header("Itemのプレハブ")]
-    [SerializeField] private GameObject _itemPrefab;
+    [SerializeField] GameObject _itemPrefab;
 
     [Tooltip("mapParentを生成したものを保存する")]
     GameObject _mapParent;
 
     [Tooltip("マップを生成し終わったかどうか")]
-    private bool _mapGenerateEnd;
-    public bool MapGenerateEnd => _mapGenerateEnd;
+    bool _mapGenerateEnd;
 
-    private bool isVertical = false;
+    bool isVertical = false;
 
     GameManager _gameManager;
     //縦で分割するかどうか
@@ -132,13 +137,13 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         _mapGenerateEnd = false;
 
         //二次元配列に値を入れる
-        Layer = new Layer2D(_width, _height);
+       _layer = new Layer2D(_width, _height);
 
         //区画リスト作成
         _divList = new List<DgDivision>();
 
         //すべてを壁にする
-        Layer.Fill(MapNum.WallNum);
+        _layer.Fill(MapNum.WallNum);
 
         //最初の区画を作る
         CreateDivision(_startMergin, _startMergin, _width - _startMergin, _height - _startMergin);
@@ -183,7 +188,8 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         //子区画の要素を作る
         DgDivision child = new DgDivision();
 
-        if (parent.Outer.Left + _minRoom + _outerMergin >= parent.Outer.Right - _minRoom - _outerMergin || parent.Outer.Top + _minRoom + _outerMergin >= parent.Outer.Bottom - _minRoom - _outerMergin)
+        if (parent.Outer.Left + _minRoom + _outerMergin >= parent.Outer.Right - _minRoom - _outerMergin 
+            || parent.Outer.Top + _minRoom + _outerMergin >= parent.Outer.Bottom - _minRoom - _outerMergin)
         {
             //どちらかの線の長さが足りない場合親の区画を元に戻しておしまい
             //どちらも最大数まで分けると形が一定になるのでランダム要素をつけるためにどちらかの線の長さが足りない場合にする
@@ -210,7 +216,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
             child.Outer.Set(p, parent.Outer.Top, parent.Outer.Right, parent.Outer.Bottom);
 
             //親のLeftを子区画の右端までに移動させる
-            parent.Outer.Right = child.Outer.Left;
+            parent.Outer.SetRight(child.Outer.Left);
         }
         else
         {
@@ -230,7 +236,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
             child.Outer.Set(parent.Outer.Left, p, parent.Outer.Right, parent.Outer.Bottom);
 
             //親のTopを子区画の右端までに移動させる
-            parent.Outer.Bottom = child.Outer.Top;
+            parent.Outer.SetBottom(child.Outer.Top);
         }
 
 
@@ -555,7 +561,7 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
     /// <summary>設定を初期化する</summary>
     private void MapInit()
     {
-        Layer = null;
+        _layer = null;
         Destroy(_mapParent);
         _mapParent = Instantiate(_mapParentPrefab, new Vector3(0, 0, 0), transform.rotation);
     }
@@ -601,7 +607,6 @@ public class DgGenerator : SingletonBehaviour<DgGenerator>
         //Debug.Log("見つからなかった");
         //どこの部屋にもいなかった場合-1を返す
         return -1;
-       
     }
 
     /// <summary>
