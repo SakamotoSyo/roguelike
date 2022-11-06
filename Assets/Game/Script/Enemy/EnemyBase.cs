@@ -80,6 +80,7 @@ public abstract class EnemyBase : MonoBehaviour, IDirection
         _generatorIns = DgGenerator.Instance;
         //エネミーマネージャーに自分自身のオブジェクトを渡す
         _enemyManager.SetEnemyBaseList(this.gameObject.GetComponent<EnemyBase>());
+        _enemyManager.SetEnemyObject(this.gameObject);
 
         _playerBase = _gameManager.PlayerObj.GetComponent<IDamageble>();
     }

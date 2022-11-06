@@ -77,7 +77,13 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
     /// <summary>マップの再生成による初期化</summary>
     void MapInit() 
     {
+        Debug.Log("削除する");
+        Debug.Log(_enemyGameObjList.Count);
         _enemyBaseList.Clear();
+        foreach (var i in _enemyGameObjList) 
+        {
+            Destroy(i);
+        }
         _enemyGameObjList.Clear();
         _nowTotalEnemyNum = 0;
     }
@@ -188,6 +194,13 @@ public class EnemyManager : SingletonBehaviour<EnemyManager>
         _nowTotalEnemyNum += num;
     }
 
+    /// <summary>
+    /// EnemyListにGameObjectをAddするためのメソッド
+    /// </summary>
+    public void SetEnemyObject(GameObject enemy) 
+    {
+        _enemyGameObjList.Add(enemy);
+    }
 
     /// <summary>
     /// 総獲得EXPをセットする
