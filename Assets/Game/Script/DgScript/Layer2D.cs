@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Layer2D
 {
-    //マップの幅
-    private int _width;
-    //マップの高さ
-    private int _height;
-    //領域外を指定した時の値
-    private int _outOfRange = -1;
-    //マップデータ
-    private int[] _values;
-    //カプセル化
+    [Tooltip("マップの幅")]
+    int _width;
+    [Tooltip("マップの高さ")]
+    int _height;
+    [Tooltip("領域外を指定した時の値")]
+    int _outOfRange = -1;
+    [Tooltip("マップデータ")]
+    int[] _values;
+    [Tooltip("カプセル化")]
     public int Width => _width;
     public int Height => _height;
 

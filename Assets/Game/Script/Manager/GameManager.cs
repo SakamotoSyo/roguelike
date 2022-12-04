@@ -23,7 +23,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     public TurnManager TurnType;
 
     public GameObject PlayerObj => _playerObj;
-
     public int TotalEnemyNum => _totalEnemyNum;
     public int PlayerX => _playerX;
     public int PlayerY => _playerY;

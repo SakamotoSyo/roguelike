@@ -5,18 +5,17 @@ using UnityEngine;
 public class DaiksutoraCs: MonoBehaviour
 {
     //マップのデータを取得
-    int mapY = 10;
-    int mapX = 10;
-    int y = 0;
-    int movePoint = 0;
-    int[] PosX = { 1, 0, -1, 0 };
-    int[] PosY = { 0, 1, 0, -1 };
+    int _mapY = 10;
+    int _mapX = 10;
+    int _movePoint = 0;
+    int[] _posX = { 1, 0, -1, 0 };
+    int[] _posY = { 0, 1, 0, -1 };
     //プレイヤーのデータを作成
     EnemyData _playerData;
     //ゴールのデータを仮作成
     EnemyData _enemyData;
     EnemyData _result;
-    DgDivision mapData;
+    DgDivision _mapData;
     DgGenerator _dgGenerator;
     GameManager _gameManager;
 
@@ -31,22 +30,22 @@ public class DaiksutoraCs: MonoBehaviour
     public EnemyData Dijkstra(int x, int y)
     {
         _result = new EnemyData(0, 0, 1000);
-        mapData = DgGenerator.Instance.GetDivList(x, y * -1);
+        _mapData = DgGenerator.Instance.GetDivList(x, y * -1);
         Init();
-        _playerData = new EnemyData(_gameManager.PlayerX - mapData.Room.Left, _gameManager.PlayerY - mapData.Room.Top, 100);
-        _enemyData = new EnemyData(x - mapData.Room.Left, y - mapData.Room.Top, 0);
-        for (int i = 0; i < mapY; i++)
+        _playerData = new EnemyData(_gameManager.PlayerX - _mapData.Room.Left, _gameManager.PlayerY - _mapData.Room.Top, 100);
+        _enemyData = new EnemyData(x - _mapData.Room.Left, y - _mapData.Room.Top, 0);
+        for (int i = 0; i < _mapY; i++)
         {
-            for (int j = 0; j < mapX; j++)
+            for (int j = 0; j < _mapX; j++)
             {
                 asiato[i, j] = 99;
 
             }
         }
 
-        movePoint = 0;
+        _movePoint = 0;
         UpTansaku(_playerData.PlayerY);
-        movePoint = 0;
+        _movePoint = 0;
         DownTansaku(_playerData.PlayerY);
 
         for (int i = 0; i < 3; i++)
@@ -55,14 +54,14 @@ public class DaiksutoraCs: MonoBehaviour
             {
                 var k = _enemyData.PlayerX+ i - 1;
                 var l = _enemyData.PlayerY + j - 1;
-                if (k < 0 || l < 0 || k > asiato.Length / mapY - 1 || l > asiato.Length / mapX - 1) 
+                if (k < 0 || l < 0 || k > asiato.Length / _mapY - 1 || l > asiato.Length / _mapX - 1) 
                 {
                     continue;
                 }
-                var a =  new EnemyData(k + mapData.Room.Left, l + mapData.Room.Top, asiato[l,k]);
-                if (_result.MovePoint > a.MovePoint && _dgGenerator.Layer.GetMapData(k + mapData.Room.Left, l + mapData.Room.Top) != MapNum.EnemyNum) 
+                var a =  new EnemyData(k + _mapData.Room.Left, l + _mapData.Room.Top, asiato[l,k]);
+                if (_result.MovePoint > a.MovePoint && _dgGenerator.Layer.GetMapData(k + _mapData.Room.Left, l + _mapData.Room.Top) != MapNum.EnemyNum) 
                 {
-                    Debug.Log($"入れ替えーーーーー");
+                    Debug.Log($"入れ替え");
                     _result = a;
                 }
             }
@@ -78,10 +77,10 @@ public class DaiksutoraCs: MonoBehaviour
     {
         _gameManager = GameManager.Instance;
         _dgGenerator = DgGenerator.Instance;
-        mapX = mapData.Room.Right - mapData.Room.Left + 2;
-        mapY = mapData.Room.Bottom - mapData.Room.Top + 2;
-        mapArray = new int[mapY, mapX];
-        asiato = new int[mapY, mapX];
+        _mapX = _mapData.Room.Right - _mapData.Room.Left + 2;
+        _mapY = _mapData.Room.Bottom - _mapData.Room.Top + 2;
+        mapArray = new int[_mapY, _mapX];
+        asiato = new int[_mapY, _mapX];
     }
 
     void UpTansaku(int y)
@@ -89,12 +88,12 @@ public class DaiksutoraCs: MonoBehaviour
         //プレイヤーのY座標を保存
         var movePlayerY = y;
         //周りに移動用の変数作成
-        var smovePoint = movePoint;
+        var smovePoint = _movePoint;
 
         //左端まで足跡をつける
         for (int i = _playerData.PlayerX; i >= 0; i--)
         {
-            if (movePlayerY < 0 || asiato.Length / mapX - 1 < movePlayerY)
+            if (movePlayerY < 0 || asiato.Length / _mapX - 1 < movePlayerY)
             {
 
             }
@@ -106,17 +105,17 @@ public class DaiksutoraCs: MonoBehaviour
             }
 
             //周りを見る
-            for (int j = 0; j < PosX.Length; j++)
+            for (int j = 0; j < _posX.Length; j++)
             {
                 //領域外を指定した時処理をやめる
-                if (i + PosX[j] >= mapX || i + PosX[j] < 0 || movePlayerY + PosY[j] >= mapY || movePlayerY + PosY[j] < 0)
+                if (i + _posX[j] >= _mapX || i + _posX[j] < 0 || movePlayerY + _posY[j] >= _mapY || movePlayerY + _posY[j] < 0)
                 {
 
                 }
                 //見た方向の数字が移動したポイントより大きかった場合上書きする
-                else if (asiato[movePlayerY + PosY[j], i + PosX[j]] > smovePoint + 1)
+                else if (asiato[movePlayerY + _posY[j], i + _posX[j]] > smovePoint + 1)
                 {
-                    asiato[movePlayerY + PosY[j], i + PosX[j]] = smovePoint + 1;
+                    asiato[movePlayerY + _posY[j], i + _posX[j]] = smovePoint + 1;
                 }
             }
 
@@ -124,11 +123,11 @@ public class DaiksutoraCs: MonoBehaviour
 
         }
 
-        smovePoint = movePoint;
+        smovePoint = _movePoint;
         //右端まで足跡をつける
-        for (int i = _playerData.PlayerX; i < mapX; i++)
+        for (int i = _playerData.PlayerX; i < _mapX; i++)
         {
-            if (movePlayerY < 0 || asiato.Length / mapX - 1 < movePlayerY)
+            if (movePlayerY < 0 || asiato.Length / _mapX - 1 < movePlayerY)
             {
 
             }
@@ -139,24 +138,24 @@ public class DaiksutoraCs: MonoBehaviour
             }
 
             //周りを見る
-            for (int j = 0; j < PosX.Length; j++)
+            for (int j = 0; j < _posX.Length; j++)
             {
                 //領域外を指定した時処理をやめる
-                if (i + PosX[j] >= mapX || i + PosX[j] < 0 || movePlayerY + PosY[j] >= mapY || movePlayerY + PosY[j] < 0)
+                if (i + _posX[j] >= _mapX || i + _posX[j] < 0 || movePlayerY + _posY[j] >= _mapY || movePlayerY + _posY[j] < 0)
                 {
 
                 }
                 //見た方向の数字が移動したポイントより大きかった場合上書きする
-                else if (asiato[movePlayerY + PosY[j], i + PosX[j]] > smovePoint + 1)
+                else if (asiato[movePlayerY + _posY[j], i + _posX[j]] > smovePoint + 1)
                 {
-                    asiato[movePlayerY + PosY[j], i + PosX[j]] = smovePoint + 1;
+                    asiato[movePlayerY + _posY[j], i + _posX[j]] = smovePoint + 1;
                 }
             }
 
             smovePoint++;
         }
 
-        movePoint++;
+        _movePoint++;
         movePlayerY++;
 
         //上方向にもう探索ができない場合再帰処理を抜ける
@@ -172,34 +171,34 @@ public class DaiksutoraCs: MonoBehaviour
         //プレイヤーのY座標を保存
         var movePlayerY = y;
         //周りに移動用の変数作成
-        var smovePoint = movePoint;
+        var smovePoint = _movePoint;
 
         //左端まで足跡をつける
         for (int i = _playerData.PlayerX - 1; i >= 0; i--)
         {
-            if (movePlayerY < 0 || asiato.Length / mapX - 1 < movePlayerY)
+            if (movePlayerY < 0 || asiato.Length / _mapX - 1 < movePlayerY)
             {
 
             }
             //足跡をつける
             else if (asiato[movePlayerY, i] > smovePoint)
             {
-                Debug.Log($"{asiato.Length / mapY - 1}da{movePlayerY}と {asiato.Length / mapX}la{i}");
+                //Debug.Log($"{asiato.Length / _mapY - 1}da{movePlayerY}と {asiato.Length / _mapX}la{i}");
                 asiato[movePlayerY, i] = smovePoint;
             }
 
             //周りを見る
-            for (int j = 0; j < PosX.Length; j++)
+            for (int j = 0; j < _posX.Length; j++)
             {
                 //領域外を指定した時処理をやめる
-                if (i + PosX[j] >= mapX || i + PosX[j] < 0 || movePlayerY + PosY[j] >= mapY || movePlayerY + PosY[j] < 0)
+                if (i + _posX[j] >= _mapX || i + _posX[j] < 0 || movePlayerY + _posY[j] >= _mapY || movePlayerY + _posY[j] < 0)
                 {
 
                 }
                 //見た方向の数字が移動したポイントより大きかった場合上書きする
-                else if (asiato[movePlayerY + PosY[j], i + PosX[j]] > smovePoint + 1)
+                else if (asiato[movePlayerY + _posY[j], i + _posX[j]] > smovePoint + 1)
                 {
-                    asiato[movePlayerY + PosY[j], i + PosX[j]] = smovePoint + 1;
+                    asiato[movePlayerY + _posY[j], i + _posX[j]] = smovePoint + 1;
                     //Console.WriteLine(movePoint);
                 }
             }
@@ -208,11 +207,11 @@ public class DaiksutoraCs: MonoBehaviour
 
         }
 
-        smovePoint = movePoint;
+        smovePoint = _movePoint;
         //右端まで足跡をつける
-        for (int i = _playerData.PlayerX; i < mapX; i++)
+        for (int i = _playerData.PlayerX; i < _mapX; i++)
         {
-            if (movePlayerY < 0 || i < 0 || asiato.Length / mapX  - 1 < movePlayerY || asiato.Length / mapY -1 < i)
+            if (movePlayerY < 0 || i < 0 || asiato.Length / _mapX  - 1 < movePlayerY || asiato.Length / _mapY -1 < i)
             {
 
             }
@@ -223,14 +222,14 @@ public class DaiksutoraCs: MonoBehaviour
             }
 
             //周りを見る
-            for (int j = 0; j < PosX.Length; j++)
+            for (int j = 0; j < _posX.Length; j++)
             {
                 //領域外を指定した時処理をやめる
-                if (i + PosX[j] >= mapX || i + PosX[j] < 0 || movePlayerY + PosY[j] >= mapY || movePlayerY + PosY[j] < 0) ;
+                if (i + _posX[j] >= _mapX || i + _posX[j] < 0 || movePlayerY + _posY[j] >= _mapY || movePlayerY + _posY[j] < 0) ;
                 //見た方向の数字が移動したポイントより大きかった場合上書きする
-                else if (asiato[movePlayerY + PosY[j], i + PosX[j]] > smovePoint + 1)
+                else if (asiato[movePlayerY + _posY[j], i + _posX[j]] > smovePoint + 1)
                 {
-                    asiato[movePlayerY + PosY[j], i + PosX[j]] = smovePoint + 1;
+                    asiato[movePlayerY + _posY[j], i + _posX[j]] = smovePoint + 1;
                     //Console.WriteLine(movePoint);
                 }
             }
@@ -238,11 +237,11 @@ public class DaiksutoraCs: MonoBehaviour
             smovePoint++;
         }
 
-        movePoint++;
+        _movePoint++;
         movePlayerY++;
 
         //下方向にもう探索ができない場合再帰処理を抜ける
-        if (movePlayerY <= mapY)
+        if (movePlayerY <= _mapY)
         {
             y++;
             DownTansaku(y);

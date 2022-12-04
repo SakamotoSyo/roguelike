@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b9de7232ea345c419a1cd94edd79c1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animation: {fileID: 0}
+  _anim: {fileID: 5934538640188018599}
   _damage: 25
   _attackRange: 3
   ThunderObj: {fileID: 100002, guid: 6422340191d2291478e7e4f77bbc5204, type: 3}
